@@ -1,0 +1,21 @@
+
+$theme-colors: (
+  'primary': #0b233f,
+  'secondary': #7898ad,
+  'tertiary': #e8513e,
+  'quaternary': #eee23e,
+);
+
+$enable-rounded: true;
+$enable-shadows: false;
+$enable-gradients: false;
+$enable-transitions: true;
+$enable-print-styles: true;
+$bv-enable-table-stacked: true;
+$body-bg: RGBA(242, 242, 242, 1.00);
+
+// BOOTSTRAP VARIABLES DECLARED ABOVE
+@import 'bootstrap/scss/bootstrap.scss';
+@import 'bootstrap-vue/src/index.scss';
+
+// OVERRIDES BELOW

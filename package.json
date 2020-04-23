@@ -1,0 +1,43 @@
+{
+  "name": "opex-template",
+  "version": "1.0.0",
+  "description": "A full stack app template for the G5 OpEx team.",
+  "author": "David Miller & Tyler Hasenoehrl",
+  "private": true,
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server",
+    "docker": "npm run dev",
+    "build": "nuxt build",
+    "start": "cross-env NODE_ENV=production node server/index.js",
+    "generate": "nuxt generate",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
+  },
+  "dependencies": {
+    "@cloudnative/health-connect": "^2.1.0",
+    "@nuxtjs/axios": "^5.3.6",
+    "@nuxtjs/google-analytics": "^2.2.3",
+    "appmetrics-prometheus": "^3.1.0",
+    "appmetrics-zipkin": "^1.1.1",
+    "bootstrap": "^4.1.3",
+    "bootstrap-vue": "^2.0.0",
+    "cross-env": "^5.2.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "greenlock": "^4.0.4",
+    "jquery": "^3.4.1",
+    "nuxt": "^2.0.0",
+    "path": "^0.12.7",
+    "pg": "^7.18.2",
+    "sequelize": "^5.21.5"
+  },
+  "devDependencies": {
+    "@nuxtjs/eslint-config": "^2.0.0",
+    "@nuxtjs/eslint-module": "^1.0.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^6.1.0",
+    "eslint-plugin-nuxt": ">=0.4.2",
+    "node-sass": "^4.13.1",
+    "nodemon": "^1.18.9",
+    "sass-loader": "^8.0.2"
+  }
+}
