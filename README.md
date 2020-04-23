@@ -73,3 +73,6 @@ If this is the first deploy you will need to expose the port to the internet wit
 ```bash 
 kubectl expose deployment [NAME] --type=LoadBalancer --port [PORT] --target-port [TARGET_PORT]
 ```
+
+
+kubectl create secret generic annotation --from-literal=DATABASE_URL=""

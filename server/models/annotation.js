@@ -19,7 +19,7 @@ module.exports = (sequelize) => {
 annotation.associate = (models) => {
   models.annotation.belongsTo(models.annotationUser)
   models.annotation.belongsTo(models.app)
-  models.annotation.belongsToMany(models.location, { through: 'annotationLocation'})
+  // models.annotation.belongsToMany(models.location, { through: 'annotationLocation'})
 }
 return annotation
 }

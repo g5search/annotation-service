@@ -3,11 +3,11 @@ const express = require('express')
 const consola = require('consola')
 const { Nuxt, Builder } = require('nuxt')
 const app = express()
-// const models = require('./models')
+const models = require('./models')
 const config = require('../nuxt.config.js')
 config.dev = process.env.NODE_ENV !== 'production'
 require('./routes')(app)
-async function start () {
+async function start() {
   const nuxt = new Nuxt(config)
 
   const { host, port } = nuxt.options.server
@@ -22,10 +22,14 @@ async function start () {
   }
 
   app.use(nuxt.render)
-  // models.sequelize
-  //   .sync()
-  //   .then(() => {
-  //   })
+  models.sequelize
+    .sync()
+    .then(() => {
+      console.log('Models Sync\'d')
+    })
+    .catch((err) => {
+      console.error(err)
+    })
   app.listen(port, host)
   consola.ready({
     message: `Server listening on http://${host}:${port}`,
