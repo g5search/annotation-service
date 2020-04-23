@@ -46,7 +46,7 @@ spec:
           - name: DATABASE_EVICT
             value: "1000"
           - name: DATABASE_SSL
-            value: "true"
+            value: "false"
           # - name: DATABASE_CA
           #   valueFrom: 
           #     secretKeyRef:
@@ -58,15 +58,15 @@ spec:
           #       name: opex-template
           #       key: client-cert.txt
           # - name: DATABASE_KEY
-          #   valueFrom: 
-          #     secretKeyRef:
-          #       name: opex-template
-          #       key: client-key.txt
-          # - name: DATABASE_URL
-          #   valueFrom: 
-          #     secretKeyRef:
-          #       name: opex-template
-          #       key: db-connection.txt
+            # valueFrom: 
+            #   secretKeyRef:
+            #     name: annotation
+            #     key: DATABASE_URL
+          - name: DATABASE_URL
+            valueFrom: 
+              secretKeyRef:
+                  name: annotation
+                  key: DATABASE_URL
           - name: PORT
             value : "{{ .Values.service.servicePort }}"
         {{- if .Values.image.livenessProbe }}

@@ -3,8 +3,8 @@
 replicaCount: 1
 revisionHistoryLimit: 1
 image:
-  repository: tylrhas/opex-template
-  tag: 1.1.4
+  repository: tylrhas/annotation
+  tag: 1.1.0
   pullPolicy: IfNotPresent
   resources:
     requests:
@@ -14,20 +14,20 @@ image:
   # readinessProbe:
   #   httpGet:
   #     path: /ready
-  #     port: 8080
+  #     port: 5000
   #   initialDelaySeconds: 3
   #   periodSeconds: 5
   livenessProbe: {}
   # livenessProbe:
   #   httpGet:
   #     path: /live
-  #     port: 8080
+  #     port: 5000
   #   initialDelaySeconds: 40
   #   periodSeconds: 10
 service:
   name: Node
   type: NodePort
-  servicePort: 8080
+  servicePort: 5000
 hpa:
   enabled: false
   minReplicas: 1

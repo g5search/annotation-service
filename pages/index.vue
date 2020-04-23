@@ -4,6 +4,7 @@
       <b-col cols="6" offset="3">
         <transition name="slide-fade" appear>
           <b-card v-show="true" class="text-center">
+            <p>Annotation Service</p>
             <octopus :size="`5em`" />
           </b-card>
         </transition>
