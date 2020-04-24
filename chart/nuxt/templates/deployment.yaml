@@ -33,8 +33,6 @@ spec:
             cpu: "{{ .Values.image.resources.requests.cpu }}"
             memory: "{{ .Values.image.resources.requests.memory }}"
         env:
-          - name: TEST_VAR
-            value: "us-234-2"
           - name: DATABASE_MAX_CONNECTIONS
             value: "10"
           - name: DATABASE_MIN_CONNECTIONS
@@ -46,22 +44,22 @@ spec:
           - name: DATABASE_EVICT
             value: "1000"
           - name: DATABASE_SSL
-            value: "false"
-          # - name: DATABASE_CA
-          #   valueFrom: 
-          #     secretKeyRef:
-          #       name: opex-template
-          #       key: server-ca.txt
-          # - name: DATABASE_CERT
-          #   valueFrom: 
-          #     secretKeyRef:
-          #       name: opex-template
-          #       key: client-cert.txt
-          # - name: DATABASE_KEY
-            # valueFrom: 
-            #   secretKeyRef:
-            #     name: annotation
-            #     key: DATABASE_URL
+            value: "true"
+          - name: DATABASE_CA
+            valueFrom: 
+              secretKeyRef:
+                name: annotation
+                key: DATABASE_CA
+          - name: DATABASE_CERT
+            valueFrom: 
+              secretKeyRef:
+                name: annotation
+                key: DATABASE_CERT
+          - name: DATABASE_KEY
+            valueFrom: 
+              secretKeyRef:
+                name: annotation
+                key: DATABASE_KEY
           - name: DATABASE_URL
             valueFrom: 
               secretKeyRef:
