@@ -4,7 +4,7 @@ replicaCount: 1
 revisionHistoryLimit: 1
 image:
   repository: tylrhas/annotation
-  tag: 1.1.2
+  tag: 1.1.3
   pullPolicy: IfNotPresent
   resources:
     requests:

@@ -8,6 +8,7 @@ const config = require('../nuxt.config.js')
 config.dev = process.env.NODE_ENV !== 'production'
 require('./routes')(app)
 async function start() {
+  require('@getg5/g5-updatable').init(app, models)
   const nuxt = new Nuxt(config)
 
   const { host, port } = nuxt.options.server

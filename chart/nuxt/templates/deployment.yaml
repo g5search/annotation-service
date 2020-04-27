@@ -33,6 +33,12 @@ spec:
             cpu: "{{ .Values.image.resources.requests.cpu }}"
             memory: "{{ .Values.image.resources.requests.memory }}"
         env:
+          - name: GKE
+            value: "true "
+          - name: INCLUDE_G5_UPDATABLES
+            value: "true"
+          - name : INCLUDE_G5_AUTH
+            value: ""
           - name: DATABASE_MAX_CONNECTIONS
             value: "10"
           - name: DATABASE_MIN_CONNECTIONS

@@ -3,3 +3,7 @@ npm-debug*
 .nuxt
 .git
 .env
+*.swp
+client-key
+client-cert
+server-ca
