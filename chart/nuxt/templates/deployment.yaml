@@ -34,7 +34,7 @@ spec:
             memory: "{{ .Values.image.resources.requests.memory }}"
         env:
           - name: GKE
-            value: "true "
+            value: "true"
           - name: INCLUDE_G5_UPDATABLES
             value: "true"
           - name : INCLUDE_G5_AUTH
