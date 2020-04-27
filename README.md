@@ -76,3 +76,6 @@ kubectl expose deployment [NAME] --type=LoadBalancer --port [PORT] --target-port
 
 
 kubectl create secret generic annotation --from-literal=DATABASE_URL=""
+
+### Tutorial for ssl and ingress setup
+https://medium.com/bluekiri/deploy-a-nginx-ingress-and-a-certitificate-manager-controller-on-gke-using-helm-3-8e2802b979ec
