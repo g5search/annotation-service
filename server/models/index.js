@@ -38,12 +38,10 @@ const sequelize = new Sequelize(dbUrl, {
   logging: (logging === 'true')
 })
 
-// NOT SURE THIS WILL WORK, BUT IT SEEMS LIKE WE WOULD WANT TO OPTIONALIZE THESE
+const updatableModels = require('@getg5/g5-updatable').models(sequelize)
 const db = {
-  ...includeAuth ? require('@getg5/g5-auth').models(sequelize) : {},
-  ...includeUpdatables ? require('@getg5/g5-updatable').models(sequelize) : {}
+  ...updatableModels
 }
-
 // db.user.associate = (models) => {
 //   models.user.hasMany(models.seoAssignment, { foreignKey: 'userId', sourceKey: 'id' })
 // }
@@ -68,7 +66,6 @@ Object.keys(db)
       db[modelName].associate(db)
     }
   })
-
 require('./prototypes')(db)
 require('./hooks')(db)
 
