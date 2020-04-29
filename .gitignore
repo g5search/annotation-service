@@ -93,3 +93,4 @@ sw.*
 client-key
 client-cert
 server-ca
+.npmrc

@@ -57,7 +57,7 @@ docker tag [buildName] [repo]:[version]
 docker push [repo]:[version]
 ```
 
-## Deploy the app
+## Deploy the app using Helm
 Make sure that the repository and tag match the docker image before running this
 If this is the first deploy run the below
 ``` bash
