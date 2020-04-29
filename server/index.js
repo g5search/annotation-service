@@ -1,14 +1,11 @@
 require('dotenv').config()
-const express = require('express')
 const consola = require('consola')
 const { Nuxt, Builder } = require('nuxt')
-const app = express()
-const models = require('./models')
 const config = require('../nuxt.config.js')
+const app = require('./controllers/express')
+const models = require('./models')
 config.dev = process.env.NODE_ENV !== 'production'
-require('./routes')(app)
 async function start() {
-  require('@getg5/g5-updatable').init(app, models)
   const nuxt = new Nuxt(config)
 
   const { host, port } = nuxt.options.server

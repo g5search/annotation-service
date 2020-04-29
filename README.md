@@ -1,4 +1,4 @@
-# opex-template
+# Annotation Service
 
 Configure Dockerfile and environment variables.
 
@@ -19,7 +19,7 @@ npm run dev
 ```
 
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
-
+Built Using [Cloud Native JS](https://www.cloudnativejs.io/)
 ### Using Docker
 
 ``` bash
@@ -48,6 +48,7 @@ gcloud container clusters create [CLUSTER NAME] --num-nodes=[NUMBER_OF_NODES]
 ```
 
 # Deploying the app
+This assumes that you are connected to the correct kubernetes cluster and helm installed
 
 ## Build, Tag, Push the Docker Image
 
