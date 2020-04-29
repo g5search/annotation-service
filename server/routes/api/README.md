@@ -9,11 +9,9 @@ We've created a semi-automatic methodology for adding routes to this app.
 Routes are written for Express.js. Hand the express `app` to the exported function.
 
 ``` js
-
 module.exports = (app) => {
   app.get('', () => {})
   app.post('', () => {})
   // etc
 }
-
 ```
