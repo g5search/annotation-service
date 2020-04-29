@@ -36,7 +36,7 @@ brew install helm
 # Set Up a new kubernetes cluster
 
 ## Set up project Id
-``` bash 
+``` bash
 export PROJECT_ID=[PROJECT_ID]
 ```
 
@@ -49,33 +49,47 @@ gcloud container clusters create [CLUSTER NAME] --num-nodes=[NUMBER_OF_NODES]
 
 # Deploying the app
 
-## Build, Tag, Push the Docker Image 
+## Build, Tag, Push the Docker Image
 
-``` bash 
+``` bash
 docker build -t [buildName] .
 docker tag [buildName] [repo]:[version]
 docker push [repo]:[version]
 ```
 
-## Deploy the app 
+## Deploy the app
 Make sure that the repository and tag match the docker image before running this
 If this is the first deploy run the below
-``` bash 
+``` bash
 helm install [NAME] [CHART]
 ```
-If this is not the fist deploy run this 
-``` bash 
+If this is not the fist deploy run this
+``` bash
 helm upgrade [NAME] [CHART]
 ```
 
 ## Expose app to internet
-If this is the first deploy you will need to expose the port to the internet with the following 
-```bash 
+If this is the first deploy you will need to expose the port to the internet with the following
+```bash
 kubectl expose deployment [NAME] --type=LoadBalancer --port [PORT] --target-port [TARGET_PORT]
 ```
 
+### Add Secret Environment Variables
 
+Secrets are added via the command line.
+```bash
 kubectl create secret generic annotation --from-literal=DATABASE_URL=""
+```
+Secrets also need to be added to the environment variables in the Chart deployment template.
+
+Ex.
+``` yaml
+- name: ENV_VAR
+  valueFrom:
+    secretKeyRef:
+      name: envVar
+      key: ENV_VAR
+```
 
 ### Tutorial for ssl and ingress setup
 https://medium.com/bluekiri/deploy-a-nginx-ingress-and-a-certitificate-manager-controller-on-gke-using-helm-3-8e2802b979ec
