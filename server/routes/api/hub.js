@@ -10,13 +10,13 @@ module.exports = (app) => {
   app.options('/api/hub/clients', cors(corsOpts))
   app.options('/api/hub/clients/:clientUrn/locations', cors(corsOpts))
 
-  app.get('/api/hub/clients/:clientUrn/locations', async (req, res) => {
+  app.get('/api/hub/clients/:clientUrn/locations', cors(corsOpts), async (req, res) => {
     const { clientUrn } = req.params
     const locations = await models.g5_updatable_location.getByClientUrn(clientUrn)
     res.json(locations)
   })
 
-  app.get('/api/hub/clients', async (req, res) => {
+  app.get('/api/hub/clients', cors(corsOpts), async (req, res) => {
     const { internal } = req.query
     let clients
     if (internal) {
