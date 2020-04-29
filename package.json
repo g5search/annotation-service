@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@cloudnative/health-connect": "^2.1.0",
+    "@getg5/g5-auth": "^2.0.3",
     "@getg5/g5-updatable": "^2.2.3",
     "@nuxtjs/axios": "^5.10.2",
     "@nuxtjs/google-analytics": "^2.2.3",
@@ -21,6 +22,7 @@
     "appmetrics-zipkin": "^1.1.1",
     "bootstrap": "^4.1.3",
     "bootstrap-vue": "^2.13.0",
+    "bull-board": "^0.7.0",
     "cors": "^2.8.5",
     "cross-env": "^5.2.0",
     "dotenv": "^8.2.0",
@@ -28,9 +30,12 @@
     "greenlock": "^4.0.4",
     "jquery": "^3.5.0",
     "nuxt": "^2.12.2",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
     "path": "^0.12.7",
     "pg": "^7.18.2",
-    "sequelize": "^5.21.7"
+    "sequelize": "^5.21.7",
+    "uninstall": "0.0.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^2.0.0",
