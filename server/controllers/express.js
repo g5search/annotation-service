@@ -16,13 +16,15 @@ const g5AuthOnly = [
 const jwtOnly = [
 ]
 const noAuth = [
-  '/api/v1/login'
+  '/api/v1/login',
+  '/api/v1/key'
 ]
 const apiKeyPath = [
   '/api/v1/key'
 ]
 function checkAuth (req, res, next) {
   const { path } = req
+  console.log(path)
   const { access_token: accessToken, key: apiKey } = req.query
   if (noAuth.includes(path)) {
     next()

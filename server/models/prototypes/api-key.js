@@ -8,6 +8,6 @@ module.exports = (models) => {
   models.apiKey.prototype.generateKey = async function() {
     const key = hashids.encode(this.id)
     const hash = await bcrypt.hash(key, 10)
-    return { hash, key }
+    return { hash, key: `${key}:${this.id}` }
   }
 }

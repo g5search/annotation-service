@@ -39,6 +39,7 @@ module.exports = (app, passport) => {
         res.sendStatus(422)
       } else {
         const { hash, key } = await apiUser.generateKey()
+        console.log({ hash, key })
         await apiUser.update({ key: hash })
         res.json({ key })
       }

@@ -15,8 +15,11 @@ const corsOpts = {
 module.exports = (app) => {
   app.options('/api/note', cors(corsOpts))
   app.post('/api/note', cors(corsOpts), async(req, res) => {
+    console.log(req.user)
+    const user = await models.annotationUser.findOne({ where: { email: req.user.email } })
+    console.log(user)
     const { body } = req
-    const note = await models.annotation.create(body)
+    const note = await models.annotation.create({ ...body, annotationUserId: user.dataValues.id })
     res.json(note)
   })
   app.put('/api/note/:id', cors(corsOpts), async (req, res) => {
