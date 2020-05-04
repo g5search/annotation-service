@@ -4,7 +4,7 @@ module.exports = (sequelize) => {
   const annotation = sequelize.define('annotation', {
     id: {
       type: INTEGER,
-      autoIncrement: false,
+      autoIncrement: true,
       primaryKey: true
     },
     external_id: {

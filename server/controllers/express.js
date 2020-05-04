@@ -7,7 +7,7 @@ app.use(bodyParser.json({ limit: '1000kb' }))
 // app.use('/admin/queues', UI)
 const passport = require('./auth')(app, models)
 const api = require('./api-auth')
-// app.use(checkAuth)
+app.use(checkAuth)
 require('../routes')(app, passport)
 
 const g5AuthOnly = [
@@ -19,14 +19,14 @@ const noAuth = [
   '/api/v1/login'
 ]
 const apiKeyPath = [
-  '/api/v1'
+  '/api/v1/key'
 ]
 function checkAuth (req, res, next) {
   const { path } = req
   const { access_token: accessToken, key: apiKey } = req.query
   if (noAuth.includes(path)) {
     next()
-  } else if (!accessToken && !jwtOnly.includes(path && !apiKey)) {
+  } else if (!accessToken && !jwtOnly.includes(path) && !apiKey) {
     if (req.isAuthenticated()) {
       next()
     } else {
