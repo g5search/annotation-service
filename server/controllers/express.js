@@ -6,24 +6,27 @@ const models = require('../models')
 app.use(bodyParser.json({ limit: '1000kb' }))
 // app.use('/admin/queues', UI)
 const passport = require('./auth')(app, models)
-
+const api = require('./api-auth')
 // app.use(checkAuth)
 require('../routes')(app, passport)
 
 const g5AuthOnly = [
-  '/api/signup'
+  '/api/v1/signup'
 ]
 const jwtOnly = [
 ]
 const noAuth = [
-  '/api/login'
+  '/api/v1/login'
 ]
-function checkAuth(req, res, next) {
+const apiKeyPath = [
+  '/api/v1'
+]
+function checkAuth (req, res, next) {
   const { path } = req
-  const { access_token: accessToken } = req.query
+  const { access_token: accessToken, key: apiKey } = req.query
   if (noAuth.includes(path)) {
     next()
-  } else if (!accessToken && !jwtOnly.includes(path)) {
+  } else if (!accessToken && !jwtOnly.includes(path && !apiKey)) {
     if (req.isAuthenticated()) {
       next()
     } else {
@@ -31,8 +34,10 @@ function checkAuth(req, res, next) {
     }
   } else if (g5AuthOnly.includes(path)) {
     res.sendStatus(401)
-  } else {
+  } else if (accessToken) {
     passport.authenticate('jwt', { session: false })(req, res, next)
+  } else if (apiKey) {
+    api.authenticate(apiKey, req, res, next)
   }
 }
 module.exports = app

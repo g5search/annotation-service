@@ -38,7 +38,9 @@ module.exports = (app, passport) => {
       if (!created) {
         res.sendStatus(422)
       } else {
-        res.json({ key: apiUser.dataValues.nonHashKey })
+        const { hash, key } = await apiUser.generateKey()
+        await apiUser.update({ key: hash })
+        res.json({ key })
       }
     } else {
       res.sendStatus(401)
