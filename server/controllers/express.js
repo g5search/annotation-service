@@ -17,16 +17,20 @@ const jwtOnly = [
 ]
 const noAuth = [
   '/api/v1/login',
-  '/api/v1/key'
+  '/api/hub/clients'
+]
+const whitelistRegex = [
+  /\/api\/hub\/clients\/\S*\/locations/
 ]
 const apiKeyPath = [
-  '/api/v1/key'
+  '/api/v1/key',
+  '/api/hub'
 ]
 function checkAuth (req, res, next) {
   const { path } = req
   console.log(path)
   const { access_token: accessToken, key: apiKey } = req.query
-  if (noAuth.includes(path)) {
+  if (noAuth.includes(path) || whitelistRegex.some(reg => reg.test(path))) {
     next()
   } else if (!accessToken && !jwtOnly.includes(path) && !apiKey) {
     if (req.isAuthenticated()) {
