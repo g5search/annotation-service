@@ -11,13 +11,14 @@ app.use(checkAuth)
 require('../routes')(app, passport)
 
 const g5AuthOnly = [
-  '/api/v1/signup'
+
 ]
 const jwtOnly = [
 ]
 const noAuth = [
   '/api/v1/login',
-  '/api/hub/clients'
+  '/api/hub/clients',
+  '/api/v1/signup'
 ]
 const whitelistRegex = [
   /\/api\/hub\/clients\/\S*\/locations/
