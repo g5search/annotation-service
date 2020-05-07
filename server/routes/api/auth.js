@@ -1,6 +1,21 @@
 const jwt = require('jsonwebtoken')
 const { JWT_SECRET } = process.env
 const models = require('../../models')
+const cors = require('cors')
+const whitelist = [
+  /chrome-extension:\/\/[a-z]*$/
+]
+const corsOpts = {
+  origin: (origin, callback) => {
+    if (whitelist.some(pattern => pattern.test(origin)) || !origin) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
+  preflightContinue: true,
+  methods: 'POST'
+}
 
 module.exports = (app, passport) => {
   app.post('/api/v1/signup', passport.authenticate('signup', { session: false }), async (req, res) => {
@@ -28,7 +43,8 @@ module.exports = (app, passport) => {
     })(req, res, next)
   })
 
-  app.post('/api/v1/key', async (req, res) => {
+  app.options('/api/v1/key', cors(corsOpts))
+  app.post('/api/v1/key', cors(corsOpts), async (req, res) => {
     const { body } = req
     if (body.email && body.email.includes('@getg5.com')) {
       const [apiUser, created] = await models.apiKey.findOrCreate({
