@@ -18,15 +18,13 @@ const jwtOnly = [
 const noAuth = [
   '/api/v1/login',
   '/api/hub/clients',
-  '/api/v1/signup'
+  '/api/v1/signup',
+  '/api/v1/key'
 ]
 const whitelistRegex = [
   /\/api\/hub\/clients\/\S*\/locations/
 ]
-const apiKeyPath = [
-  '/api/v1/key',
-  '/api/hub'
-]
+
 function checkAuth (req, res, next) {
   const { path } = req
   console.log(path)
