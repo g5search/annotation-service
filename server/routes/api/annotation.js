@@ -19,9 +19,10 @@ module.exports = (app) => {
     const user = await models.annotationUser.findOne({ where: { email: req.user.email } })
     console.log(user)
     const { body } = req
-    const note = await models.annotation.create({ ...body, annotationUserId: user.dataValues.id })
+    const note = await models.annotation.createAndAssociate({ ...body, annotationUserId: user.dataValues.id })
     res.json(note)
   })
+
   app.put('/api/note/:id', cors(corsOpts), async (req, res) => {
     const { id } = req.params
     const { body } = req
