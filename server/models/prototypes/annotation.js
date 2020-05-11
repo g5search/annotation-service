@@ -1,7 +1,7 @@
 const { Op } = require('sequelize')
 module.exports = (models) => {
   models.annotation.createAndAssociate = async (params) => {
-    const { clientUrn, internal, locationUrns, category: noteCategory, actionType: type, annotation, html, startDate, endDate } = params
+    const { clientUrn, internal, locationUrns, category: noteCategory, actionType: type, annotation, html, startDate, endDate, annotationUserId } = params
     const [actionType] = await models.annotationType.findOrCreate({
       defaults: { name: type },
       where: { name: type }
@@ -26,7 +26,9 @@ module.exports = (models) => {
       html,
       startDate,
       endDate,
-      annotation
+      annotation,
+      internal,
+      annotationUserId
     })
     await note.setAnnotationType(actionType)
     await note.setAnnotationCategory(category)
