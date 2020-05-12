@@ -94,3 +94,4 @@ client-key
 client-cert
 server-ca
 .npmrc
+secret-annotation.yaml
