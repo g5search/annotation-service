@@ -2,14 +2,20 @@ const { Op } = require('sequelize')
 module.exports = (models) => {
   models.annotation.createAndAssociate = async (params) => {
     const { clientUrn, internal, locationUrns, category: noteCategory, actionType: type, annotation, html, startDate, endDate, annotationUserId } = params
-    const [actionType] = await models.annotationType.findOrCreate({
-      defaults: { name: type },
-      where: { name: type }
-    })
-    const [category] = await models.annotationCategory.findOrCreate({
-      defaults: { name: noteCategory },
-      where: { name: noteCategory }
-    })
+    let actionType = null
+    if (type) {
+      [actionType] = await models.annotationType.findOrCreate({
+        defaults: { name: type },
+        where: { name: type }
+      })
+    }
+    let category = null
+    if (noteCategory) {
+      [category] = await models.annotationCategory.findOrCreate({
+        defaults: { name: noteCategory },
+        where: { name: noteCategory }
+      })
+    }
     const locations = await models.g5_updatable_location.findAll({
       where: {
         urn: {
