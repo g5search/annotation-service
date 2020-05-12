@@ -11,7 +11,7 @@ module.exports = (models) => {
       })
     }
     if (user) {
-      const annotationUser = await models.annotationUser.findOrCreate({
+      const [annotationUser] = await models.annotationUser.findOrCreate({
         where: { email: user.email },
         defaults: {
           email: user.email,
@@ -28,6 +28,7 @@ module.exports = (models) => {
         where: { name: noteCategory }
       })
     }
+    console.log({ locationUrns })
     const locations = await models.g5_updatable_location.findAll({
       where: {
         urn: {
