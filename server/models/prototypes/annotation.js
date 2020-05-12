@@ -1,13 +1,25 @@
 const { Op } = require('sequelize')
 module.exports = (models) => {
   models.annotation.createAndAssociate = async (params) => {
-    const { clientUrn, internal, locationUrns, category: noteCategory, actionType: type, annotation, html, startDate, endDate, annotationUserId } = params
+    const { clientUrn, internal, locationUrns, category: noteCategory, actionType: type, annotation, html, startDate, endDate, user } = params
+    let { annotationUserId } = params
     let actionType = null
     if (type) {
       [actionType] = await models.annotationType.findOrCreate({
         defaults: { name: type },
         where: { name: type }
       })
+    }
+    if (user) {
+      const annotationUser = await models.annotationUser.findOrCreate({
+        where: { email: user.email },
+        defaults: {
+          email: user.email,
+          first_name: user.firstName,
+          last_name: user.lastNae
+        }
+      })
+      annotationUserId = annotationUser.dataValues.id
     }
     let category = null
     if (noteCategory) {
