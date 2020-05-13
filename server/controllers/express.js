@@ -7,6 +7,7 @@ app.use(bodyParser.json({ limit: '1000kb' }))
 // app.use('/admin/queues', UI)
 const passport = require('./auth')(app, models)
 const api = require('./api-auth')
+require('@getg5/g5-updatable').init(app, models)
 app.use(checkAuth)
 require('../routes')(app, passport)
 
