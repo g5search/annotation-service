@@ -1,8 +1,9 @@
 const sequelize = require('sequelize')
 module.exports = (models) => {
-  models.g5_updatable_client.getAllNonInternal = () => models.g5_updatable_client.findAll({
+  models.g5_updatable_client.getAllNonInternal = where => models.g5_updatable_client.findAll({
     where: {
-      'properties.g5_internal': false
+      'properties.g5_internal': false,
+      ...where
     },
     attributes: [
       'urn',

@@ -14,6 +14,7 @@ const corsOpts = {
   methods: 'GET'
 }
 const models = require('../../models')
+const { Op } = require('sequelize')
 module.exports = (app) => {
   // single route exception
   app.options('/api/hub/clients', cors(corsOpts))
@@ -26,12 +27,22 @@ module.exports = (app) => {
   })
 
   app.get('/api/hub/clients', cors(corsOpts), async (req, res) => {
-    const { internal } = req.query
+    const { internal, activeDa } = req.query
     let clients
+    let where = {}
+    if (activeDa) {
+      where = {
+        properties: {
+          search_analyst: {
+            [Op.not]: null
+          }
+        }
+      }
+    }
     if (internal) {
-      clients = await models.g5_updatable_client.findAll()
+      clients = await models.g5_updatable_client.findAll({ where })
     } else {
-      clients = await models.g5_updatable_client.getAllNonInternal()
+      clients = await models.g5_updatable_client.getAllNonInternal(where)
     }
     res.json(clients)
   })
