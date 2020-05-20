@@ -1,4 +1,5 @@
 const cors = require('cors')
+const sequelize = require('sequelize')
 const whitelist = [
   /chrome-extension:\/\/[a-z]*$/
 ]
@@ -13,8 +14,8 @@ const corsOpts = {
   preflightContinue: true,
   methods: 'GET'
 }
-const models = require('../../models')
 const { Op } = require('sequelize')
+const models = require('../../models')
 module.exports = (app) => {
   // single route exception
   app.options('/api/hub/clients', cors(corsOpts))
@@ -40,7 +41,22 @@ module.exports = (app) => {
       }
     }
     if (internal) {
-      clients = await models.g5_updatable_client.findAll({ where })
+      clients = await models.g5_updatable_client.findAll({
+        where,
+        attributes: [
+          'urn',
+          'name',
+          // [sequelize.json('properties.core_id'), 'clientId'],
+          // [sequelize.json('properties.g5_internal'), 'g5Internal'],
+          [sequelize.json('properties.branded_name'), 'brandedName']
+        // [sequelize.json('properties.domain_type'), 'domainType'],
+        // [sequelize.json('properties.vertical'), 'vertical'],
+        // [sequelize.json('properties.search_analyst.name'), 'strategist']
+        ],
+        order: [
+          ['name', 'asc']
+        ]
+      })
     } else {
       clients = await models.g5_updatable_client.getAllNonInternal(where)
     }

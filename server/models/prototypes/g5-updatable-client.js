@@ -8,12 +8,12 @@ module.exports = (models) => {
     attributes: [
       'urn',
       'name',
-      [sequelize.json('properties.core_id'), 'clientId'],
-      [sequelize.json('properties.g5_internal'), 'g5Internal'],
-      [sequelize.json('properties.branded_name'), 'brandedName'],
-      [sequelize.json('properties.domain_type'), 'domainType'],
-      [sequelize.json('properties.vertical'), 'vertical'],
-      [sequelize.json('properties.search_analyst.name'), 'strategist']
+      // [sequelize.json('properties.core_id'), 'clientId'],
+      // [sequelize.json('properties.g5_internal'), 'g5Internal'],
+      [sequelize.json('properties.branded_name'), 'brandedName']
+      // [sequelize.json('properties.domain_type'), 'domainType'],
+      // [sequelize.json('properties.vertical'), 'vertical'],
+      // [sequelize.json('properties.search_analyst.name'), 'strategist']
     ],
     order: [
       ['name', 'asc']
