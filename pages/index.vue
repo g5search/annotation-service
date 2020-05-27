@@ -10,6 +10,11 @@
         </transition>
       </b-col>
     </b-row>
+    <b-row>
+      <b-col>
+        {{ notes }}
+      </b-col>
+    </b-row>
   </b-container>
 </template>
 
@@ -18,6 +23,11 @@ import Octopus from '~/components/icons/octopus'
 export default {
   components: {
     Octopus
+  },
+  async asyncData({ $axios }) {
+    return {
+      notes: await $axios.$get('/api/v1/notes')
+    }
   }
 }
 </script>
