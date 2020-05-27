@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@cloudnative/health-connect": "^2.1.0",
-    "@getg5/g5-auth": "^2.0.5",
+    "@getg5/g5-auth": "^2.0.7",
     "@getg5/g5-updatable": "^2.2.3",
     "@nuxtjs/axios": "^5.10.2",
     "@nuxtjs/google-analytics": "^2.2.3",
