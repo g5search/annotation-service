@@ -1,4 +1,5 @@
-const g5Auth = require('@getg5/g5-auth')
+// const g5Auth = require('@getg5/g5-auth')
+const g5Auth = require('../../../g5-auth-js')
 const {
   G5_AUTH_ENDPOINT: authorizationURL,
   G5_TOKEN_ENDPOINT: tokenURL,
