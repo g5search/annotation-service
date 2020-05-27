@@ -1,8 +1,6 @@
 const cors = require('cors')
 const models = require('../../models')
-const whitelist = [
-  /chrome-extension:\/\/[a-z]*$/
-]
+const whitelist = [/chrome-extension:\/\/[a-z]*$/]
 const corsOpts = {
   origin: (origin, callback) => {
     if (whitelist.some(pattern => pattern.test(origin)) || !origin) {
@@ -12,6 +10,7 @@ const corsOpts = {
     }
   }
 }
+
 module.exports = (app) => {
   app.options('/api/v1/note', cors(corsOpts))
   app.post('/api/v1/note', cors(corsOpts), async(req, res) => {
@@ -33,5 +32,11 @@ module.exports = (app) => {
     const note = await models.annotation.findOne({ where: { id } })
     await note.update(body)
     res.json(note)
+  })
+
+  app.get('/api/v1/notes', async (req, res) => {
+    const notes = await models.annotation.findAll()
+    console.log({ notes })
+    res.json(notes)
   })
 }
