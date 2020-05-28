@@ -1,11 +1,10 @@
-
-$theme-colors: (
+@import url('https://fonts.googleapis.com/css2?family=Sen&display=swap');$theme-colors: (
   'primary': #0b233f,
   'secondary': #7898ad,
   'tertiary': #e8513e,
   'quaternary': #eee23e,
 );
-
+$font-family-base: 'Sen', sans-serif;
 $enable-rounded: true;
 $enable-shadows: false;
 $enable-gradients: false;
