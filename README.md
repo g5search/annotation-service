@@ -67,9 +67,21 @@ If this is the first deploy run the below
 ``` bash
 helm install [NAME] [CHART]
 ```
-If this is not the fist deploy run this
+If this is not the fist deploy run these. Get a list of deployments, then upgrade the deployment you want..
 ``` bash
-helm upgrade [NAME] [CHART]
+helm list
+helm upgrade [NAME] [path/to/Chart.yaml]
+```
+Verify the status of the deployment. There will be a spin up period where the previous pod will still exist while the new pod spins up.
+``` bash
+kubectl get pods
+```
+
+> Mistake or problem?
+
+Roll it back with Helm.
+``` bash
+helm rollback [NAME]
 ```
 
 ## Expose app to internet
