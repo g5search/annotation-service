@@ -1,6 +1,7 @@
 const cors = require('cors')
 const sequelize = require('sequelize')
 const axios = require('axios')
+const { CRS_URL: crsUrl } = process.env
 const whitelist = [
   /chrome-extension:\/\/[a-z]*$/
 ]
@@ -26,41 +27,6 @@ module.exports = (app) => {
     const { clientUrn } = req.params
     const locations = await models.g5_updatable_location.getByClientUrn(clientUrn)
     res.json(locations)
-  })
-  app.get('/api/core/client/:clientId', async (req, res) => {
-    const { clientId } = req.params
-    const client = await models.g5_updatable_client.findOne({
-      where: {
-        properties: {
-          core_id: clientId
-        }
-      },
-      attributes: [
-        'urn',
-        'name',
-        [sequelize.json('properties.branded_name'), 'brandedName']
-      ]
-    })
-    res.json({ clientUrn: client.dataValues.urn })
-  })
-  app.get('/api/core/services/:serviceId', async (req, res) => {
-    const { serviceId } = req.params
-    // get location and client urn by service Id
-  })
-  app.get('/api/core/services/:serviceId', async (req, res) => {
-    const { serviceId } = req.params
-    // get location and client urn by service Id
-  })
-  app.get('api/core/location/:locationId', async (req, res) => {
-    const { locationId } = req.params
-    const client = await models.g5_updatable_location.findOne({
-      where: {
-        properties: {
-          core_store_id: locationId
-        }
-      }
-    })
-    res.json({ clientUrn: client.dataValues.client_urn })
   })
   app.get('/api/hub/clients', cors(corsOpts), async (req, res) => {
     const { internal, activeDa } = req.query
