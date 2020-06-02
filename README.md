@@ -55,7 +55,7 @@ This assumes that you are connected to the correct kubernetes cluster and helm i
 Follow these instructions to publish updates.
 
 ``` bash
-docker build -t [buildName] . --build-arg NPM_TOKEN=${NPM_TOKEN}
+docker build -t [buildName] . --build-arg NPM_TOKEN=$NPM_TOKEN
 # Where NPM_TOKEN is declared in your bash environment.
 docker tag [buildName] [repo]:[version]
 docker push [repo]:[version]

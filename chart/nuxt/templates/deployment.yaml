@@ -33,6 +33,10 @@ spec:
             cpu: "{{ .Values.image.resources.requests.cpu }}"
             memory: "{{ .Values.image.resources.requests.memory }}"
         env:
+          - name: BROWSER_URL
+            value: "notes.g5marketingcloud.com"
+          - name: CRS_URL
+            value: "https://crs.g5marketingcloud.com"
           - name: GKE
             value: "true"
           - name: INCLUDE_G5_UPDATABLES
@@ -80,22 +84,22 @@ spec:
                 name: annotation
                 key: JWT_SECRET
           - name: DATABASE_CA
-            valueFrom: 
+            valueFrom:
               secretKeyRef:
                 name: annotation
                 key: DATABASE_CA
           - name: DATABASE_CERT
-            valueFrom: 
+            valueFrom:
               secretKeyRef:
                 name: annotation
                 key: DATABASE_CERT
           - name: DATABASE_KEY
-            valueFrom: 
+            valueFrom:
               secretKeyRef:
                 name: annotation
                 key: DATABASE_KEY
           - name: DATABASE_URL
-            valueFrom: 
+            valueFrom:
               secretKeyRef:
                   name: annotation
                   key: DATABASE_URL
