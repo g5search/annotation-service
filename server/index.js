@@ -23,7 +23,7 @@ async function start() {
   models.sequelize
     .sync()
     .then(() => {
-      console.log('Models Sync\'d')
+      console.log('%c Models Sync\'d!', 'color: crimson;')
     })
     .catch((err) => {
       console.error(err)

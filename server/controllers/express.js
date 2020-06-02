@@ -28,7 +28,6 @@ const whitelistRegex = [
 
 function checkAuth (req, res, next) {
   const { path } = req
-  console.log(path)
   const { access_token: accessToken, key: apiKey } = req.query
   if (noAuth.includes(path) || whitelistRegex.some(reg => reg.test(path))) {
     next()
@@ -46,4 +45,5 @@ function checkAuth (req, res, next) {
     api.authenticate(apiKey, req, res, next)
   }
 }
+
 module.exports = app

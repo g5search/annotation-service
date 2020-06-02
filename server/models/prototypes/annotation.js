@@ -28,7 +28,7 @@ module.exports = (models) => {
         where: { name: noteCategory }
       })
     }
-    console.log({ locationUrns })
+    // console.log({ locationUrns })
     const locations = await models.g5_updatable_location.findAll({
       where: {
         urn: {
