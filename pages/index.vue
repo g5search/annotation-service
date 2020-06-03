@@ -68,7 +68,7 @@ export default {
       'annotationTypeId',
       'external_id'
     ]
-    const notes = await $axios.$get('/api/v1/notes')
+    const notes = await $axios.$get('https://notes.g5marketingcloud.com/api/v1/notes')
     return {
       notes,
       fields: Object.keys(notes[0]).map(key => ({

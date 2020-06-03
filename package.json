@@ -1,6 +1,6 @@
 {
   "name": "opex-template",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A full stack app template for the G5 OpEx team.",
   "author": "David Miller & Tyler Hasenoehrl",
   "private": true,
@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@cloudnative/health-connect": "^2.1.0",
-    "@getg5/g5-auth": "^2.0.8",
+    "@getg5/g5-auth": "^2.0.9",
     "@getg5/g5-updatable": "^2.2.3",
     "@nuxtjs/axios": "^5.10.3",
     "@nuxtjs/google-analytics": "^2.3.0",
