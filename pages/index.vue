@@ -34,6 +34,8 @@
             :fields="fields"
             :items="notes"
             responsive
+            fixed
+            bordered
           >
             <template v-slot:cell(internal)="row">
               <b-icon-check-circle v-if="row.item.internal === 'true'" />
