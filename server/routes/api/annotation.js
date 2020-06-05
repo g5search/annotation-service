@@ -32,8 +32,33 @@ module.exports = (app) => {
     res.json(note)
   })
   app.get('/api/v1/notes', async (req, res) => {
-    const notes = await models.annotation.findAll()
-    // console.log({ notes })
-    res.json(notes)
+    const notes = await models.annotation.findAll({
+      include: [
+        {
+          model: models.annotationCategory
+        },
+        {
+          model: models.annotationType
+        },
+        {
+          model: models.annotationUser
+        }
+      ]
+    })
+    const mappedNotes = notes.map((note) => {
+      const { internal, annotationCategory, annotationType, annotationUser, external_id, startDate, endDate, html, annotation } = note.dataValues
+      return {
+        internal,
+        annotationCategory: annotationCategory ? annotationCategory.name : null,
+        annotationType: annotationType ? annotationType.name : null,
+        annotationUser: `${annotationUser.first_name} ${annotationUser.last_name}`,
+        external_id,
+        startDate,
+        endDate,
+        html,
+        annotation
+      }
+    })
+    res.json(mappedNotes)
   })
 }
