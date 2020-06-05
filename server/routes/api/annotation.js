@@ -59,7 +59,7 @@ module.exports = (app) => {
         internal,
         annotationCategory: annotationCategory ? annotationCategory.name : null,
         annotationType: annotationType ? annotationType.name : null,
-        annotationUser: `${annotationUser.first_name} ${annotationUser.last_name}`,
+        annotationUser: !annotationUser ? null : `${annotationUser.first_name} ${annotationUser.last_name}`,
         external_id,
         startDate,
         endDate,

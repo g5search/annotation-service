@@ -39,6 +39,9 @@
               <b-icon-check-circle v-if="row.item.internal === 'true'" />
               {{ row.item.internal }}
             </template>
+            <template v-slot:cell(html)="row">
+              <read-only :content="row.item.html" />
+            </template>
           </b-table>
         </b-card>
       </b-col>
@@ -48,9 +51,11 @@
 
 <script>
 import Octopus from '~/components/icons/octopus'
+import ReadOnly from '~/components/read-only'
 export default {
   components: {
-    Octopus
+    Octopus,
+    ReadOnly
   },
   async asyncData({ $axios }) {
     const reject = [
