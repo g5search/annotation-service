@@ -1,6 +1,7 @@
 const cors = require('cors')
 const models = require('../../models')
 const whitelist = [/chrome-extension:\/\/[a-z]*$/]
+const objectUtil = require('../../controllers/utilities/object')
 const corsOpts = {
   origin: (origin, callback) => {
     if (whitelist.some(pattern => pattern.test(origin)) || !origin) {
@@ -35,11 +36,33 @@ module.exports = (app) => {
   })
 
   app.get('/api/v1/notes', async (req, res) => {
+    const { query } = req
+    let where = {}
+    let categoryWhere = {}
+    let typeWhere = {}
+    let userWhere = {}
+    if (query) {
+      const { group1, group2 } = objectUtil.split(query, ['annotationName', 'annotationType', 'userEmail'])
+      categoryWhere = { name: group2.annotationName }
+      typeWhere = { name: group2.annotationType }
+      userWhere = { email: group2.userEmail }
+      where = group1
+    }
     const notes = await models.annotation.findAll({
+      where,
       include: [
-        { model: models.annotationCategory },
-        { model: models.annotationType },
-        { model: models.annotationUser }
+        {
+          model: models.annotationCategory,
+          where: categoryWhere
+        },
+        {
+          model: models.annotationType,
+          where: typeWhere
+        },
+        {
+          model: models.annotationUser,
+          where: userWhere
+        }
       ]
     })
     const mappedNotes = notes.map((note) => {
