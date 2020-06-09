@@ -24,6 +24,9 @@ module.exports = (sequelize) => {
     },
     html: {
       type: STRING
+    },
+    salesfroceSync: {
+      type: BOOLEAN
     }
   }, {
     paranoid: true
