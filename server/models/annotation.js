@@ -25,7 +25,7 @@ module.exports = (sequelize) => {
     html: {
       type: STRING
     },
-    salesfroceSync: {
+    salesforceSync: {
       type: BOOLEAN
     }
   }, {
