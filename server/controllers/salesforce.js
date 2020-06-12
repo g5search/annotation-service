@@ -1,27 +1,30 @@
 const jsforce = require('jsforce')
-const util = require('../../util')
-// const conn = new jsforce.Connection({
-//   loginUrl: 'https://test.salesforce.com'
-// })
-const conn = new jsforce.Connection()
+const util = require('../controllers/util')
+const conn = new jsforce.Connection({
+  loginUrl: 'https://test.salesforce.com'
+})
+// const conn = new jsforce.Connection()
 
 module.exports = {
   createNote,
   login,
   logout,
   getUserId,
-  updateNote
+  updateNote,
+  findAccount
 }
 
-function createNote (subject, accountId, status, summary, ContactId, Request_Type__c) {
-  return conn.sobject('Case').create({
-    Subject: subject,
-    AccountId: accountId,
-    Status: status,
-    Summary_of_Request__c: summary,
-    ContactId,
-    RecordTypeId: '0121N000000U4oUQAS',
-    Request_Type__c
+function createNote (AccountId, OwnerId, Task_Categories__c, Task_Action_Type__c, Internal_Only__c, Description, ActivityDate, CreatedDate, LastModifiedDate) {
+  return conn.sobject('Task').create({
+    AccountId,
+    OwnerId,
+    Task_Categories__c,
+    Task_Action_Type__c,
+    Internal_Only__c,
+    Description,
+    ActivityDate,
+    CreatedDate,
+    LastModifiedDate
   })
 }
 
@@ -31,7 +34,7 @@ function getUserId(where, attributes) {
 }
 
 function updateNote(Id, update) {
-  return conn.sobject('Case').update({
+  return conn.sobject('Task').update({
     Id,
     ...update
   })
@@ -43,4 +46,14 @@ function login(username, password) {
 
 function logout() {
   return conn.logout()
+}
+
+/**
+ *
+ * @param {Object} where
+ * @param {Array} attributes
+ */
+async function findAccount(where, attributes) {
+  const accounts = await conn.sobject('Account').find(where, attributes)
+  return util.pick(accounts[0], attributes)
 }

@@ -70,7 +70,6 @@ Object.keys(db)
   })
 require('./prototypes')(db)
 require('./hooks')(db)
-
 module.exports = {
   ...db,
   sequelize,

@@ -41,7 +41,7 @@ module.exports = (app) => {
     let categoryWhere = {}
     let typeWhere = {}
     let userWhere = {}
-    if (query) {
+    if (Object.keys(query).length !== 0) {
       const { group1, group2 } = objectUtil.split(query, ['annotationName', 'annotationType', 'userEmail'])
       categoryWhere = { name: group2.annotationName }
       typeWhere = { name: group2.annotationType }
