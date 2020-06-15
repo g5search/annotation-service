@@ -14,17 +14,17 @@ module.exports = {
   findAccount
 }
 
-function createNote (AccountId, OwnerId, Task_Categories__c, Task_Action_Type__c, Internal_Only__c, Description, ActivityDate, CreatedDate, LastModifiedDate) {
+function createNote (WhatId, OwnerId, Task_Category__c, Task_Action_Type__c, Internal_Only__c, Description, ActivityDate, Status, Subject) {
   return conn.sobject('Task').create({
-    AccountId,
+    WhatId,
     OwnerId,
-    Task_Categories__c,
+    Task_Category__c,
     Task_Action_Type__c,
     Internal_Only__c,
     Description,
     ActivityDate,
-    CreatedDate,
-    LastModifiedDate
+    Status,
+    Subject
   })
 }
 
@@ -40,8 +40,8 @@ function updateNote(Id, update) {
   })
 }
 
-function login(username, password) {
-  return conn.login(username, password)
+function login(username, password, token) {
+  return conn.login(username, `${password}${token}`)
 }
 
 function logout() {

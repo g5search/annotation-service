@@ -1,22 +1,27 @@
+const moment = require('moment')
 const models = require('../../models')
 const sfApi = require('../salesforce')
 const {
-  SALSEFORCE_USERNAME: sfUsername,
-  SALSEFORCE_PASSWORD: sfPassword,
-  SALSFORCE_TOKEN: token
+  SF_USERNAME: sfUsername,
+  SF_PASSWORD: sfPassword,
+  SF_TOKEN: sfToken
 } = process.env
+
 module.exports = async function (job) {
   const { id } = job.data
-  const dbAnnotation = await models.annotation.findOne({ where: { id }, includes: [{ model: models.g5_updatable_client }] })
-  console.log({ dbAnnotation })
-  const { html, annotation, internal, g5_updatable_client } = dbAnnotation.dataValues
-  console.log({ internal })
+  const dbAnnotation = await models.annotation.findOne({
+    where: { id },
+    include: [
+      { model: models.g5_updatable_client },
+      { model: models.annotationCategory },
+      { model: models.annotationType }
+    ]
+  })
+  const { html, annotation, internal, g5_updatable_client, annotationCategory, annotationType } = dbAnnotation.dataValues
   if (!internal) {
-    console.log('logging in')
-    await sfApi.login(sfUsername, sfPassword)
-    console.log('logged in')
-    const { Id } = sfApi.findAccount({ Client_URN__c: g5_updatable_client.urn }, ['Id'])
-    await sfApi.createNote(Id, null, 'Specials/Promotions', 'Account Changes', false, html, '06-01-2020', '06-01-2020', '06-01-2020')
+    await sfApi.login(sfUsername, sfPassword, sfToken)
+    const { Id } = await sfApi.findAccount({ Client_URN__c: g5_updatable_client.dataValues.urn }, ['Id'])
+    await sfApi.createNote(Id, '0051N000006K50qQAC', annotationCategory.dataValues.name, annotationType.dataValues.name, false, html, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name)
     await sfApi.logout()
     // send to SF
   }

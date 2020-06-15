@@ -31,6 +31,7 @@
     "greenlock": "^4.0.4",
     "hashids": "^2.2.1",
     "jquery": "^3.5.1",
+    "moment": "^2.26.0",
     "nuxt": "^2.12.2",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
@@ -38,8 +39,7 @@
     "pg": "^7.18.2",
     "sequelize": "^5.21.11",
     "tiptap": "^1.27.1",
-    "tiptap-extensions": "^1.29.1",
-    "uninstall": "0.0.0"
+    "tiptap-extensions": "^1.29.1"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^2.0.0",
