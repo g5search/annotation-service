@@ -101,8 +101,23 @@ spec:
           - name: DATABASE_URL
             valueFrom:
               secretKeyRef:
+                name: annotation
+                key: DATABASE_URL
+          - name: SF_USERNAME
+            valueFrom:
+                secretKeyRef:
                   name: annotation
-                  key: DATABASE_URL
+                  key: SF_USERNAME
+          - name: SF_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: annotation
+                key: SF_PASSWORD
+          - name: SF_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: annotation
+                key: SF_TOKEN
           - name: PORT
             value : "{{ .Values.service.servicePort }}"
         {{- if .Values.image.livenessProbe }}

@@ -27,7 +27,7 @@ module.exports = (app) => {
     res.json(note)
   })
 
-  app.put('/api/note/:id', cors(corsOpts), async (req, res) => {
+  app.put('/api/v1/note/:id', cors(corsOpts), async (req, res) => {
     const { id } = req.params
     const { body } = req
     const note = await models.annotation.findOne({ where: { id } })

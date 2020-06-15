@@ -1,5 +1,5 @@
 const moment = require('moment')
-const models = require('../../models')
+// const models = require('../../models')
 const sfApi = require('../salesforce')
 const {
   SF_USERNAME: sfUsername,
@@ -7,7 +7,7 @@ const {
   SF_TOKEN: sfToken
 } = process.env
 
-module.exports = async function (job) {
+module.exports = async function (job, models) {
   const { id } = job.data
   const dbAnnotation = await models.annotation.findOne({
     where: { id },

@@ -47,12 +47,15 @@ module.exports = (models) => {
       endDate,
       annotation,
       internal,
-      annotationUserId
+      annotationUserId,
+      annotationCategoryId: category.dataValues.id,
+      annotationTypeId: actionType.dataValues.id,
+      g5UpdatableClientId: client.dataValues.id
     })
-    await note.setAnnotationType(actionType)
-    await note.setAnnotationCategory(category)
+    // await note.setAnnotationType(actionType)
+    // await note.setAnnotationCategory(category)
     await note.addG5_updatable_locations(locations)
-    await note.setG5_updatable_client(client)
+    // await note.setG5_updatable_client(client)
     return note
   }
 }
