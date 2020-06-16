@@ -14,7 +14,7 @@ module.exports = {
   findAccount
 }
 
-function createNote (WhatId, OwnerId, Task_Category__c, Task_Action_Type__c, Internal_Only__c, Description, ActivityDate, Status, Subject) {
+function createNote (WhatId, OwnerId, Task_Category__c, Task_Action_Type__c, Internal_Only__c, Description, ActivityDate, Status, Subject, Task_Types__c,) {
   return conn.sobject('Task').create({
     WhatId,
     OwnerId,
@@ -24,7 +24,8 @@ function createNote (WhatId, OwnerId, Task_Category__c, Task_Action_Type__c, Int
     Description,
     ActivityDate,
     Status,
-    Subject
+    Subject,
+    Task_Types__c
   })
 }
 

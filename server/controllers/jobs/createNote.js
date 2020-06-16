@@ -14,15 +14,15 @@ module.exports = async function (job, models) {
     include: [
       { model: models.g5_updatable_client },
       { model: models.annotationCategory },
-      { model: models.annotationType }
+      { model: models.annotationType },
+      { model: models.annotationUser }
     ]
   })
-  const { html, annotation, internal, g5_updatable_client, annotationCategory, annotationType } = dbAnnotation.dataValues
-  if (!internal) {
-    await sfApi.login(sfUsername, sfPassword, sfToken)
-    const { Id } = await sfApi.findAccount({ Client_URN__c: g5_updatable_client.dataValues.urn }, ['Id'])
-    await sfApi.createNote(Id, '0051N000006K50qQAC', annotationCategory.dataValues.name, annotationType.dataValues.name, false, html, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name)
-    await sfApi.logout()
-    // send to SF
-  }
+  const { html, annotation, internal, g5_updatable_client, annotationCategory, annotationType, annotationUser } = dbAnnotation.dataValues
+  await sfApi.login(sfUsername, sfPassword, sfToken)
+  const { Id: userId } = await sfApi.getUserId({ email: annotationUser.dataValues.email }, ['Id'])
+  const { Id } = await sfApi.findAccount({ Client_URN__c: g5_updatable_client.dataValues.urn }, ['Id'])
+  await sfApi.createNote(Id, userId, annotationCategory.dataValues.name, annotationType.dataValues.name, internal, html, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name, 'DA Task')
+  await sfApi.logout()
+  // send to SF
 }

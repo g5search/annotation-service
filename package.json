@@ -31,6 +31,7 @@
     "greenlock": "^4.0.4",
     "hashids": "^2.2.1",
     "jquery": "^3.5.1",
+    "jsforce": "^2.0.0-alpha.12",
     "moment": "^2.26.0",
     "nuxt": "^2.12.2",
     "passport-jwt": "^4.0.0",

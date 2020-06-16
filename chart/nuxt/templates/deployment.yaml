@@ -36,7 +36,7 @@ spec:
           - name: BROWSER_URL
             value: "notes.g5marketingcloud.com"
           - name: CRS_URL
-            value: "https://crs.g5marketingcloud.com"
+            value: "https://opex.g5marketingcloud.com"
           - name: GKE
             value: "true"
           - name: INCLUDE_G5_UPDATABLES
