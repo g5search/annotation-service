@@ -44,16 +44,21 @@ module.exports = (app) => {
   })
 
   app.options('/api/core/location/:locationId', cors(corsOpts))
-  app.get('/api/core/location/:locationId', cors(corsOpts), async (req, res) => {
+  app.get('/api/core/location/:locationId', cors(corsOpts), async (req, res, err) => {
     const { locationId } = req.params
     const client = await models.g5_updatable_location.findOne({
       where: {
         properties: { core_store_id: locationId }
       }
     })
-    res.json({
-      clientUrn: client.dataValues.client_urn,
-      locationUrn: client.dataValues.urn
-    })
+    if (client) {
+      res.json({
+        clientUrn: client.dataValues.client_urn,
+        locationUrn: client.dataValues.urn
+      })
+    } else {
+      res.sendStatus(500)
+      throw err
+    }
   })
 }

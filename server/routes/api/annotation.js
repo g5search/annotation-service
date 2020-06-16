@@ -14,7 +14,6 @@ const corsOpts = {
 
 module.exports = (app) => {
   app.options('/api/v1/note', cors(corsOpts))
-
   app.post('/api/v1/note', cors(corsOpts), async(req, res) => {
     let user = null
     let annotationUserId = null
