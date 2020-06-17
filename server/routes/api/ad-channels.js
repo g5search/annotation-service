@@ -1,5 +1,7 @@
 const cors = require('cors')
-const models = require('../../models')
+const axios = require('axios')
+const { CRS_URL: crsUrl } = process.env
+// const models = require('../../models')
 const whitelist = [/chrome-extension:\/\/[a-z]*$/]
 const corsOpts = {
   origin: (origin, callback) => {
@@ -14,11 +16,15 @@ const corsOpts = {
 module.exports = (app) => {
   app.options('/api/v1/facebook/campaign/:campaignId', cors(corsOpts))
   app.get('/api/v1/facebook/campaign/:campaignId', cors(corsOpts), async (req, res) => {
-    res.sendStatus(200)
+    const { campaignId } = req.params
+    const { data } = await axios.get(`${crsUrl}/api/dam/code_campaign/${campaignId}`)
+    res.sendStatus(data)
   })
 
   app.options('/api/v1/facebook/account/:accountId', cors(corsOpts))
   app.get('/api/v1/facebook/account/:accountId', cors(corsOpts), async (req, res) => {
-    res.sendStatus(200)
+    const { accountId } = req.params
+    const { data } = await axios.get(`${crsUrl}/api/dam/code_account/${accountId}`)
+    res.sendStatus(data)
   })
 }
