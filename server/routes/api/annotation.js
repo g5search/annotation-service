@@ -41,7 +41,11 @@ module.exports = (app) => {
     let typeWhere = {}
     let userWhere = {}
     if (Object.keys(query).length !== 0) {
-      const { group1, group2 } = objectUtil.split(query, ['annotationName', 'annotationType', 'userEmail'])
+      const { group1, group2 } = objectUtil.split(query, [
+        'annotationName',
+        'annotationType',
+        'userEmail'
+      ])
       categoryWhere = { name: group2.annotationName }
       typeWhere = { name: group2.annotationType }
       userWhere = { email: group2.userEmail }
@@ -81,7 +85,9 @@ module.exports = (app) => {
         internal,
         annotationCategory: annotationCategory ? annotationCategory.name : null,
         annotationType: annotationType ? annotationType.name : null,
-        annotationUser: !annotationUser ? null : `${annotationUser.first_name} ${annotationUser.last_name}`,
+        annotationUser: (!annotationUser)
+          ? null
+          : `${annotationUser.first_name} ${annotationUser.last_name}`,
         external_id,
         startDate,
         endDate,
@@ -90,5 +96,12 @@ module.exports = (app) => {
       }
     })
     res.json(mappedNotes)
+  })
+
+  app.get('/api/v1/strategists', async (req, res) => {
+    const strategists = await models.annotationUser.findAll({
+      attributes: ['first_name', 'last_name', 'email']
+    })
+    res.json(strategists)
   })
 }

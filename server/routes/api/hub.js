@@ -20,6 +20,7 @@ const models = require('../../models')
 module.exports = (app) => {
   app.options('/api/hub/clients', cors(corsOpts))
   app.options('/api/hub/clients/:clientUrn/locations', cors(corsOpts))
+  app.options('/api/hub/location/:locationUrn', cors(corsOpts))
 
   app.get('/api/hub/clients/:clientUrn/locations', cors(corsOpts), async (req, res) => {
     const { clientUrn } = req.params
@@ -56,5 +57,31 @@ module.exports = (app) => {
       clients = await models.g5_updatable_client.getAllNonInternal(where)
     }
     res.json(clients)
+  })
+
+  app.get('/api/hub/location/:locationUrn', cors(corsOpts), async (req, res) => {
+    const { locationUrn } = req.params
+    const location = await models.g5_updatable_location.findOne({
+      where: {
+        urn: locationUrn
+      },
+      attributes: [
+        'urn',
+        'client_urn',
+        'name',
+        'display_name'
+      ]
+    })
+    const client = await models.g5_updatable_client.findOne({
+      where: {
+        urn: location.dataValues.client_urn
+      },
+      attributes: [
+        'urn',
+        'name',
+        [sequelize.json('properties.branded_name'), 'brandedName']
+      ]
+    })
+    res.json({ location, client })
   })
 }

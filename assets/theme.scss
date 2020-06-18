@@ -1,11 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Sen&display=swap');$theme-colors: (
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Heebo:wght@400;700&display=swap');
+$theme-colors: (
   'primary': #0b233f,
   'secondary': #7898ad,
   'tertiary': #e8513e,
   'quaternary': #eee23e,
+  'neutral': #e1e5e9
 );
-$font-family-base: 'Sen', sans-serif;
-$enable-rounded: true;
+$font-family-base: 'Heebo', sans-serif;
+$headings-font-family: 'DM Serif Display', serif;
+$enable-rounded: false;
 $enable-shadows: false;
 $enable-gradients: false;
 $enable-transitions: true;
@@ -16,5 +19,37 @@ $body-bg: RGBA(242, 242, 242, 1.00);
 // BOOTSTRAP VARIABLES DECLARED ABOVE
 @import 'bootstrap/scss/bootstrap.scss';
 @import 'bootstrap-vue/src/index.scss';
+@import 'vue-multiselect/dist/vue-multiselect.min.css';
 
 // OVERRIDES BELOW
+.italic {
+  font-style: italic;
+}
+.b-table-sticky-header {
+  max-height: unset;
+  & > .table.b-table > thead > tr > th {
+    top: -1px !important;
+  }
+}
+
+.multiselect__spinner:after,
+.multiselect__spinner:before {
+  border-top-color: #0b233f;
+}
+.multiselect__tag,
+.multiselect__option--highlight,
+.multiselect__option--highlight:after {
+  background: #0b233f;
+}
+.multiselect__tag-icon:hover {
+  background:#0b233f;
+}
+.multiselect__tag-icon:after {
+  color:#b1c4d2;
+}
+.multiselect__option--selected.multiselect__option--highlight,
+.multiselect__option--selected.multiselect__option--highlight:after,
+.multiselect__option--group-selected.multiselect__option--highlight,
+.multiselect__option--group-selected.multiselect__option--highlight:after {
+  background:#e94f3c;
+}
