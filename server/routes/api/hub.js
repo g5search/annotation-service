@@ -70,4 +70,30 @@ module.exports = (app) => {
     }
     res.json(clients)
   })
+
+  app.get('/api/hub/location/:locationUrn', cors(corsOpts), async (req, res) => {
+    const { locationUrn } = req.params
+    const location = await models.g5_updatable_location.findOne({
+      where: {
+        urn: locationUrn
+      },
+      attributes: [
+        'urn',
+        'client_urn',
+        'name',
+        'display_name'
+      ]
+    })
+    const client = await models.g5_updatable_client.findOne({
+      where: {
+        urn: location.dataValues.client_urn
+      },
+      attributes: [
+        'urn',
+        'name',
+        [sequelize.json('properties.branded_name'), 'brandedName']
+      ]
+    })
+    res.json({ location, client })
+  })
 }

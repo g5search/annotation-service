@@ -51,7 +51,8 @@ module.exports = {
   ],
   bootstrapVue: {
     bootstrapCSS: false,
-    bootstrapVueCSS: false
+    bootstrapVueCSS: false,
+    icons: true
   },
   axios: {
     debug: true,

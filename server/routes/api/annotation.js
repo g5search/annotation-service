@@ -40,11 +40,20 @@ module.exports = (app) => {
     let categoryWhere = {}
     let typeWhere = {}
     let userWhere = {}
+    let clientWhere = {}
+    let locationWhere = {}
     if (Object.keys(query).length !== 0) {
-      const { group1, group2 } = objectUtil.split(query, ['annotationName', 'annotationType', 'userEmail'])
+      const { group1, group2 } = objectUtil.split(query, [
+        'annotationName',
+        'annotationType',
+        'userEmail',
+        'clients',
+        'locations'
+      ])
       categoryWhere = { name: group2.annotationName }
       typeWhere = { name: group2.annotationType }
       userWhere = { email: group2.userEmail }
+      clientWhere = { urns: group2.clients }
       where = group1
     }
     const notes = await models.annotation.findAll({
@@ -61,6 +70,23 @@ module.exports = (app) => {
         {
           model: models.annotationUser,
           where: userWhere
+        },
+        {
+          model: models.g5_updatable_client,
+          where: clientWhere,
+          attributes: [
+            'name',
+            'urn'
+          ]
+        },
+        {
+          model: models.g5_updatable_location,
+          where: locationWhere,
+          attributes: [
+            'name',
+            'display_name',
+            'urn'
+          ]
         }
       ]
     })
@@ -73,22 +99,41 @@ module.exports = (app) => {
         external_id,
         startDate,
         endDate,
+        createdAt,
+        updatedAt,
+        salesforceSync,
         html,
-        annotation
+        annotation,
+        g5_updatable_client,
+        g5_updatable_locations
       } = note.dataValues
 
       return {
         internal,
         annotationCategory: annotationCategory ? annotationCategory.name : null,
         annotationType: annotationType ? annotationType.name : null,
-        annotationUser: !annotationUser ? null : `${annotationUser.first_name} ${annotationUser.last_name}`,
+        annotationUser: (!annotationUser)
+          ? null
+          : `${annotationUser.first_name} ${annotationUser.last_name}`,
         external_id,
         startDate,
         endDate,
-        html,
-        annotation
+        createdAt,
+        updatedAt,
+        salesforceSync,
+        note: html,
+        annotation,
+        client: g5_updatable_client.name,
+        locations: g5_updatable_locations.map(l => l.name)
       }
     })
     res.json(mappedNotes)
+  })
+
+  app.get('/api/v1/strategists', async (req, res) => {
+    const strategists = await models.annotationUser.findAll({
+      attributes: ['first_name', 'last_name', 'email']
+    })
+    res.json(strategists)
   })
 }
