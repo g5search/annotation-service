@@ -20,7 +20,20 @@ const models = require('../../models')
 module.exports = (app) => {
   app.options('/api/hub/clients', cors(corsOpts))
   app.options('/api/hub/clients/:clientUrn/locations', cors(corsOpts))
-
+  app.options('/api/hub/location/:locationUrn', cors(corsOpts))
+  app.get('/api/hub/location/:locationUrn', cors(corsOpts), async (req, res) => {
+    const location = await models.g5_updatable_location.findOne({
+      where: {
+        urn: req.params.locationUrn
+      }
+    })
+    const client = await models.g5_updatable_client.findOne({
+      where: {
+        urn: location.dataValues.client_urn
+      }
+    })
+    res.json({ clientUrn: client.dataValues.urn, locationUrn: location.dataValues.urn })
+  })
   app.get('/api/hub/clients/:clientUrn/locations', cors(corsOpts), async (req, res) => {
     const { clientUrn } = req.params
     const locations = await models.g5_updatable_location.getByClientUrn(clientUrn)

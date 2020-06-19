@@ -18,13 +18,19 @@ module.exports = (app) => {
   app.get('/api/v1/facebook/campaign/:campaignId', cors(corsOpts), async (req, res) => {
     const { campaignId } = req.params
     const { data } = await axios.get(`${crsUrl}/api/dam/code_campaign/${campaignId}`)
-    res.sendStatus(data)
+    res.json(data)
   })
 
   app.options('/api/v1/facebook/account/:accountId', cors(corsOpts))
   app.get('/api/v1/facebook/account/:accountId', cors(corsOpts), async (req, res) => {
     const { accountId } = req.params
     const { data } = await axios.get(`${crsUrl}/api/dam/code_account/${accountId}`)
-    res.sendStatus(data)
+    res.json(data)
+  })
+  app.options('/api/v1/google-ads/:accountId', cors(corsOpts))
+  app.get('/api/v1/google-ads/:accountId', cors(corsOpts), async (req, res) => {
+    const { accountId } = req.params
+    const { data } = await axios.get(`${crsUrl}/api/dam/code_account/${accountId}`)
+    res.json(data)
   })
 }
