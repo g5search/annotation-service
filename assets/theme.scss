@@ -1,6 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Heebo:wght@400;700&display=swap');
 $theme-colors: (
   'primary': #0b233f,
+  'primary-0': #314e88,
+  'primary-1': #0b233f,
+  'primary-2': #4c679d,
+  'primary-3': #2f38b0,
+  'primary-4': #5277c2,
+  'primary-5': #19356a,
+  'primary-6': #94abd7,
   'secondary': #7898ad,
   'tertiary': #e8513e,
   'quaternary': #eee23e,
@@ -8,7 +15,7 @@ $theme-colors: (
 );
 $font-family-base: 'Heebo', sans-serif;
 $headings-font-family: 'DM Serif Display', serif;
-$enable-rounded: false;
+$enable-rounded: true;
 $enable-shadows: false;
 $enable-gradients: false;
 $enable-transitions: true;
