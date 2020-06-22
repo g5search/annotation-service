@@ -33,7 +33,7 @@ $body-bg: RGBA(242, 242, 242, 1.00);
   font-style: italic;
 }
 .b-table-sticky-header {
-  max-height: unset;
+  max-height: 90vh;
   & > .table.b-table > thead > tr > th {
     top: -1px !important;
   }

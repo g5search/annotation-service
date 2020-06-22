@@ -1,6 +1,5 @@
 export const state = () => {
   return {
-    clients: [],
     selectedClient: null,
     locations: [],
     selectedLocations: [],
@@ -12,10 +11,6 @@ export const state = () => {
     }
   }
 }
-export const actions = {
-  updateField({ commit }, data) {
-    commit(data.key, data.value)
-  }
-}
+export const actions = {}
 export const mutations = {}
 export const getters = {}
