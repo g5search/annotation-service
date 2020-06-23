@@ -48,6 +48,7 @@ module.exports = (app) => {
       .catch((err) => res.json(err))
     res.json(data)
   })
+
   app.options('/api/v1/microsoft/account/:accountId')
   app.get('/api/v1/microsoft/:accountId', cors(corsOpts), async (req, res) => {
     const { accountId } = req.params
