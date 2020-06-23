@@ -4,7 +4,7 @@ const { Op } = sequelize
 module.exports = (models, Sequelize) => {
   models.annotation.createAndAssociate = async (params) => {
     // const t = await Sequelize.transaction()
-    const { clientUrn, internal, locationUrns, category: noteCategory, actionType: type, annotation, html, startDate, endDate, user } = params
+    const { clientUrn, internal, locationUrns, category: noteCategory, actionType: type, annotation, html, startDate, endDate, user, createdAt } = params
     let { annotationUserId } = params
     let actionType = null
     if (type) {
@@ -45,7 +45,7 @@ module.exports = (models, Sequelize) => {
       }
     })
     const result = await Sequelize.transaction(async (t) => {
-      const note = await models.annotation.create({
+      const update = {
         html,
         startDate,
         endDate,
@@ -53,7 +53,11 @@ module.exports = (models, Sequelize) => {
         internal,
         annotationUserId,
         g5UpdatableClientId: client.dataValues.id
-      }, { transaction: t })
+      }
+      if (createdAt) {
+        update.createdAt = createdAt
+      }
+      const note = await models.annotation.create(update, { transaction: t })
       await note.addG5_updatable_locations(locations, { transaction: t })
       await note.setAnnotationType(actionType, { transaction: t })
       await note.setAnnotationCategory(category, { transaction: t })
