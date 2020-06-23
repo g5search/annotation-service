@@ -43,19 +43,15 @@ module.exports = (app) => {
     let clientWhere = {}
     let locationWhere = {}
     if (Object.keys(query).length !== 0) {
-      const { group1, group2 } = objectUtil.split(query, [
-        'annotationName',
-        'annotationType',
-        'userEmail',
-        'clients',
-        'locations'
-      ])
+      const { group1, group2 } = objectUtil.split(query, [])
+      console.log({ group1, group2 })
       categoryWhere = { name: group2.annotationName }
       typeWhere = { name: group2.annotationType }
       userWhere = { email: group2.userEmail }
-      clientWhere = { urns: group2.clients }
+      clientWhere = { urn: group2.clients }
       where = group1
     }
+    console.log({ where, categoryWhere, typeWhere, userWhere, clientWhere })
     const notes = await models.annotation.findAll({
       where,
       include: [

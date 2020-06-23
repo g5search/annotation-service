@@ -16,21 +16,22 @@
       id="controls-container"
       v-model="isOpen"
       right
-      width="400px"
+      width="450px"
       shadow
-      bg-variant="neutral"
       sidebar-class="px-2"
     >
       <b-card
-        header-class="d-flex m-0 p-0 justify-content-between align-items-center"
+        header-class="border-0 p-0"
         header-bg-variant="white"
-        body-class="px-3 py-4"
+        body-class="m-0 p-0"
+        class="my-3"
       >
         <template v-slot:header>
           <b-btn
             v-b-toggle.filter-controls
             variant="outline-secondary"
             block
+            class="rounded-0 text-left"
           >
             <b-icon-filter />
             Filter Table
@@ -41,58 +42,9 @@
           visible
           accordion="controls-accordion"
           role="tabpanel"
+          class="p-0 m-0"
         >
-          <b-form-group
-            label-cols="2"
-            label-class="d-flex align-items-center text-secondary justify-content-end"
-          >
-            <template v-slot:label>
-              <b-icon-person />
-              <span class="ml-2">
-                User
-              </span>
-            </template>
-            <b-form-select
-              v-model="strategist"
-              :options="strategists"
-            />
-          </b-form-group>
-          <b-form-group
-            label-cols="2"
-            label-class="d-flex align-items-center text-secondary justify-content-end"
-          >
-            <template v-slot:label>
-              Vertical
-            </template>
-            <b-form-select
-              v-model="vertical"
-              :options="verticals"
-            />
-          </b-form-group>
-          <b-form-group
-            label-cols="2"
-            label-class="d-flex align-items-center text-secondary justify-content-end"
-          >
-            <template v-slot:label>
-              Internal
-            </template>
-            <b-form-select
-              v-model="internal"
-              :options="internals"
-            />
-          </b-form-group>
-          <b-btn-group class="w-100">
-            <b-btn @click="onUpdate">
-              <b-spinner v-if="isBusy" small />
-              Update Table
-            </b-btn>
-            <b-btn
-              @click="isBusy = !isBusy"
-              variant="outline-secondary"
-            >
-              Clear Filters
-            </b-btn>
-          </b-btn-group>
+          <controls @on-submit="onSubmit" />
         </b-collapse>
       </b-card>
       <b-card
@@ -104,6 +56,7 @@
             v-b-toggle.new-note
             variant="outline-secondary"
             block
+            class="text-left rounded-0"
           >
             <b-icon-card-text />
             New Note
@@ -122,9 +75,9 @@
       <b-col>
         <b-card
           bg-variant="white"
-          body-class="p-3"
+          body-class="p-0"
           header-class="d-flex primary-header"
-          header-bg-variant="neutral"
+          header-bg-variant="light"
         >
           <template v-slot:header>
             <b-input-group>
@@ -148,6 +101,14 @@
                 </b-btn>
               </template>
             </b-input-group>
+            <b-btn
+              id="filter-me-btn"
+              @click="onFilterMe"
+              variant="primary"
+              class="ml-2"
+            >
+              <b-icon-person-circle />
+            </b-btn>
             <b-input-group class="ml-2">
               <template v-slot:prepend>
                 <b-input-group-text>
@@ -173,19 +134,13 @@
               class="d-flex align-items-center mr-2"
             >
               <b-icon-download />
-              <span class="ml-2">
-                CSV
-              </span>
             </b-btn>
             <b-btn
               @click="isOpen = !isOpen"
               variant="primary"
               class="d-flex align-items-center"
             >
-              <b-icon-chevron-double-right />
-              <span class="ml-2">
-                More
-              </span>
+              <b-icon-layout-sidebar-inset-reverse />
             </b-btn>
           </template>
           <b-table
@@ -198,6 +153,8 @@
             small
             striped
             sticky-header
+            outlined
+            thead-tr-class="primary-header"
           >
             <template v-slot:cell(internal)="row">
               <div class="hover-anchor">
@@ -256,24 +213,26 @@
               <b-icon-x-circle-fill v-else scale="1.5" />
             </template>
             <template v-slot:cell(note)="row">
-              <read-only :content="row.item.note" />
+              <span v-html="row.item.note" />
             </template>
             <template v-slot:cell(edit)="row">
-              <b-btn
-                @click="onToggle(row)"
-                variant="outline-primary"
-                style="vertical-align: text-top;"
-                class="d-flex"
-              >
-                <b-icon-pencil-square />
-                <span class="ml-2">
-                  Edit
-                </span>
-              </b-btn>
+              <div class="d-flex align-items-center">
+                <b-btn
+                  @click="onToggle(row)"
+                  variant="outline-primary"
+                >
+                  <b-icon-pencil-square />
+                </b-btn>
+                <b-btn
+                  @click="onDrop(row)"
+                  variant="outline-tertiary"
+                >
+                  <b-icon-trash />
+                </b-btn>
+              </div>
             </template>
             <template v-slot:row-details="row">
               {{ row }}
-              <!-- <inline-editor :row="row" @toggle-details="onToggle" /> -->
             </template>
           </b-table>
         </b-card>
@@ -284,16 +243,20 @@
 
 <script>
 import Octopus from '~/components/icons/octopus'
-import ReadOnly from '~/components/read-only'
+import Controls from '~/components/overflow-controls'
 import NoteEditor from '~/components/note-editor'
 import PapaMixin from '~/mixins/papaparse'
 export default {
   components: {
     Octopus,
-    NoteEditor,
-    ReadOnly
+    Controls,
+    NoteEditor
   },
   mixins: [PapaMixin],
+  async fetch({ store }) {
+    await store.dispatch('controls/fillUsers')
+    store.dispatch('controls/fillClients')
+  },
   async asyncData({ $axios }) {
     const reject = [
       'annotation',
@@ -302,8 +265,6 @@ export default {
       'endDate'
     ]
     const notes = await $axios.$get('api/v1/notes')
-    const strategists = await $axios.$get('api/v1/strategists')
-    // const clients = await $$axios.$get('api/v1/clients')
     return {
       fields: [
         ...Object.keys(notes[0])
@@ -315,11 +276,7 @@ export default {
         { key: 'Edit', class: 'text-center align-middle' }
       ],
       notes,
-      totalRows: notes.length,
-      strategists: strategists.map(s => ({
-        text: `${s.first_name} ${s.last_name}`,
-        value: s.email
-      }))
+      totalRows: notes.length
     }
   },
   data() {
@@ -355,17 +312,23 @@ export default {
     onClear() {
       this.search = ''
     },
+    onFilterMe() {
+      this.isBusy = !this.isBusy
+    },
     onDrop(row) {},
     onToggle(row) {
       row.toggleDetails()
       // this.refetch()
     },
+    onSubmit() {},
     onUpdate(evt) {
-      const endpoint = `api/v1/notes?userEmail=${this.strategist}`
+      const endpoint = `api/v1/notes?userEmail=${this.strategist}&annotationName=&annotationType=&clients=&locations=`
       this.isBusy = true
       this.$axios
         .$get(endpoint)
-        .then((res) => {})
+        .then((res) => {
+          this.isBusy = false
+        })
         .catch(() => {
           this.isError = true
         })
@@ -408,7 +371,7 @@ export default {
   }
 }
 .primary-header {
-  box-shadow: 0 5px 25px rgba(25, 53, 106, 0.5);
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);
 }
 .align-middle {
   vertical-align: middle;
