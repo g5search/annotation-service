@@ -44,7 +44,7 @@
           role="tabpanel"
           class="p-0 m-0"
         >
-          <controls @on-submit="onSubmit" />
+          <controls :is-busy="isBusy" @on-submit="onSubmit" />
         </b-collapse>
       </b-card>
       <b-card
@@ -101,14 +101,14 @@
                 </b-btn>
               </template>
             </b-input-group>
-            <b-btn
+            <!-- <b-btn
               id="filter-me-btn"
               @click="onFilterMe"
               variant="primary"
               class="ml-2"
             >
               <b-icon-person-circle />
-            </b-btn>
+            </b-btn> -->
             <b-input-group class="ml-2">
               <template v-slot:prepend>
                 <b-input-group-text>
@@ -126,7 +126,7 @@
               :per-page="perPage"
               class="my-0 mx-2"
             />
-            <b-btn
+            <!-- <b-btn
               id="download-csv-btn"
               :href="downloadCsv"
               download="notes.csv"
@@ -134,7 +134,7 @@
               class="d-flex align-items-center mr-2"
             >
               <b-icon-download />
-            </b-btn>
+            </b-btn> -->
             <b-btn
               @click="isOpen = !isOpen"
               variant="primary"
@@ -149,6 +149,7 @@
             :filter="search"
             :current-page="currentPage"
             :per-page="perPage"
+            show-empty
             responsive
             small
             striped
@@ -226,6 +227,7 @@
                 <b-btn
                   @click="onDrop(row)"
                   variant="outline-tertiary"
+                  class="ml-2"
                 >
                   <b-icon-trash />
                 </b-btn>
@@ -281,31 +283,13 @@ export default {
   },
   data() {
     return {
-      strategist: null,
       isOpen: false,
       isBusy: false,
       isError: false,
       currentPage: 1,
       perPage: 10,
       pageOptions: [10, 20, 50, 100],
-      search: '',
-      client: null,
-      vertical: null,
-      verticals: [
-        'Multifamily',
-        'Senior Living',
-        'Self Storage'
-      ],
-      category: null,
-      categories: [],
-      actionType: null,
-      actionTypes: {},
-      internal: null,
-      internals: [
-        { text: 'Both', value: null },
-        { text: 'Internal Only', value: true },
-        { text: 'Customer-Facing', value: false }
-      ]
+      search: ''
     }
   },
   methods: {
@@ -320,7 +304,9 @@ export default {
       row.toggleDetails()
       // this.refetch()
     },
-    onSubmit() {},
+    onSubmit() {
+      this.isBusy = !this.isBusy
+    },
     onUpdate(evt) {
       const endpoint = `api/v1/notes?userEmail=${this.strategist}&annotationName=&annotationType=&clients=&locations=`
       this.isBusy = true

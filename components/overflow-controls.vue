@@ -16,6 +16,9 @@
             :value="client"
             :options="clients"
             @input="getLocations"
+            placeholder="Search"
+            track-by="urn"
+            label="name"
           />
         </b-form-group>
         <b-form-group
@@ -207,6 +210,12 @@ import VueMultiselect from 'vue-multiselect'
 export default {
   components: {
     VueMultiselect
+  },
+  props: {
+    isBusy: {
+      type: Boolean,
+      default: false
+    }
   },
   computed: mapState({
     client: state => state.controls.client,
