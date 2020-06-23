@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const Sequelize = require('sequelize')
-
+const { Transaction } = Sequelize
 const {
   INCLUDE_G5_AUTH: includeAuth,
   INCLUDE_G5_UPDATABLES: includeUpdatables,
@@ -68,7 +68,7 @@ Object.keys(db)
       db[modelName].associate(db)
     }
   })
-require('./prototypes')(db)
+require('./prototypes')(db, sequelize)
 require('./hooks')(db)
 module.exports = {
   ...db,

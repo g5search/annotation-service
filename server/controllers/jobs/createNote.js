@@ -8,6 +8,8 @@ const {
 } = process.env
 
 module.exports = async function (job, models) {
+  console.log('starting')
+  let whatId = null
   const { id } = job.data
   const dbAnnotation = await models.annotation.findOne({
     where: { id },
@@ -15,14 +17,24 @@ module.exports = async function (job, models) {
       { model: models.g5_updatable_client },
       { model: models.annotationCategory },
       { model: models.annotationType },
-      { model: models.annotationUser }
+      { model: models.annotationUser },
+      { model: models.g5_updatable_location }
     ]
   })
+  const locationUrns = dbAnnotation.dataValues.g5_updatable_locations.map(location => location.dataValues.urn)
   const { html, annotation, internal, g5_updatable_client, annotationCategory, annotationType, annotationUser } = dbAnnotation.dataValues
   await sfApi.login(sfUsername, sfPassword, sfToken)
   const { Id: userId } = await sfApi.getUserId({ email: annotationUser.dataValues.email }, ['Id'])
-  const { Id } = await sfApi.findAccount({ Client_URN__c: g5_updatable_client.dataValues.urn }, ['Id'])
-  await sfApi.createNote(Id, userId, annotationCategory.dataValues.name, annotationType.dataValues.name, internal, html, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name, 'DA Task')
+  if (locationUrns.length > 0) {
+    console.log(locationUrns.length)
+    for (let i = 0; i < locationUrns.length; i++) {
+      const { Id } = await sfApi.findLocation({ Location_URN__c: locationUrns[i] }, ['Id'])
+      await sfApi.createNote(Id, userId, annotationCategory.dataValues.name, annotationType.dataValues.name, internal, html, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name, 'DA Task')
+    }
+  } else {
+    const { Id } = await sfApi.findAccount({ Client_URN__c: g5_updatable_client.dataValues.urn }, ['Id'])
+    await sfApi.createNote(Id, userId, annotationCategory.dataValues.name, annotationType.dataValues.name, internal, html, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name, 'DA Task')
+  }
   await sfApi.logout()
   // send to SF
 }

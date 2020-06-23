@@ -1,6 +1,9 @@
-const { Op } = require('sequelize')
-module.exports = (models) => {
+const sequelize = require('sequelize')
+const createNote = require('../../controllers/jobs/createNote')
+const { Op } = sequelize
+module.exports = (models, Sequelize) => {
   models.annotation.createAndAssociate = async (params) => {
+    // const t = await Sequelize.transaction()
     const { clientUrn, internal, locationUrns, category: noteCategory, actionType: type, annotation, html, startDate, endDate, user } = params
     let { annotationUserId } = params
     let actionType = null
@@ -41,21 +44,22 @@ module.exports = (models) => {
         urn: clientUrn
       }
     })
-    const note = await models.annotation.create({
-      html,
-      startDate,
-      endDate,
-      annotation,
-      internal,
-      annotationUserId,
-      annotationCategoryId: category.dataValues.id,
-      annotationTypeId: actionType.dataValues.id,
-      g5UpdatableClientId: client.dataValues.id
+    const result = await Sequelize.transaction(async (t) => {
+      const note = await models.annotation.create({
+        html,
+        startDate,
+        endDate,
+        annotation,
+        internal,
+        annotationUserId,
+        g5UpdatableClientId: client.dataValues.id
+      }, { transaction: t })
+      await note.addG5_updatable_locations(locations, { transaction: t })
+      await note.setAnnotationType(actionType, { transaction: t })
+      await note.setAnnotationCategory(category, { transaction: t })
+      return note
     })
-    // await note.setAnnotationType(actionType)
-    // await note.setAnnotationCategory(category)
-    await note.addG5_updatable_locations(locations)
-    // await note.setG5_updatable_client(client)
-    return note
+
+    return result
   }
 }

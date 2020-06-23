@@ -11,7 +11,8 @@ module.exports = {
   logout,
   getUserId,
   updateNote,
-  findAccount
+  findAccount,
+  findLocation
 }
 
 function createNote (WhatId, OwnerId, Task_Category__c, Task_Action_Type__c, Internal_Only__c, Description, ActivityDate, Status, Subject, Task_Types__c,) {
@@ -56,5 +57,12 @@ function logout() {
  */
 async function findAccount(where, attributes) {
   const accounts = await conn.sobject('Account').find(where, attributes)
+  return util.pick(accounts[0], attributes)
+}
+
+async function findLocation(where, attributes) {
+  console.log({ where })
+  const accounts = await conn.sobject('Location__c').find(where, attributes)
+  console.log({ account: accounts[0] })
   return util.pick(accounts[0], attributes)
 }
