@@ -9,7 +9,7 @@ const {
 
 module.exports = async function (job, models) {
   console.log('starting')
-  let whatId = null
+  const whatId = null
   const { id } = job.data
   const dbAnnotation = await models.annotation.findOne({
     where: { id },
@@ -28,12 +28,20 @@ module.exports = async function (job, models) {
   if (locationUrns.length > 0) {
     console.log(locationUrns.length)
     for (let i = 0; i < locationUrns.length; i++) {
-      const { Id } = await sfApi.findLocation({ Location_URN__c: locationUrns[i] }, ['Id'])
-      await sfApi.createNote(Id, userId, annotationCategory.dataValues.name, annotationType.dataValues.name, internal, html, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name, 'DA Task')
+      try {
+        const { Id } = await sfApi.findLocation({ Location_URN__c: locationUrns[i] }, ['Id'])
+        await sfApi.createNote(Id, userId, annotationCategory.dataValues.name, annotationType.dataValues.name, internal, html, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name, 'DA Task')
+      } catch (error) {
+        console.log({ error })
+      }
     }
   } else {
-    const { Id } = await sfApi.findAccount({ Client_URN__c: g5_updatable_client.dataValues.urn }, ['Id'])
-    await sfApi.createNote(Id, userId, annotationCategory.dataValues.name, annotationType.dataValues.name, internal, html, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name, 'DA Task')
+    try {
+      const { Id } = await sfApi.findAccount({ Client_URN__c: g5_updatable_client.dataValues.urn }, ['Id'])
+      await sfApi.createNote(Id, userId, annotationCategory.dataValues.name, annotationType.dataValues.name, internal, html, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name, 'DA Task')
+    } catch (error) {
+      console.log({ error })
+    }
   }
   await sfApi.logout()
   // send to SF
