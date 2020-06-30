@@ -166,6 +166,9 @@
                 </div>
               </div>
             </template>
+            <template v-slot:cell(annotationCategory)="row">
+              {{ row.item.annotationCategory.text }}
+            </template>
             <template v-slot:cell(annotationType)="row">
               {{ row.item.annotationType }}
               <b-form-text
@@ -195,13 +198,13 @@
             <template v-slot:cell(updatedAt)="row">
               {{ new Date(row.item.updatedAt).toLocaleDateString() }}
             </template>
-            <template v-slot:cell(locations)="row">
-              <div v-if="row.item.locations.length >= 10">
-                {{ row.item.locations.length }} Locations
+            <template v-slot:cell(locationNames)="row">
+              <div v-if="row.item.locationNames.length >= 10">
+                {{ row.item.locationNames.length }} Locations
               </div>
               <b-badge
                 v-else
-                v-for="(loc, i) in row.item.locations"
+                v-for="(loc, i) in row.item.locationNames"
                 :key="loc"
                 :variant="`primary-${i}`"
                 class="mr-1"
@@ -219,8 +222,8 @@
             <template v-slot:cell(edit)="row">
               <div class="d-flex align-items-center">
                 <b-btn
+                  :variant="row.detailsShowing ? 'primary' : 'outline-primary'"
                   @click="onToggle(row)"
-                  variant="outline-primary"
                 >
                   <b-icon-pencil-square />
                 </b-btn>
@@ -234,7 +237,16 @@
               </div>
             </template>
             <template v-slot:row-details="row">
-              {{ row }}
+              <transition name="scale-in-ver-top" appear leave>
+                <inline-editor
+                  :content="row.item"
+                  :clients="clients"
+                  :users="users"
+                  :categories="categories"
+                  :action-types="actionTypes"
+                  @on-close="row.toggleDetails()"
+                />
+              </transition>
             </template>
           </b-table>
         </b-card>
@@ -244,14 +256,17 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import Octopus from '~/components/icons/octopus'
 import Controls from '~/components/overflow-controls'
 import NoteEditor from '~/components/note-editor'
+import InlineEditor from '~/components/inline-editor'
 import PapaMixin from '~/mixins/papaparse'
 export default {
   components: {
     Octopus,
     Controls,
+    InlineEditor,
     NoteEditor
   },
   mixins: [PapaMixin],
@@ -263,6 +278,9 @@ export default {
     const reject = [
       'annotation',
       'external_id',
+      'client',
+      'locations',
+      'user',
       'startDate',
       'endDate'
     ]
@@ -280,6 +298,14 @@ export default {
       notes,
       totalRows: notes.length
     }
+  },
+  computed: {
+    ...mapState({
+      clients: state => state.controls.clients,
+      users: state => state.controls.users,
+      categories: state => state.controls.categories,
+      actionTypes: state => state.controls.actionTypes
+    })
   },
   data() {
     return {
@@ -362,18 +388,6 @@ export default {
 .align-middle {
   vertical-align: middle;
 }
-.slide-fade-enter-active,
-.slide-fade-leave-active {
-  transition: all 400ms cubic-bezier(0.2, 0.4, 0.8, 1.0);
-}
-.slide-fade-enter {
-  transform: translateY(-20px);
-  opacity: 0;
-}
-.slide-fade-leave-to {
-  transform: translateY(20px);
-  opacity: 0;
-}
 .hover-anchor {
   position: relative;
   background-color: inherit;
@@ -401,5 +415,18 @@ export default {
       opacity: 1;
     }
   }
+}
+.scale-in-ver-top-enter-active,
+.scale-in-ver-top-leave-active {
+  transition: 500ms cubic-bezier(0.250, 0.460, 0.450, 0.940);
+}
+.scale-in-ver-top-enter,
+.scale-in-ver-top-leave {
+  transform: scaleY(0);
+  transform-origin: 100% 0%;
+}
+.scale-in-ver-top-leave-to {
+  transform: scaleY(1);
+  transform-origin: 100% 0%;
 }
 </style>

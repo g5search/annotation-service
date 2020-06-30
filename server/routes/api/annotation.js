@@ -105,11 +105,12 @@ module.exports = (app) => {
 
       return {
         internal,
-        annotationCategory: annotationCategory ? annotationCategory.name : null,
+        annotationCategory: annotationCategory ? { text: annotationCategory.name, value: annotationCategory.name } : null,
         annotationType: annotationType ? annotationType.name : null,
         annotationUser: (!annotationUser)
           ? null
           : `${annotationUser.first_name} ${annotationUser.last_name}`,
+        user: (!annotationUser) ? null : { text: `${annotationUser.first_name} ${annotationUser.last_name}`, value: annotationUser.email },
         external_id,
         startDate,
         endDate,
@@ -118,8 +119,10 @@ module.exports = (app) => {
         salesforceSync,
         note: html,
         annotation,
-        client: g5_updatable_client.name,
-        locations: g5_updatable_locations.map(l => l.name)
+        clientName: g5_updatable_client.name,
+        locationNames: g5_updatable_locations.map(l => l.name),
+        client: g5_updatable_client,
+        locations: g5_updatable_locations
       }
     })
     res.json(mappedNotes)

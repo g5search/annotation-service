@@ -24,11 +24,7 @@ export const state = () => ({
   ],
   actionType: null,
   actionTypes: {
-    null: [
-      { text: 'Select a category first' }
-    ],
     'Account Changes': [
-      { text: 'Select Option', value: null },
       'Smart Bidding Strategy Change',
       'Specials/Promotions',
       'Spend Optimizer Version Change',
@@ -36,15 +32,13 @@ export const state = () => ({
       'Whitelisting Events Change'
     ],
     'General Note': [
-      { text: '-', value: 'none' }
+      'NA'
     ],
     'Customer Contact': [
-      { text: 'Select Option', value: null },
       'Action Items',
       'Analysis/Notes'
     ],
     Optimizations: [
-      { text: 'Select Option', value: null },
       'Added Negative Keywords',
       'Added Keywords',
       'Changed Location Strategy',
@@ -57,18 +51,15 @@ export const state = () => ({
       'Manual Bid Adjustments'
     ],
     Other: [
-      { text: 'Select Option', value: null },
       'Uncontrollable Circumstances'
     ],
     'Technical Issue': [
-      { text: 'Select Option', value: null },
       'DA WoW',
       'Dynamic Pricing',
       'Dynamic Availability',
       'Reporting Issue'
     ],
     'Implementation Dates': [
-      { text: 'Select Option', value: null },
       'Dynamic Pricing Start',
       'Dynamic Pricing End',
       'Dynamic Availability Start',

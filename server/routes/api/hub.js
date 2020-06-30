@@ -21,6 +21,7 @@ module.exports = (app) => {
   app.options('/api/hub/clients', cors(corsOpts))
   app.options('/api/hub/clients/:clientUrn/locations', cors(corsOpts))
   app.options('/api/hub/location/:locationUrn', cors(corsOpts))
+
   app.get('/api/hub/location/:locationUrn', cors(corsOpts), async (req, res) => {
     const location = await models.g5_updatable_location.findOne({
       where: {
@@ -34,6 +35,7 @@ module.exports = (app) => {
     })
     res.json({ clientUrn: client.dataValues.urn, locationUrn: location.dataValues.urn })
   })
+
   app.get('/api/hub/clients/:clientUrn/locations', cors(corsOpts), async (req, res) => {
     const { clientUrn } = req.params
     const locations = await models.g5_updatable_location.getByClientUrn(clientUrn)
