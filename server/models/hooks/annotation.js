@@ -5,7 +5,12 @@ module.exports = (models) => {
     if (options.transaction) {
       // Save done within a transaction, wait until transaction is committed to
       // notify listeners the instance has been saved
-      options.transaction.afterCommit(() => createNote({ data: instance.dataValues }, models))
+      try {
+        options.transaction.afterCommit(() => createNote({ data: instance.dataValues }, models))
+      } catch (error) {
+        console.log({ error })
+        return instance
+      }
     }
     // return salesforce.add('sync', instance.dataValues)
   })

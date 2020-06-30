@@ -17,11 +17,24 @@ module.exports = (app) => {
   app.post('/api/v1/note', cors(corsOpts), async(req, res) => {
     let user = null
     let annotationUserId = null
+    const { body } = req
     if (req.user.email) {
       user = await models.annotationUser.findOne({ where: { email: req.user.email } })
       annotationUserId = user.dataValues.id
+    } else if (body.user) {
+      const [annotationUser] = await models.annotationUser.findOrCreate({
+        where: {
+          email: body.user.email
+        },
+        defaults: {
+          email: body.user.email,
+          first_name: body.user.firstName,
+          last_name: body.user.lastName
+        }
+      })
+      user = annotationUser
+      annotationUserId = annotationUser.dataValues.id
     }
-    const { body } = req
     const note = await models.annotation.createAndAssociate({ ...body, annotationUserId })
     res.json(note)
   })
@@ -41,7 +54,7 @@ module.exports = (app) => {
     let typeWhere = {}
     let userWhere = {}
     let clientWhere = {}
-    let locationWhere = {}
+    const locationWhere = {}
     if (Object.keys(query).length !== 0) {
       const { group1, group2 } = objectUtil.split(query, [])
       categoryWhere = { name: group2.annotationName }
