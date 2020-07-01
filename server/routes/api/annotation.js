@@ -39,10 +39,17 @@ module.exports = (app) => {
     res.json(note)
   })
 
-  app.put('/api/v1/note/:id', cors(corsOpts), async (req, res) => {
+  app.put('/api/v1/note/:id', async (req, res) => {
     const { id } = req.params
     const { body } = req
+    console.log({ body })
+    // client
+    // locations
+    // const [annotationUser] = await models.annotationUser.findOne({
+    //   where: { email: body.user }
+    // })
     const note = await models.annotation.findOne({ where: { id } })
+    // TODO if client or locations change, preserve previous values to reassociate SF task.
     await note.update(body)
     res.json(note)
   })
@@ -100,6 +107,7 @@ module.exports = (app) => {
     })
     const mappedNotes = notes.map((note) => {
       const {
+        id,
         internal,
         annotationCategory,
         annotationType,
@@ -117,6 +125,7 @@ module.exports = (app) => {
       } = note.dataValues
 
       return {
+        id,
         internal,
         annotationCategory: annotationCategory ? { text: annotationCategory.name, value: annotationCategory.name } : null,
         annotationType: annotationType ? annotationType.name : null,
