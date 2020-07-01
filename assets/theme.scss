@@ -10,7 +10,10 @@ $theme-colors: (
   'primary-6': #94abd7,
   'secondary': #7898ad,
   'tertiary': #e8513e,
+  'tertiary-0': #e37f72,
   'quaternary': #eee23e,
+  'quaternary-0': #f6f4d9,
+  'success': #69ca8a,
   'neutral': #e1e5e9
 );
 $font-family-base: 'Heebo', sans-serif;
@@ -38,7 +41,9 @@ $body-bg: RGBA(242, 242, 242, 1.00);
     top: -1px !important;
   }
 }
-
+.align-middle {
+  vertical-align: middle;
+}
 .multiselect__spinner:after,
 .multiselect__spinner:before {
   border-top-color: #0b233f;

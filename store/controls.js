@@ -38,7 +38,8 @@ export const state = () => ({
       'Action Items',
       'Analysis/Notes'
     ],
-    Optimizations: [
+    // eslint-disable-next-line
+    'Optimizations': [
       'Added Negative Keywords',
       'Added Keywords',
       'Changed Location Strategy',

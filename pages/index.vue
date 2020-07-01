@@ -21,6 +21,15 @@
       sidebar-class="px-2"
     >
       <b-card
+        header-tag="h1"
+        header-class="text-right"
+        header="G5 Notes Service"
+      >
+        <small class="text-right text-muted">
+          v.{{ version }}
+        </small>
+      </b-card>
+      <b-card
         header-class="border-0 p-0"
         header-bg-variant="white"
         body-class="m-0 p-0"
@@ -31,7 +40,7 @@
             v-b-toggle.filter-controls
             variant="outline-secondary"
             block
-            class="rounded-0 text-left"
+            class="rounded-0 text-left align-middle"
           >
             <b-icon-filter />
             Filter Table
@@ -136,9 +145,9 @@
               <b-icon-download />
             </b-btn> -->
             <b-btn
-              @click="isOpen = !isOpen"
               variant="primary"
               class="d-flex align-items-center"
+              @click="isOpen = !isOpen"
             >
               <b-icon-layout-sidebar-inset-reverse />
             </b-btn>
@@ -149,14 +158,22 @@
             :filter="search"
             :current-page="currentPage"
             :per-page="perPage"
+            :busy="isBusy"
             show-empty
+            no-border-collapse
             responsive
             small
+            hover
             striped
             sticky-header
             outlined
             thead-tr-class="primary-header"
           >
+            <template v-slot:table-busy>
+              <div>
+                <b-spinner scale="5" />
+              </div>
+            </template>
             <template v-slot:cell(internal)="row">
               <div class="hover-anchor">
                 <b-icon-emoji-neutral v-if="row.item.internal" font-scale="2" />
@@ -203,8 +220,8 @@
                 {{ row.item.locationNames.length }} Locations
               </div>
               <b-badge
-                v-else
                 v-for="(loc, i) in row.item.locationNames"
+                v-else
                 :key="loc"
                 :variant="`primary-${i}`"
                 class="mr-1"
@@ -213,8 +230,8 @@
               </b-badge>
             </template>
             <template v-slot:cell(salesforceSync)="row">
-              <b-icon-check-circle-fill v-if="row.item.salesforceSync" scale="1.5" />
-              <b-icon-x-circle-fill v-else scale="1.5" />
+              <b-icon-check-circle-fill v-if="row.item.salesforceSync" scale="1.2" class="text-success" />
+              <b-icon-x-circle-fill v-else scale="1.2" class="text-tertiary" />
             </template>
             <template v-slot:cell(note)="row">
               <span v-html="row.item.note" />
@@ -222,17 +239,18 @@
             <template v-slot:cell(edit)="row">
               <div class="d-flex align-items-center">
                 <b-btn
-                  :variant="row.detailsShowing ? 'primary' : 'outline-primary'"
+                  :variant="row.detailsShowing ? 'primary' : 'transparent'"
+                  class="align-middle"
                   @click="onToggle(row)"
                 >
-                  <b-icon-pencil-square />
+                  <b-icon-pencil-square scale="0.8" />
                 </b-btn>
                 <b-btn
+                  variant="transparent"
+                  class="ml-2 align-middle text-tertiary"
                   @click="onDrop(row)"
-                  variant="outline-tertiary"
-                  class="ml-2"
                 >
-                  <b-icon-trash />
+                  <b-icon-trash scale="0.8" />
                 </b-btn>
               </div>
             </template>
@@ -257,6 +275,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import { version } from '~/package.json'
 import Octopus from '~/components/icons/octopus'
 import Controls from '~/components/overflow-controls'
 import NoteEditor from '~/components/note-editor'
@@ -276,6 +295,7 @@ export default {
   },
   async asyncData({ $axios }) {
     const reject = [
+      'id',
       'annotation',
       'external_id',
       'client',
@@ -299,16 +319,9 @@ export default {
       totalRows: notes.length
     }
   },
-  computed: {
-    ...mapState({
-      clients: state => state.controls.clients,
-      users: state => state.controls.users,
-      categories: state => state.controls.categories,
-      actionTypes: state => state.controls.actionTypes
-    })
-  },
   data() {
     return {
+      version,
       isOpen: false,
       isBusy: false,
       isError: false,
@@ -317,6 +330,14 @@ export default {
       pageOptions: [10, 20, 50, 100],
       search: ''
     }
+  },
+  computed: {
+    ...mapState({
+      clients: state => state.controls.clients,
+      users: state => state.controls.users,
+      categories: state => state.controls.categories,
+      actionTypes: state => state.controls.actionTypes
+    })
   },
   methods: {
     onClear() {
@@ -338,11 +359,12 @@ export default {
       this.isBusy = true
       this.$axios
         .$get(endpoint)
-        .then((res) => {
-          this.isBusy = false
-        })
+        .then((res) => {})
         .catch(() => {
           this.isError = true
+        })
+        .finally(() => {
+          this.isBusy = false
         })
     }
   }
@@ -385,9 +407,6 @@ export default {
 .primary-header {
   box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);
 }
-.align-middle {
-  vertical-align: middle;
-}
 .hover-anchor {
   position: relative;
   background-color: inherit;
@@ -418,15 +437,13 @@ export default {
 }
 .scale-in-ver-top-enter-active,
 .scale-in-ver-top-leave-active {
-  transition: 500ms cubic-bezier(0.250, 0.460, 0.450, 0.940);
+  transition: 300ms cubic-bezier(0.250, 0.460, 0.550, 0.740);
 }
 .scale-in-ver-top-enter,
 .scale-in-ver-top-leave {
-  transform: scaleY(0);
-  transform-origin: 100% 0%;
+  transform: translateZ(160px) translateY(-100px);
 }
 .scale-in-ver-top-leave-to {
-  transform: scaleY(1);
-  transform-origin: 100% 0%;
+  transform: translateZ(0) translateY(0);
 }
 </style>

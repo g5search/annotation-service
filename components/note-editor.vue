@@ -25,10 +25,10 @@
             <vue-multiselect
               v-model="client"
               :options="clients"
-              @input="onClientSelect"
               placeholder="Search"
               track-by="urn"
               label="name"
+              @input="onClientSelect"
             />
           </b-form-group>
           <b-form-group
@@ -93,8 +93,8 @@
               <b-form-select
                 v-model="actionType"
                 :options="actionTypes[category]"
-                @change="toggleDates"
                 required
+                @change="toggleDates"
               />
             </b-form-group>
             <div v-show="showDates">
@@ -155,49 +155,49 @@
               </template>
               <div class="editor">
                 <editor-menu-bar
-                  :editor="editor"
                   v-slot="{ commands, isActive }"
+                  :editor="editor"
                 >
                   <div class="d-flex justify-content-start menubar">
                     <b-btn
                       :class="[{ 'is-active': isActive.bold() }, 'menubar__btn']"
-                      @click="commands.bold"
                       variant="outline-secondary"
+                      @click="commands.bold"
                     >
                       <b-icon-type-bold />
                     </b-btn>
                     <b-btn
                       :class="[{ 'is-active': isActive.italic() }, 'menubar__btn']"
-                      @click="commands.italic"
                       variant="outline-secondary"
+                      @click="commands.italic"
                     >
                       <b-icon-type-italic />
                     </b-btn>
                     <b-btn
                       :class="[{ 'is-active': isActive.underline() }, 'menubar__btn']"
-                      @click="commands.underline"
                       variant="outline-secondary"
+                      @click="commands.underline"
                     >
                       <b-icon-type-underline />
                     </b-btn>
                     <b-btn
                       :class="[{ 'is-active': isActive.strike() }, 'menubar__btn']"
-                      @click="commands.strike"
                       variant="outline-secondary"
+                      @click="commands.strike"
                     >
                       <b-icon-type-strikethrough />
                     </b-btn>
                     <b-btn
                       :class="[{ 'is-active': isActive.ordered_list() }, 'menubar__btn']"
-                      @click="commands.ordered_list"
                       variant="outline-secondary"
+                      @click="commands.ordered_list"
                     >
                       <b-icon-list-ol />
                     </b-btn>
                     <b-btn
                       :class="[{ 'is-active': isActive.bullet_list() }, 'menubar__btn']"
-                      @click="commands.bullet_list"
                       variant="outline-secondary"
+                      @click="commands.bullet_list"
                     >
                       <b-icon-list-ul />
                     </b-btn>
@@ -209,7 +209,7 @@
             </b-form-group>
           </b-card>
           <b-card no-body class="mb-1 p-1">
-           <b-form-checkbox
+            <b-form-checkbox
               v-model="backdate"
               switch
               size="sm"
@@ -239,31 +239,31 @@
           <template v-slot:footer>
             <b-btn-group class="w-100 d-flex">
               <b-btn
-                @click="onSubmit"
                 :disabled="!isValid"
                 :variant="isValid ? 'secondary' : 'outline-secondary'"
                 class="roman flex-grow-1 btn-rad"
+                @click="onSubmit"
               >
                 <b-icon-bookmark-plus />
                 Save Note
               </b-btn>
               <b-btn
                 id="reset"
-                @click="onReset"
                 variant="outline-tertiary"
                 class="ml-1 btn-rad px-2 roman flex-grow-0"
+                @click="onReset"
               >
                 <b-icon-trash />
               </b-btn>
             </b-btn-group>
           </template>
           <b-alert
-            :show="dismissCountDown"
-            @dismissed="dismissCountDown = 0"
-            @dismiss-count-down="countDownChanged"
             id="submission-status"
+            :show="dismissCountDown"
             variant="success"
             dismissible
+            @dismissed="dismissCountDown = 0"
+            @dismiss-count-down="countDownChanged"
           >
             <b-icon-check-circle />
             Note Saved!
@@ -294,7 +294,7 @@ export default {
     EditorContent,
     EditorMenuBar
   },
-  data () {
+  data() {
     return {
       editor: null,
       showLocation: false,
@@ -406,6 +406,11 @@ export default {
       dismissCountDown: 0
     }
   },
+  computed: {
+    isValid() {
+      return this.category !== null && this.client !== null
+    }
+  },
   mounted() {
     this.editor = new Editor({
       extensions: [
@@ -429,11 +434,6 @@ export default {
         this.updateText({ html: getHTML(), json: getJSON() })
       }
     })
-  },
-  computed: {
-    isValid() {
-      return this.category !== null && this.client !== null
-    }
   },
   beforeDestroy() {
     this.editor.destroy()
