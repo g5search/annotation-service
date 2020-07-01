@@ -105,7 +105,7 @@
         />
       </div>
       <text-menu
-        :content="local.note"
+        :content="note"
         @on-update="updateText"
       />
     </b-card>
@@ -116,7 +116,7 @@
           Created Date
         </template>
         <b-form-datepicker
-          v-model="content.createdAt"
+          v-model="createdAt"
         />
         <small class="text-muted pl-2">
           Last Updated on {{ new Date(content.updatedAt).toLocaleDateString() }}
@@ -187,7 +187,15 @@ export default {
   data() {
     return {
       local: this.content,
-      locations: []
+      client: null,
+      includedLocations: [],
+      locations: [],
+      internal: null,
+      createdAt: null,
+      category: null,
+      actionType: null,
+      user: null,
+      note: ''
     }
   },
   computed: {
@@ -196,6 +204,13 @@ export default {
     }
   },
   async created() {
+    this.client = this.content.client
+    this.note = this.content.note
+    this.user = this.content.user
+    this.internal = this.content.internal
+    this.createdAt = this.content.createdAt
+    this.category = this.content.annotationCategory
+    this.actionType = this.content.actionType
     this.locations = await this.getClientLocations(this.content.client.urn)
   },
   methods: {

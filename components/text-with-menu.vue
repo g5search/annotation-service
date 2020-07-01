@@ -1,49 +1,49 @@
 <template>
   <div class="editor">
     <editor-menu-bar
-      :editor="editor"
       v-slot="{ commands, isActive }"
+      :editor="editor"
     >
       <div class="d-flex justify-content-start menubar">
         <b-btn
           :class="[{ 'is-active': isActive.bold() }, 'menubar__btn']"
-          @click="commands.bold"
           variant="outline-secondary"
+          @click="commands.bold"
         >
           <b-icon-type-bold />
         </b-btn>
         <b-btn
           :class="[{ 'is-active': isActive.italic() }, 'menubar__btn']"
-          @click="commands.italic"
           variant="outline-secondary"
+          @click="commands.italic"
         >
           <b-icon-type-italic />
         </b-btn>
         <b-btn
           :class="[{ 'is-active': isActive.underline() }, 'menubar__btn']"
-          @click="commands.underline"
           variant="outline-secondary"
+          @click="commands.underline"
         >
           <b-icon-type-underline />
         </b-btn>
         <b-btn
           :class="[{ 'is-active': isActive.strike() }, 'menubar__btn']"
-          @click="commands.strike"
           variant="outline-secondary"
+          @click="commands.strike"
         >
           <b-icon-type-strikethrough />
         </b-btn>
         <b-btn
           :class="[{ 'is-active': isActive.ordered_list() }, 'menubar__btn']"
-          @click="commands.ordered_list"
           variant="outline-secondary"
+          @click="commands.ordered_list"
         >
           <b-icon-list-ol />
         </b-btn>
         <b-btn
           :class="[{ 'is-active': isActive.bullet_list() }, 'menubar__btn']"
-          @click="commands.bullet_list"
           variant="outline-secondary"
+          @click="commands.bullet_list"
         >
           <b-icon-list-ul />
         </b-btn>
@@ -121,9 +121,9 @@ export default {
 <style lang="scss" scoped>
 .editor {
   &__content {
-    // font-size: 0.9em;
+    background-color: white;
     padding: 0.5em 0.5em 0.25em;
-    border: 1px solid #7898ad;
+    border: 1px solid #e8e8e8;
     border-top: none;
     color: #0b233f;
     & .is-editor-empty:first-child::before {
@@ -146,7 +146,7 @@ export default {
       margin: 0;
       border-radius: 0;
       &.is-active {
-        background-color: #7898ad;
+        background-color: #e8e8e8;
         color: white;
       }
     }
