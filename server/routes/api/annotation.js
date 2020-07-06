@@ -39,6 +39,33 @@ module.exports = (app) => {
     res.json(note)
   })
 
+  // DUPLICATE ROUTE FOR SAME ORIGIN API (CORS is blocking this)
+  app.post('/api/v1/new-note', async(req, res) => {
+    let user = null
+    let annotationUserId = null
+    const { body } = req
+    console.log({ body, user: req.user })
+    if (req.user.email) {
+      user = await models.annotationUser.findOne({ where: { email: req.user.email } })
+      annotationUserId = user.dataValues.id
+    } else if (body.user) {
+      const [annotationUser] = await models.annotationUser.findOrCreate({
+        where: {
+          email: body.user.email
+        },
+        defaults: {
+          email: body.user.email,
+          first_name: body.user.firstName,
+          last_name: body.user.lastName
+        }
+      })
+      user = annotationUser
+      annotationUserId = annotationUser.dataValues.id
+    }
+    const note = await models.annotation.createAndAssociate({ ...body, annotationUserId })
+    res.json(note)
+  })
+
   app.put('/api/v1/note/:id', async (req, res) => {
     const { id } = req.params
     const { body } = req
@@ -61,16 +88,19 @@ module.exports = (app) => {
     let typeWhere = {}
     let userWhere = {}
     let clientWhere = {}
-    const locationWhere = {}
+    let locationWhere = {}
     if (Object.keys(query).length !== 0) {
+      console.log({ query })
       const { group1, group2 } = objectUtil.split(query, [])
-      categoryWhere = { name: group2.annotationName }
-      typeWhere = { name: group2.annotationType }
-      userWhere = { email: group2.userEmail }
-      clientWhere = { urn: group2.clients }
+      console.log({ group1, group2 })
+      categoryWhere = group2.annotationName ? { name: group2.annotationName } : {}
+      typeWhere = group2.annotationName ? { name: group2.annotationType } : {}
+      userWhere = group2.userEmail ? { email: group2.userEmail } : {}
+      clientWhere = group2.clients ? { urn: group2.clients } : {}
+      // locationWhere = { urn: group2.locations || '' }
       where = group1
     }
-    // console.log({ where, categoryWhere, typeWhere, userWhere, clientWhere })
+    console.log({ userWhere, categoryWhere, where, typeWhere, clientWhere })
     const notes = await models.annotation.findAll({
       where,
       include: [
@@ -105,6 +135,7 @@ module.exports = (app) => {
         }
       ]
     })
+    console.log({ notes: notes.length })
     const mappedNotes = notes.map((note) => {
       const {
         id,

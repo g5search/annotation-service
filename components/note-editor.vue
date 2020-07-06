@@ -275,6 +275,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import VueMultiselect from 'vue-multiselect'
 import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
 import {
@@ -297,12 +298,12 @@ export default {
   data() {
     return {
       editor: null,
+      isError: false,
       showLocation: false,
       showDates: false,
       backdate: false,
       theme: 'secondary',
       client: null,
-      clients: [],
       clientLocations: [],
       detectedClient: false,
       isBusy: false,
@@ -315,98 +316,18 @@ export default {
         html: '',
         json: ''
       },
-      macros: [
-        {
-          text: 'Location DA Start',
-          data: {
-            category: 'Account Changes',
-            actionType: 'Location DA Start',
-            isInternal: false
-          }
-        },
-        {
-          text: 'Location DA End',
-          data: {
-            category: 'Account Changes',
-            actionType: 'Location DA End',
-            isInternal: false
-          }
-        }
-      ],
       category: null,
-      categories: [
-        { text: 'Select option', value: null },
-        { text: 'Account Changes', value: 'Account Changes' },
-        { text: 'Customer Contact', value: 'Customer Contact' },
-        { text: 'General Note', value: 'General Note' },
-        { text: 'Optimizations', value: 'Optimizations' },
-        { text: 'Other', value: 'Other' },
-        { text: 'Technical Issue', value: 'Technical Issue' }
-      ],
       actionType: null,
-      actionTypes: {
-        null: [
-          { text: 'Select a category first' }
-        ],
-        'Account Changes': [
-          { text: 'Select Option', value: null },
-          'Smart Bidding Strategy Change',
-          'Specials/Promotions',
-          'Spend Optimizer Version Change',
-          'URL Change',
-          'Whitelisting Events Change'
-        ],
-        'General Note': [
-          { text: '-', value: 'none' }
-        ],
-        'Customer Contact': [
-          { text: 'Select Option', value: null },
-          'Action Items',
-          'Analysis/Notes'
-        ],
-        Optimizations: [
-          { text: 'Select Option', value: null },
-          'Added Negative Keywords',
-          'Added Keywords',
-          'Changed Location Strategy',
-          'Paused Campaign',
-          'Enabled Campaign',
-          'Refreshed Ad Copy',
-          'Testing',
-          'T & O Added',
-          'Manual Spend Adjustments',
-          'Manual Bid Adjustments'
-        ],
-        Other: [
-          { text: 'Select Option', value: null },
-          'Uncontrollable Circumstances'
-        ],
-        'Technical Issue': [
-          { text: 'Select Option', value: null },
-          'DA WoW',
-          'Dynamic Pricing',
-          'Dynamic Availability',
-          'Reporting Issue'
-        ],
-        'Implementation Dates': [
-          { text: 'Select Option', value: null },
-          'Dynamic Pricing Start',
-          'Dynamic Pricing End',
-          'Dynamic Availability Start',
-          'Dynamic Availability End',
-          'Spend Optimizer Start',
-          'Spend Optimizer End',
-          'Call Scoring Start',
-          'Call Scoring End',
-          'First Impressions',
-          'First Spend'
-        ]
-      },
       dismissSecs: 2,
       dismissCountDown: 0
     }
   },
   computed: {
+    ...mapState({
+      clients: state => state.controls.clients,
+      categories: state => state.controls.categories,
+      actionTypes: state => state.controls.actionTypes
+    }),
     isValid() {
       return this.category !== null && this.client !== null
     }
@@ -451,6 +372,9 @@ export default {
       ]
       this.showDates = matches.includes(evt)
     },
+    updateText(data) {
+      this.annotation = data
+    },
     onReset() {
       this.client = null
       this.locations = []
@@ -467,8 +391,33 @@ export default {
     showAlert() {
       this.dismissCountDown = this.dismissSecs
     },
-    onSubmit() {},
-    onClientSelect() {
+    onSubmit() {
+      const endpoint = 'api/v1/new-note'
+      this.$axios
+        .$post(endpoint, {
+          annotation: this.annotation.json,
+          internal: this.isInternal,
+          startDate: this.startDate,
+          endDate: this.endDate,
+          html: this.annotation.html,
+          createdAt: this.noteDate,
+          category: this.category,
+          actionType: this.actionType,
+          clientUrn: this.client.urn,
+          locationUrns: this.locations.map(l => l.urn)
+        })
+        .then(() => this.onReset())
+        .catch(() => {
+          this.isError = true
+          this.onReset()
+        })
+    },
+    onClientSelect(evt) {
+      this.$axios
+        .$get(`api/hub/clients/${evt.urn}/locations`)
+        .then((res) => {
+          this.clientLocations = res
+        })
     }
   }
 }
@@ -511,8 +460,9 @@ export default {
       flex: 1 1 auto;
     }
     &__btn {
-      padding: 0.15em 0.25em;
+      padding: 0 0.25em 0.25em;
       margin: 0;
+      border-radius: 0;
       &.is-active {
         background-color: #7898ad;
         color: white;
