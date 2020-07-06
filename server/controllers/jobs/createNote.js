@@ -22,9 +22,20 @@ module.exports = async function (job, models) {
     ]
   })
   const locationUrns = dbAnnotation.dataValues.g5_updatable_locations.map(location => location.dataValues.urn)
-  const { html, annotation, internal, g5_updatable_client, annotationCategory, annotationType, annotationUser } = dbAnnotation.dataValues
+  const {
+    html,
+    annotation,
+    internal,
+    g5_updatable_client,
+    annotationCategory,
+    annotationType,
+    annotationUser
+  } = dbAnnotation.dataValues
+
   await sfApi.login(sfUsername, sfPassword, sfToken)
+
   const { Id: userId } = await sfApi.getUserId({ email: annotationUser.dataValues.email }, ['Id'])
+
   if (locationUrns.length > 0) {
     console.log(locationUrns.length)
     for (let i = 0; i < locationUrns.length; i++) {
