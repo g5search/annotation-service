@@ -20,65 +20,31 @@
       shadow
       sidebar-class="px-2"
     >
-      <b-card
-        header-tag="h1"
-        header-class="text-right"
-        header="G5 Notes Service"
-      >
-        <small class="text-right text-muted">
-          v.{{ version }}
-        </small>
+      <b-card no-body>
+        <b-tabs card>
+          <b-tab>
+            <template v-slot:title>
+              <b-icon-filter />
+            </template>
+            <controls :is-busy="isBusy" @on-submit="onSubmit" />
+          </b-tab>
+          <b-tab>
+            <template v-slot:title>
+              <b-icon-card-text />
+            </template>
+            <note-editor />
+          </b-tab>
+          <b-tab>
+            <template v-slot:title>
+              <b-icon-gear-wide-connected />
+            </template>
+            <small class="text-right text-muted">
+              v.{{ version }}
+            </small>
+          </b-tab>
+        </b-tabs>
       </b-card>
-      <b-card
-        header-class="border-0 p-0"
-        header-bg-variant="white"
-        body-class="m-0 p-0"
-        class="my-3"
-      >
-        <template v-slot:header>
-          <b-btn
-            v-b-toggle.filter-controls
-            variant="outline-secondary"
-            block
-            class="rounded-0 text-left align-middle"
-          >
-            <b-icon-filter />
-            Filter Table
-          </b-btn>
-        </template>
-        <b-collapse
-          id="filter-controls"
-          visible
-          accordion="controls-accordion"
-          role="tabpanel"
-          class="p-0 m-0"
-        >
-          <controls :is-busy="isBusy" @on-submit="onSubmit" />
-        </b-collapse>
-      </b-card>
-      <b-card
-        header-class="d-flex m-0 p-0 justify-content-start align-items-end border-0"
-        body-class="p-1"
-      >
-        <template v-slot:header>
-          <b-btn
-            v-b-toggle.new-note
-            variant="outline-secondary"
-            block
-            class="text-left rounded-0"
-          >
-            <b-icon-card-text />
-            New Note
-          </b-btn>
-        </template>
-        <b-collapse
-          id="new-note"
-          accordion="controls-accordion"
-          role="tabpanel"
-        >
-          <note-editor />
-        </b-collapse>
-      </b-card>
+
     </b-sidebar>
     <b-row no-gutters>
       <b-col>
@@ -110,14 +76,14 @@
                 </b-btn>
               </template>
             </b-input-group>
-            <!-- <b-btn
+            <b-btn
               id="filter-me-btn"
               @click="onFilterMe"
               variant="primary"
               class="ml-2"
             >
               <b-icon-person-circle />
-            </b-btn> -->
+            </b-btn>
             <b-input-group class="ml-2">
               <template v-slot:prepend>
                 <b-input-group-text>
@@ -172,6 +138,18 @@
             <template v-slot:table-busy>
               <div>
                 <b-spinner scale="5" />
+              </div>
+            </template>
+            <template v-slot:emptyfiltered>
+              <div class="text-center py-5">
+                <b-icon-emoji-frown scale="1.2" />
+                Your search did not return any results. Please adjust search string.
+              </div>
+            </template>
+            <template v-slot:empty>
+              <div class="text-center py-5">
+                <b-icon-emoji-frown scale="1.2" />
+                {{ isEmpty }}
               </div>
             </template>
             <template v-slot:cell(internal)="row">
@@ -305,6 +283,7 @@ export default {
       'endDate'
     ]
     const notes = await $axios.$get('api/v1/notes')
+    const me = await $axios.$get('api/v1/whoami')
     return {
       fields: [
         ...Object.keys(notes[0])
@@ -315,6 +294,7 @@ export default {
           })).filter(field => !reject.includes(field.key)),
         { key: 'Edit', class: 'text-center align-middle' }
       ],
+      me,
       notes,
       totalRows: notes.length
     }
@@ -322,6 +302,7 @@ export default {
   data() {
     return {
       version,
+      isEmpty: 'Oh no! We couldn\'t find any notes that match your selected filters, please review and adjust them.',
       isOpen: false,
       isBusy: false,
       isError: false,
@@ -345,21 +326,48 @@ export default {
     },
     onFilterMe() {
       this.isBusy = !this.isBusy
+      // submit fetch with email as this.me.email
     },
     onDrop(row) {},
     onToggle(row) {
       row.toggleDetails()
       // this.refetch()
     },
-    onSubmit() {
-      this.isBusy = !this.isBusy
+    onSubmit(payload) {
+      // this.isBusy = !this.isBusy
+      this.$emit('submitting', payload)
+      this.onUpdate(payload)
     },
     onUpdate(evt) {
-      const endpoint = `api/v1/notes?userEmail=${this.strategist}&annotationName=&annotationType=&clients=&locations=`
+      const userEmail = evt.userEmail ? `userEmail=${evt.userEmail}` : ''
+      const annotationName = evt.annotationName ? `annotationName=${evt.annotationName}` : ''
+      const endpoint = `api/v1/notes?${userEmail}&${annotationName}`
       this.isBusy = true
       this.$axios
         .$get(endpoint)
-        .then((res) => {})
+        .then((res) => {
+          const reject = [
+            'id',
+            'annotation',
+            'external_id',
+            'client',
+            'locations',
+            'user',
+            'startDate',
+            'endDate'
+          ]
+          this.fields = [
+            ...Object.keys(res[0])
+              .map(key => ({
+                key,
+                sortable: true,
+                class: 'text-center align-middle'
+              })).filter(field => !reject.includes(field.key)),
+            { key: 'Edit', class: 'text-center align-middle' }
+          ]
+          this.totalRows = res.length
+          this.notes = res
+        })
         .catch(() => {
           this.isError = true
         })

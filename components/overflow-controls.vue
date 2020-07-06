@@ -43,22 +43,6 @@
         >
           <template v-slot:label>
             <span class="ml-2">
-              Vertical
-            </span>
-          </template>
-          <b-form-select
-            id="vertical-select"
-            :value="vertical"
-            :options="verticals"
-            @input="onUpdate({ key: 'vertical', value: $event })"
-          />
-        </b-form-group>
-        <b-form-group
-          label-cols="4"
-          label-class="d-flex align-items-center text-secondary justify-content-start"
-        >
-          <template v-slot:label>
-            <span class="ml-2">
               User
             </span>
           </template>
@@ -222,8 +206,6 @@ export default {
     clients: state => state.controls.clients,
     location: state => state.controls.location,
     locations: state => state.controls.locations,
-    vertical: state => state.controls.vertical,
-    verticals: state => state.controls.verticals,
     user: state => state.controls.user,
     users: state => state.controls.users,
     category: state => state.controls.category,
@@ -250,7 +232,12 @@ export default {
         .then(l => this.onUpdate({ key: 'locations', value: l }))
     },
     onSubmit() {
-      this.$emit('on-submit')
+      this.$emit('on-submit', {
+        userEmail: this.user ? this.user : null,
+        annotationName: this.category ? this.category : null,
+        annotationType: this.actionType ? this.actionType : null,
+        clients: this.client ? this.client.urn : null
+      })
     }
   }
 }

@@ -81,6 +81,15 @@ module.exports = (app) => {
     res.json(note)
   })
 
+  app.get('/api/v1/whoami', async (req, res) => {
+    if (req.user.email) {
+      const { email, firstName, lastName } = req.user
+      res.json({ email, firstName, lastName })
+    } else {
+      res.sendStatus(404)
+    }
+  })
+
   app.get('/api/v1/notes', async (req, res) => {
     const { query } = req
     let where = {}
