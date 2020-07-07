@@ -11,6 +11,8 @@ $theme-colors: (
   'secondary': #7898ad,
   'tertiary': #e8513e,
   'tertiary-0': #e37f72,
+  'tertiary-1': #e00033,
+  'tertiary-2': #e34a68,
   'quaternary': #eee23e,
   'quaternary-0': #f6f4d9,
   'success': #69ca8a,
@@ -42,7 +44,7 @@ $body-bg: RGBA(242, 242, 242, 1.00);
   }
 }
 .align-middle {
-  vertical-align: middle;
+  vertical-align: text-bottom;
 }
 .multiselect__spinner:after,
 .multiselect__spinner:before {

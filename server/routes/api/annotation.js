@@ -104,7 +104,7 @@ module.exports = (app) => {
       const { group1, group2 } = objectUtil.split(query, [])
       console.log({ group1, group2 })
       categoryWhere = group2.annotationName ? { name: group2.annotationName } : {}
-      typeWhere = group2.annotationName ? { name: group2.annotationType } : {}
+      typeWhere = group2.annotationType ? { name: group2.annotationType } : {}
       userWhere = group2.userEmail ? { email: group2.userEmail } : {}
       clientWhere = group2.clients ? { urn: group2.clients } : {}
       // locationWhere = { urn: group2.locations || '' }

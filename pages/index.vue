@@ -3,7 +3,7 @@
     <div class="ceph-container" @click="isOpen = !isOpen">
       <octopus
         :size="`6em`"
-        :color="octColors[rdm(0, octColors.length)]"
+        :color="`#19356a`"
         :class="[{ 'is-open': isOpen }, 'ceph-container__svg', 'shadowed']"
       />
       <div class="ceph-container__title text-primary">
@@ -18,12 +18,11 @@
       right
       width="450px"
       shadow
-      bg-variant="neutral"
       sidebar-class="px-2"
     >
       <b-card no-body>
         <b-tabs card>
-          <b-tab no-body>
+          <b-tab no-body title-item-class="align-middle">
             <template v-slot:title>
               <b-icon-filter />
               Filters
@@ -87,9 +86,17 @@
             >
               <b-icon-person-circle />
             </b-btn>
-            <b-input-group class="ml-2">
+            <b-tooltip
+              target="filter-me-btn"
+              triggers="hover"
+              placement="bottom"
+              variant="primary-1"
+            >
+              Filter table to just my notes
+            </b-tooltip>
+            <b-input-group class="ml-2 w-50">
               <template v-slot:prepend>
-                <b-input-group-text class="text-light bg-primary border-primary">
+                <b-input-group-text class="text-light bg-transparent border-0">
                   Show Rows
                 </b-input-group-text>
               </template>
@@ -148,19 +155,20 @@
             thead-tr-class="primary-header"
           >
             <template v-slot:table-busy>
-              <div>
+              <div class="text-center h1 align-middle">
                 <b-spinner scale="5" />
+                Loading Those Notes...
               </div>
             </template>
             <template v-slot:emptyfiltered>
-              <div class="text-center py-5">
+              <div class="text-center py-5 h1">
                 <b-icon-emoji-frown scale="1.2" />
                 Your search did not return any results. Please adjust search string.
               </div>
             </template>
             <template v-slot:empty>
-              <div class="text-center py-5">
-                <b-icon-emoji-frown scale="1.2" />
+              <div class="text-center py-5 h1">
+                <b-icon-emoji-frown scale="1.7" class="pr-2 text-tertiary" />
                 {{ isEmpty }}
               </div>
             </template>
@@ -333,13 +341,7 @@ export default {
       currentPage: 1,
       perPage: 10,
       pageOptions: [10, 20, 50, 100],
-      search: '',
-      octColors: [
-        '#234082',
-        '#0b233f',
-        '#2f38b0',
-        '#e00033'
-      ]
+      search: ''
     }
   },
   computed: {
@@ -405,17 +407,27 @@ export default {
       ]
     },
     onUpdate(evt) {
-      const userEmail = evt.userEmail ? `userEmail=${evt.userEmail}` : ''
-      const annotationName = evt.annotationName ? `&annotationName=${evt.annotationName}` : ''
-      const internal = evt.internal ? `&internal=${evt.internal}` : ''
-      const endpoint = `api/v1/notes?${userEmail}${annotationName}${internal}`
+      const userEmail = evt.userEmail ? `email=${evt.userEmail}` : ''
+      const clientUrn = evt.clientUrn ? `&clientUrn=${evt.clientUrn}` : ''
+      const locationUrns = (evt.locationUrns.length > 0)
+        ? `&locationUrns=${evt.locationUrns}`
+        : ''
+      const category = evt.annotationName ? `&annotationName=${evt.annotationName}` : ''
+      const internal = evt.isInternal ? `&internal=${evt.isInternal}` : ''
+      const type = evt.annotationType ? `&annotationType=${evt.annotationType}` : ''
+      const endpoint = `api/v1/notes?${userEmail}${category}${clientUrn}${locationUrns}${type}${internal}`
       this.isBusy = true
       this.$axios
         .$get(endpoint)
         .then((res) => {
-          this.fields = this.createFields(res[0])
-          this.totalRows = res.length
-          this.notes = res
+          if (res.length > 0) {
+            this.fields = this.createFields(res[0])
+            this.totalRows = res.length
+            this.notes = res
+          } else {
+            this.totalRows = 0
+            this.notes = []
+          }
         })
         .catch(() => {
           this.isError = true
@@ -462,16 +474,13 @@ export default {
     }
   }
 }
-.sidebar-gradient {
-  background: linear-gradient(35deg, #19356a, #2f38b0 ,#0b233f);
-}
 .primary-header {
-  background: linear-gradient(35deg, #19356a, #2f38b0 ,#0b233f);
-  background-size: 125% 120px;
-  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+  background: radial-gradient(circle at bottom center, #0b233f, transparent), linear-gradient(35deg, #19356a, #2f38b0 ,#0b233f);
+  box-shadow: 0 5px 50px rgba(0, 0, 0, 0.25);
   z-index: 10;
+  transition: 200ms ease-in-out;
   &:hover {
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
   }
 }
 .hover-anchor {

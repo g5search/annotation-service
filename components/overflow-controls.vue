@@ -34,6 +34,8 @@
             id="location-select"
             :value="location"
             :options="locations"
+            :multiple="true"
+            :custom-label="l => `${l.display_name ? l.display_name : l.name}`"
             @input="onUpdate({ key: 'location', value: $event })"
           />
         </b-form-group>
@@ -173,15 +175,25 @@
       </b-row>
     </b-card>
     <b-row>
-      <b-col cols="6">
+      <b-col cols="8">
         <b-btn
           id="filter-table-btn"
-          @click="onSubmit"
           variant="primary"
           block
+          @click="onSubmit"
         >
           <b-spinner v-if="isBusy" small />
           Update Table
+        </b-btn>
+      </b-col>
+      <b-col cols="4">
+        <b-btn
+          id="clear-filters"
+          variant="tertiary-2"
+          block
+          @click="onReset"
+        >
+          Clear Filters
         </b-btn>
       </b-col>
     </b-row>
@@ -223,9 +235,17 @@ export default {
   }),
   methods: {
     ...mapActions({
-      onUpdate: 'controls/onUpdate'
+      onUpdate: 'controls/onUpdate',
+      reset: 'controls/onReset'
     }),
+    onReset() {
+      this.reset()
+      this.onSubmit()
+    },
     async getLocations(evt) {
+      if (!evt) {
+        return
+      }
       this.onUpdate({ key: 'client', value: evt })
       await this.$axios
         .$get(`api/hub/clients/${this.client.urn}/locations`)
@@ -236,7 +256,9 @@ export default {
         userEmail: this.user ? this.user : null,
         annotationName: this.category ? this.category : null,
         annotationType: this.actionType ? this.actionType : null,
-        clients: this.client ? this.client.urn : null
+        clientUrn: this.client ? this.client.urn : null,
+        locationUrns: this.location ? this.location.map(l => l.urn) : null,
+        isInternal: this.isInternal !== null ? this.isInternal : null
       })
     }
   }
