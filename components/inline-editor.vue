@@ -223,7 +223,9 @@ export default {
           internal: this.local.internal,
           annotationCategory: this.local.annotationCategory.value,
           annotationType: this.local.annotationType,
-          annotationUser: this.local.user.value
+          annotationUser: this.local.user.value,
+          clientUrn: this.local.client.urn,
+          locationUrns: this.local.locations.map(l => l.urn)
         })
         .then(() => {
           this.$emit('on-close')

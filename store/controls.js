@@ -139,6 +139,12 @@ export const mutations = {
     state.category = null
     state.actionType = null
     state.user = null
+    state.isInternal = null
+    state.startDate = null
+    state.endDate = null
+    state.isCreatedAt = true
+    state.fromDate = null
+    state.toDate = ''
   },
   FILL_CLIENTS(state, payload) {
     state.clients = payload

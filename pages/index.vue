@@ -141,6 +141,7 @@
             :current-page="currentPage"
             :per-page="perPage"
             :busy="isBusy"
+            primary-key="id"
             show-empty
             no-border-collapse
             responsive
@@ -478,7 +479,7 @@ export default {
   }
 }
 .primary-header {
-  background: radial-gradient(circle at bottom center, #0b233f, transparent), linear-gradient(35deg, #19356a, #2f38b0 ,#0b233f);
+  background: linear-gradient(35deg, #19356a, #2f38b0 ,#0b233f);
   box-shadow: 0 5px 50px rgba(0, 0, 0, 0.25);
   z-index: 10;
   transition: 200ms ease-in-out;
