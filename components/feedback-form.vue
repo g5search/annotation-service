@@ -10,10 +10,14 @@
     <b-form-group label="Comment">
       <b-form-textarea
         v-model="comments"
+        :state="comments === '' ? null : commentLength <= 250"
         placeholder="Tell us how you really feel..."
         rows="6"
       />
     </b-form-group>
+    <b-form-text class="text-muted text-right">
+      {{ commentLength }} / 250
+    </b-form-text>
     <b-btn
       :disabled="!isReady"
       variant="primary"
@@ -45,6 +49,7 @@ export default {
     },
     isReady() {
       return this.comments.length !== 0 &&
+        this.commentLength <= 250 &&
         this.type !== null
     }
   },
@@ -55,6 +60,10 @@ export default {
         .$post('api/v1/feedback', {
           type: this.type,
           comments: this.comments
+        })
+        .finally(() => {
+          this.type = null
+          this.comments = ''
         })
     }
   }

@@ -23,7 +23,7 @@
           :multiple="true"
           :allow-empty="false"
           :close-on-select="false"
-          :custom-label="l => `${l.name}`"
+          :custom-label="l => `${l.display_name ? l.display_name : l.name}`"
           track-by="urn"
           label="name"
           @open="$emit('FETCH CLIENT LOCATIONS HERE')"
@@ -223,7 +223,9 @@ export default {
           internal: this.local.internal,
           annotationCategory: this.local.annotationCategory.value,
           annotationType: this.local.annotationType,
-          annotationUser: this.local.user.value
+          annotationUser: this.local.user.value,
+          clientUrn: this.local.client.urn,
+          locationUrns: this.local.locations.map(l => l.urn)
         })
         .then(() => {
           this.$emit('on-close')

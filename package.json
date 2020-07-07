@@ -1,6 +1,6 @@
 {
   "name": "opex-template",
-  "version": "1.0.1",
+  "version": "1.1.23",
   "description": "A full stack app template for the G5 OpEx team.",
   "author": "David Miller & Tyler Hasenoehrl",
   "private": true,

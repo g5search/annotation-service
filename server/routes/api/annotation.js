@@ -102,7 +102,7 @@ module.exports = (app) => {
     },
     query
     )
-    console.log({ userWhere, categoryWhere, where, typeWhere, clientWhere })
+    // console.log({ userWhere, categoryWhere, where, typeWhere, clientWhere })
     const notes = await models.annotation.findAll({
       where,
       include: [

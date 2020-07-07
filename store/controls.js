@@ -14,7 +14,7 @@ export const state = () => ({
   users: [],
   category: null,
   categories: [
-    { text: 'Select option', value: null },
+    { text: 'Select Option', value: null },
     { text: 'Account Changes', value: 'Account Changes' },
     { text: 'Customer Contact', value: 'Customer Contact' },
     { text: 'General Note', value: 'General Note' },
@@ -24,6 +24,9 @@ export const state = () => ({
   ],
   actionType: null,
   actionTypes: {
+    null: [
+      { text: 'Select a Category First', value: null }
+    ],
     'Account Changes': [
       'Smart Bidding Strategy Change',
       'Specials/Promotions',
@@ -47,7 +50,8 @@ export const state = () => ({
       'Enabled Campaign',
       'Refreshed Ad Copy',
       'Testing',
-      'T & O Added',
+      // eslint-disable-next-line
+      'T \& O Added',
       'Manual Spend Adjustments',
       'Manual Bid Adjustments'
     ],
@@ -91,6 +95,9 @@ export const actions = {
   async onUpdate({ commit }, payload) {
     await commit('ON_UPDATE', payload)
   },
+  async onReset({ commit }) {
+    await commit('ON_RESET')
+  },
   async fillClients({ commit }) {
     await this.$axios
       .$get('api/hub/clients')
@@ -99,17 +106,45 @@ export const actions = {
   async fillUsers({ commit }) {
     await this.$axios
       .$get('api/v1/strategists')
-      .then(user => user.map(u => ({
+      .then(user => [...user.map(u => ({
         text: `${u.first_name} ${u.last_name}`,
         value: u.email
-      })))
+      })), { text: 'Select a User', value: null }])
       .then(users => commit('FILL_USERS', users))
+  }
+}
+
+export const getters = {
+  showDates(state) {
+    const matches = [
+      'Specials/Promotions',
+      'Testing',
+      'Uncontrollable Circumstance',
+      'DA WoW',
+      'Other',
+      'Dynamic Pricing',
+      'Dynamic Availability'
+    ]
+    return matches.includes(state.actionType)
   }
 }
 
 export const mutations = {
   ON_UPDATE(state, payload) {
     state[payload.key] = payload.value
+  },
+  ON_RESET(state) {
+    state.client = null
+    state.location = []
+    state.category = null
+    state.actionType = null
+    state.user = null
+    state.isInternal = null
+    state.startDate = null
+    state.endDate = null
+    state.isCreatedAt = true
+    state.fromDate = null
+    state.toDate = ''
   },
   FILL_CLIENTS(state, payload) {
     state.clients = payload
