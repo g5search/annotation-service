@@ -3,7 +3,7 @@
     <div class="ceph-container" @click="isOpen = !isOpen">
       <octopus
         :size="`6em`"
-        :color="`#334159`"
+        :color="octColors[rdm(0, octColors.length)]"
         :class="[{ 'is-open': isOpen }, 'ceph-container__svg', 'shadowed']"
       />
       <div class="ceph-container__title text-primary">
@@ -18,31 +18,36 @@
       right
       width="450px"
       shadow
+      bg-variant="neutral"
       sidebar-class="px-2"
     >
       <b-card no-body>
         <b-tabs card>
-          <b-tab>
+          <b-tab no-body>
             <template v-slot:title>
               <b-icon-filter />
+              Filters
             </template>
             <controls :is-busy="isBusy" @on-submit="onSubmit" />
           </b-tab>
-          <b-tab>
+          <b-tab no-body>
             <template v-slot:title>
               <b-icon-card-text />
+              New Note
             </template>
             <note-editor />
           </b-tab>
           <b-tab>
             <template v-slot:title>
-              <b-icon-gear-wide-connected />
+              <b-icon-chat-quote />
+              Feedback
             </template>
-            <small class="text-right text-muted">
-              v.{{ version }}
-            </small>
+            <feedback-form />
           </b-tab>
         </b-tabs>
+        <small class="text-right text-muted pr-3 pb-1">
+          v.{{ version }}
+        </small>
       </b-card>
 
     </b-sidebar>
@@ -57,11 +62,8 @@
           <template v-slot:header>
             <b-input-group>
               <template v-slot:prepend>
-                <b-input-group-text class="text-primary">
+                <b-input-group-text class="bg-transparent text-light border-0">
                   <b-icon-search />
-                  <span class="ml-2">
-                    Search
-                  </span>
                 </b-input-group-text>
               </template>
               <b-form-input
@@ -71,6 +73,7 @@
                 <b-btn
                   v-show="search !== ''"
                   @click="onClear"
+                  variant="transparent text-light"
                 >
                   <b-icon-x-circle />
                 </b-btn>
@@ -79,15 +82,15 @@
             <b-btn
               id="filter-me-btn"
               @click="onFilterMe"
-              variant="primary"
-              class="ml-2"
+              variant="transparent text-light"
+              class="ml-2 align-middle"
             >
               <b-icon-person-circle />
             </b-btn>
             <b-input-group class="ml-2">
               <template v-slot:prepend>
-                <b-input-group-text>
-                  Per Page
+                <b-input-group-text class="text-light bg-primary border-primary">
+                  Show Rows
                 </b-input-group-text>
               </template>
               <b-form-select
@@ -101,17 +104,25 @@
               :per-page="perPage"
               class="my-0 mx-2"
             />
-            <!-- <b-btn
+            <b-btn
               id="download-csv-btn"
               :href="downloadCsv"
               download="notes.csv"
-              variant="primary"
+              variant="transparent text-light"
               class="d-flex align-items-center mr-2"
             >
-              <b-icon-download />
-            </b-btn> -->
+              <b-icon icon="file-spreadsheet" />
+            </b-btn>
+            <b-tooltip
+              target="download-csv-btn"
+              triggers="hover"
+              placement="bottom"
+              variant="primary-1"
+            >
+              Download a CSV of the current table
+            </b-tooltip>
             <b-btn
-              variant="primary"
+              variant="transparent text-light"
               class="d-flex align-items-center"
               @click="isOpen = !isOpen"
             >
@@ -119,6 +130,7 @@
             </b-btn>
           </template>
           <b-table
+            ref="notesTable"
             :fields="fields"
             :items="notes"
             :filter="search"
@@ -208,8 +220,16 @@
               </b-badge>
             </template>
             <template v-slot:cell(salesforceSync)="row">
-              <b-icon-check-circle-fill v-if="row.item.salesforceSync" scale="1.2" class="text-success" />
-              <b-icon-x-circle-fill v-else scale="1.2" class="text-tertiary" />
+              <b-icon-check-circle-fill
+                v-if="row.item.salesforceSync"
+                scale="1.2"
+                class="text-success"
+              />
+              <b-icon-x-circle-fill
+                v-else
+                scale="1.2"
+                class="text-tertiary"
+              />
             </template>
             <template v-slot:cell(note)="row">
               <span v-html="row.item.note" />
@@ -219,16 +239,18 @@
                 <b-btn
                   :variant="row.detailsShowing ? 'primary' : 'transparent'"
                   class="align-middle"
+                  pill
                   @click="onToggle(row)"
                 >
-                  <b-icon-pencil-square scale="0.8" />
+                  <b-icon-pencil-square scale="1.2" />
                 </b-btn>
                 <b-btn
                   variant="transparent"
                   class="ml-2 align-middle text-tertiary"
+                  pill
                   @click="onDrop(row)"
                 >
-                  <b-icon-trash scale="0.8" />
+                  <b-icon-trash scale="1.2" />
                 </b-btn>
               </div>
             </template>
@@ -257,12 +279,14 @@ import { version } from '~/package.json'
 import Octopus from '~/components/icons/octopus'
 import Controls from '~/components/overflow-controls'
 import NoteEditor from '~/components/note-editor'
+import FeedbackForm from '~/components/feedback-form'
 import InlineEditor from '~/components/inline-editor'
 import PapaMixin from '~/mixins/papaparse'
 export default {
   components: {
     Octopus,
     Controls,
+    FeedbackForm,
     InlineEditor,
     NoteEditor
   },
@@ -309,7 +333,13 @@ export default {
       currentPage: 1,
       perPage: 10,
       pageOptions: [10, 20, 50, 100],
-      search: ''
+      search: '',
+      octColors: [
+        '#234082',
+        '#0b233f',
+        '#2f38b0',
+        '#e00033'
+      ]
     }
   },
   computed: {
@@ -320,13 +350,28 @@ export default {
       actionTypes: state => state.controls.actionTypes
     })
   },
+  mounted() {
+    this.updateCsv()
+  },
   methods: {
+    rdm(min, max) {
+      return Math.random() * (max - min) + min
+    },
     onClear() {
       this.search = ''
     },
     onFilterMe() {
-      this.isBusy = !this.isBusy
-      // submit fetch with email as this.me.email
+      this.isBusy = true
+      const endpoint = `api/v1/notes?userEmail=${this.me.email}`
+      this.$axios
+        .$get(endpoint)
+        .then(() => {
+          this.updateCsv()
+          this.isBusy = false
+        })
+    },
+    updateCsv() {
+      this.unparse(this.$refs.notesTable.$data.localItems)
     },
     onDrop(row) {},
     onToggle(row) {
@@ -338,33 +383,37 @@ export default {
       this.$emit('submitting', payload)
       this.onUpdate(payload)
     },
+    createFields(row) {
+      const reject = [
+        'id',
+        'annotation',
+        'external_id',
+        'client',
+        'locations',
+        'user',
+        'startDate',
+        'endDate'
+      ]
+      return [
+        ...Object.keys(row)
+          .map(key => ({
+            key,
+            sortable: true,
+            class: 'text-center align-middle'
+          })).filter(field => !reject.includes(field.key)),
+        { key: 'Edit', class: 'text-center align-middle' }
+      ]
+    },
     onUpdate(evt) {
       const userEmail = evt.userEmail ? `userEmail=${evt.userEmail}` : ''
-      const annotationName = evt.annotationName ? `annotationName=${evt.annotationName}` : ''
-      const endpoint = `api/v1/notes?${userEmail}&${annotationName}`
+      const annotationName = evt.annotationName ? `&annotationName=${evt.annotationName}` : ''
+      const internal = evt.internal ? `&internal=${evt.internal}` : ''
+      const endpoint = `api/v1/notes?${userEmail}${annotationName}${internal}`
       this.isBusy = true
       this.$axios
         .$get(endpoint)
         .then((res) => {
-          const reject = [
-            'id',
-            'annotation',
-            'external_id',
-            'client',
-            'locations',
-            'user',
-            'startDate',
-            'endDate'
-          ]
-          this.fields = [
-            ...Object.keys(res[0])
-              .map(key => ({
-                key,
-                sortable: true,
-                class: 'text-center align-middle'
-              })).filter(field => !reject.includes(field.key)),
-            { key: 'Edit', class: 'text-center align-middle' }
-          ]
+          this.fields = this.createFields(res[0])
           this.totalRows = res.length
           this.notes = res
         })
@@ -373,6 +422,7 @@ export default {
         })
         .finally(() => {
           this.isBusy = false
+          this.updateCsv()
         })
     }
   }
@@ -412,13 +462,22 @@ export default {
     }
   }
 }
+.sidebar-gradient {
+  background: linear-gradient(35deg, #19356a, #2f38b0 ,#0b233f);
+}
 .primary-header {
-  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);
+  background: linear-gradient(35deg, #19356a, #2f38b0 ,#0b233f);
+  background-size: 125% 120px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+  &:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  }
 }
 .hover-anchor {
   position: relative;
   background-color: inherit;
-  transition: 200ms ease-in-out;
+  // transition: 200ms ease-in-out;
   border-radius: 20px / 50% 0 0 50%;
   height: calc(100% + 10px);
   padding: 5px 0;

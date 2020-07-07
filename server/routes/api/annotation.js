@@ -81,6 +81,7 @@ module.exports = (app) => {
     res.json(note)
   })
 
+  // returns simplified user to client-side
   app.get('/api/v1/whoami', async (req, res) => {
     if (req.user.email) {
       const { email, firstName, lastName } = req.user
