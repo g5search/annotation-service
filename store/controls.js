@@ -50,7 +50,8 @@ export const state = () => ({
       'Enabled Campaign',
       'Refreshed Ad Copy',
       'Testing',
-      'T & O Added',
+      // eslint-disable-next-line
+      'T \& O Added',
       'Manual Spend Adjustments',
       'Manual Bid Adjustments'
     ],
@@ -110,6 +111,21 @@ export const actions = {
         value: u.email
       })), { text: 'Select a User', value: null }])
       .then(users => commit('FILL_USERS', users))
+  }
+}
+
+export const getters = {
+  showDates(state) {
+    const matches = [
+      'Specials/Promotions',
+      'Testing',
+      'Uncontrollable Circumstance',
+      'DA WoW',
+      'Other',
+      'Dynamic Pricing',
+      'Dynamic Availability'
+    ]
+    return matches.includes(state.actionType)
   }
 }
 

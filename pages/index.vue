@@ -18,37 +18,34 @@
       right
       width="450px"
       shadow
-      sidebar-class="px-2"
+      sidebar-class="px-0"
     >
-      <b-card no-body>
-        <b-tabs card>
-          <b-tab no-body title-item-class="align-middle">
-            <template v-slot:title>
-              <b-icon-filter />
-              Filters
-            </template>
-            <controls :is-busy="isBusy" @on-submit="onSubmit" />
-          </b-tab>
-          <b-tab no-body>
-            <template v-slot:title>
-              <b-icon-card-text />
-              New Note
-            </template>
-            <note-editor />
-          </b-tab>
-          <b-tab>
-            <template v-slot:title>
-              <b-icon-chat-quote />
-              Feedback
-            </template>
-            <feedback-form />
-          </b-tab>
-        </b-tabs>
-        <small class="text-right text-muted pr-3 pb-1">
-          v.{{ version }}
-        </small>
-      </b-card>
-
+      <b-tabs card class="my-0 bg-white">
+        <b-tab no-body>
+          <template v-slot:title>
+            <b-icon-filter scale="0.8" />
+            Filters
+          </template>
+          <controls :is-busy="isBusy" @on-submit="onSubmit" />
+        </b-tab>
+        <b-tab no-body>
+          <template v-slot:title>
+            <b-icon-card-text scale="0.8" />
+            New Note
+          </template>
+          <note-editor />
+        </b-tab>
+        <b-tab>
+          <template v-slot:title>
+            <b-icon-chat-quote scale="0.8" />
+            Feedback
+          </template>
+          <feedback-form />
+        </b-tab>
+      </b-tabs>
+      <small class="text-right text-muted px-3 pb-1">
+        v.{{ version }}
+      </small>
     </b-sidebar>
     <b-row no-gutters>
       <b-col>
@@ -407,15 +404,18 @@ export default {
       ]
     },
     onUpdate(evt) {
-      const userEmail = evt.userEmail ? `email=${evt.userEmail}` : ''
-      const clientUrn = evt.clientUrn ? `&clientUrn=${evt.clientUrn}` : ''
+      const userEmail = evt.userEmail ? `email=${evt.userEmail}&` : ''
+      const clientUrn = evt.clientUrn ? `clientUrn=${evt.clientUrn}&` : ''
       const locationUrns = (evt.locationUrns.length > 0)
-        ? `&locationUrns=${evt.locationUrns}`
+        ? `locationUrns=${evt.locationUrns}&`
         : ''
-      const category = evt.annotationName ? `&annotationName=${evt.annotationName}` : ''
-      const internal = evt.isInternal ? `&internal=${evt.isInternal}` : ''
-      const type = evt.annotationType ? `&annotationType=${evt.annotationType}` : ''
-      const endpoint = `api/v1/notes?${userEmail}${category}${clientUrn}${locationUrns}${type}${internal}`
+      const searchBy = `searchBy=${evt.searchBy}&`
+      const fromDate = evt.from ? `from=${evt.from}&` : ''
+      const toDate = evt.to ? `to=${evt.to}&` : ''
+      const category = evt.annotationName ? `annotationName=${evt.annotationName}&` : ''
+      const internal = evt.isInternal ? `internal=${evt.isInternal}&` : ''
+      const type = evt.annotationType ? `annotationType=${evt.annotationType}` : ''
+      const endpoint = `api/v1/notes?${userEmail}${category}${clientUrn}${locationUrns}${searchBy}${fromDate}${toDate}${internal}${type}`
       this.isBusy = true
       this.$axios
         .$get(endpoint)
@@ -448,6 +448,9 @@ export default {
   right: 0%;
   z-index: 9999;
   transform: translate(-100%, -100%);
+  &:hover {
+    cursor: pointer;
+  }
   &__svg {
     position: absolute;
     top: 0%;

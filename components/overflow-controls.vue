@@ -87,13 +87,46 @@
             @input="onUpdate({ key: 'actionType', value: $event })"
           />
         </b-form-group>
+        <div v-show="showDates">
+          <b-form-group
+            label-cols="4"
+            label-class="d-flex align-items-center text-secondary justify-content-start"
+          >
+            <template v-slot:label>
+              <b-icon-calendar />
+              <span class="ml-2">
+                Start Date
+              </span>
+            </template>
+            <b-form-datepicker
+              :value="startDate"
+              @input="onUpdate({ key: 'startDate', value: $event })"
+            />
+          </b-form-group>
+          <b-form-group
+            label-cols="4"
+            label-class="d-flex align-items-center text-secondary justify-content-start"
+          >
+            <template v-slot:label>
+              <b-icon-calendar />
+              <span class="ml-2">
+                End Date
+              </span>
+            </template>
+            <b-form-datepicker
+              :value="endDate"
+              @input="onUpdate({ key: 'endDate', value: $event })"
+            />
+          </b-form-group>
+        </div>
         <b-form-group
           label-cols="4"
           label-class="d-flex align-items-center text-secondary justify-content-start"
         >
           <template v-slot:label>
+            <b-icon-eye />
             <span class="ml-2">
-              Is Internal
+              Visibility
             </span>
           </template>
           <b-form-select
@@ -103,41 +136,11 @@
             @input="onUpdate({ key: 'isInternal', value: $event })"
           />
         </b-form-group>
-        <b-form-group
-          label-cols="4"
-          label-class="d-flex align-items-center text-secondary justify-content-start"
-        >
-          <template v-slot:label>
-            <b-icon-calendar-date-fill />
-            <span class="ml-2">
-              Start Date
-            </span>
-          </template>
-          <b-form-datepicker
-            :value="startDate"
-            @input="onUpdate({ key: 'startDate', value: $event })"
-          />
-        </b-form-group>
-        <b-form-group
-          label-cols="4"
-          label-class="d-flex align-items-center text-secondary justify-content-start"
-        >
-          <template v-slot:label>
-            <b-icon-calendar-date-fill />
-            <span class="ml-2">
-              End Date
-            </span>
-          </template>
-          <b-form-datepicker
-            :value="endDate"
-            @input="onUpdate({ key: 'endDate', value: $event })"
-          />
-        </b-form-group>
       </b-col>
     </b-row>
-    <b-card no-body class="p-2 mb-3">
+    <b-card no-body bg-variant="neutral" class="border-0 py-2 px-3 mb-3">
       <b-row>
-        <b-col>
+        <b-col class="mb-2 text-secondary">
           <b-form-checkbox
             :checked="isCreatedAt"
             @change="onUpdate({ key: 'isCreatedAt', value: $event })"
@@ -149,10 +152,11 @@
         </b-col>
       </b-row>
       <b-row>
-        <b-col cols="6">
+        <b-col cols="12">
           <b-form-group
             label="From"
             label-class="text-secondary"
+            label-cols="4"
           >
             <b-form-datepicker
               :value="fromDate"
@@ -160,10 +164,11 @@
             />
           </b-form-group>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12">
           <b-form-group
             label="To"
             label-class="text-secondary"
+            label-cols="4"
           >
             <b-form-datepicker
               :value="toDate"
@@ -201,7 +206,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import VueMultiselect from 'vue-multiselect'
 export default {
   components: {
@@ -213,26 +218,31 @@ export default {
       default: false
     }
   },
-  computed: mapState({
-    client: state => state.controls.client,
-    clients: state => state.controls.clients,
-    location: state => state.controls.location,
-    locations: state => state.controls.locations,
-    user: state => state.controls.user,
-    users: state => state.controls.users,
-    category: state => state.controls.category,
-    categories: state => state.controls.categories,
-    actionType: state => state.controls.actionType,
-    actionTypes: state => state.controls.actionTypes,
-    isInternal: state => state.controls.isInternal,
-    isInternals: state => state.controls.isInternals,
-    startDate: state => state.controls.startDate,
-    endDate: state => state.controls.endDate,
-    isCreatedAt: state => state.controls.isCreatedAt,
-    fromDate: state => state.controls.fromDate,
-    toDate: state => state.controls.toDate,
-    salesforceSync: state => state.controls.salesforceSync
-  }),
+  computed: {
+    ...mapState({
+      client: state => state.controls.client,
+      clients: state => state.controls.clients,
+      location: state => state.controls.location,
+      locations: state => state.controls.locations,
+      user: state => state.controls.user,
+      users: state => state.controls.users,
+      category: state => state.controls.category,
+      categories: state => state.controls.categories,
+      actionType: state => state.controls.actionType,
+      actionTypes: state => state.controls.actionTypes,
+      isInternal: state => state.controls.isInternal,
+      isInternals: state => state.controls.isInternals,
+      startDate: state => state.controls.startDate,
+      endDate: state => state.controls.endDate,
+      isCreatedAt: state => state.controls.isCreatedAt,
+      fromDate: state => state.controls.fromDate,
+      toDate: state => state.controls.toDate,
+      salesforceSync: state => state.controls.salesforceSync
+    }),
+    ...mapGetters({
+      showDates: 'controls/showDates'
+    })
+  },
   methods: {
     ...mapActions({
       onUpdate: 'controls/onUpdate',
@@ -258,7 +268,12 @@ export default {
         annotationType: this.actionType ? this.actionType : null,
         clientUrn: this.client ? this.client.urn : null,
         locationUrns: this.location ? this.location.map(l => l.urn) : null,
-        isInternal: this.isInternal !== null ? this.isInternal : null
+        isInternal: this.isInternal !== null ? this.isInternal : null,
+        searchBy: this.isCreatedAt ? 'createdAt' : 'updatedAt',
+        from: this.fromDate ? this.fromDate : null,
+        to: this.toDate ? this.toDate : null,
+        startDate: this.startDate ? this.startDate : null,
+        endDate: this.endDate ? this.endDate : null
       })
     }
   }
