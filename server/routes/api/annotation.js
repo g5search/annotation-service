@@ -93,23 +93,15 @@ module.exports = (app) => {
 
   app.get('/api/v1/notes', async (req, res) => {
     const { query } = req
-    let where = {}
-    let categoryWhere = {}
-    let typeWhere = {}
-    let userWhere = {}
-    let clientWhere = {}
-    let locationWhere = {}
-    if (Object.keys(query).length !== 0) {
-      console.log({ query })
-      const { group1, group2 } = objectUtil.split(query, [])
-      console.log({ group1, group2 })
-      categoryWhere = group2.annotationName ? { name: group2.annotationName } : {}
-      typeWhere = group2.annotationName ? { name: group2.annotationType } : {}
-      userWhere = group2.userEmail ? { email: group2.userEmail } : {}
-      clientWhere = group2.clients ? { urn: group2.clients } : {}
-      // locationWhere = { urn: group2.locations || '' }
-      where = group1
-    }
+    const { categoryWhere, typeWhere, userWhere, clientWhere, noGroup: where } = objectUtil.group({
+      categoryWhere: ['annotationName'],
+      typeWhere: ['annotationType'],
+      userWhere: [['userEmail', 'email']],
+      clientWhere: ['clients'],
+      locationWhere: ['urn']
+    },
+    query
+    )
     console.log({ userWhere, categoryWhere, where, typeWhere, clientWhere })
     const notes = await models.annotation.findAll({
       where,
@@ -136,7 +128,7 @@ module.exports = (app) => {
         },
         {
           model: models.g5_updatable_location,
-          where: locationWhere,
+          // where: locationWhere,
           attributes: [
             'name',
             'display_name',
@@ -182,7 +174,7 @@ module.exports = (app) => {
         salesforceSync,
         note: html,
         annotation,
-        clientName: g5_updatable_client.name,
+        clientName: g5_updatable_client ? g5_updatable_client.name : null,
         locationNames: g5_updatable_locations.map(l => l.name),
         client: g5_updatable_client,
         locations: g5_updatable_locations
