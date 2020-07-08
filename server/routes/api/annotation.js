@@ -100,8 +100,8 @@ module.exports = (app) => {
       clientWhere,
       noGroup: where
     } = objectUtil.group({
-      categoryWhere: ['annotationName'],
-      typeWhere: ['annotationType'],
+      categoryWhere: [['annotationName', 'name']],
+      typeWhere: [['annotationType', 'name']],
       userWhere: ['email'],
       clientWhere: [['clientUrn', 'urn']],
       locationWhere: ['urn'],
