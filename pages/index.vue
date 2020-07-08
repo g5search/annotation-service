@@ -64,6 +64,7 @@
               </template>
               <b-form-input
                 v-model="search"
+                class="h1 text-white"
               />
               <template v-slot:append>
                 <b-btn
@@ -362,7 +363,7 @@ export default {
     },
     onFilterMe() {
       this.isBusy = true
-      const endpoint = `api/v1/notes?userEmail=${this.me.email}`
+      const endpoint = `api/v1/notes?email=${this.me.email}`
       this.$axios
         .$get(endpoint)
         .then(() => {
@@ -414,7 +415,7 @@ export default {
       const fromDate = evt.from ? `from=${evt.from}&` : ''
       const toDate = evt.to ? `to=${evt.to}&` : ''
       const category = evt.annotationName ? `annotationName=${evt.annotationName}&` : ''
-      const internal = evt.isInternal ? `internal=${evt.isInternal}&` : ''
+      const internal = evt.isInternal !== null ? `internal=${evt.isInternal}&` : ''
       const type = evt.annotationType ? `annotationType=${evt.annotationType}` : ''
       const endpoint = `api/v1/notes?${userEmail}${category}${clientUrn}${locationUrns}${searchBy}${fromDate}${toDate}${internal}${type}`
       this.isBusy = true
@@ -485,6 +486,15 @@ export default {
   transition: 200ms ease-in-out;
   &:hover {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+  }
+  & .input-group > .form-control {
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid white;
+    transition: 200ms ease;
+    &:focus {
+      border-bottom-width: 1px;
+    }
   }
 }
 .hover-anchor {

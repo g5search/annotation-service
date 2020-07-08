@@ -55,7 +55,7 @@ module.exports = {
     icons: true
   },
   axios: {
-    debug: true,
+    debug: false,
     https: true,
     browserBaseURL: `//${process.env.BROWSER_URL}`
   },

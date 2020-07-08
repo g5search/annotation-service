@@ -93,16 +93,22 @@ module.exports = (app) => {
 
   app.get('/api/v1/notes', async (req, res) => {
     const { query } = req
-    const { categoryWhere, typeWhere, userWhere, clientWhere, noGroup: where } = objectUtil.group({
+    const {
+      categoryWhere,
+      typeWhere,
+      userWhere,
+      clientWhere,
+      noGroup: where
+    } = objectUtil.group({
       categoryWhere: ['annotationName'],
       typeWhere: ['annotationType'],
-      userWhere: [['userEmail', 'email']],
-      clientWhere: ['clients'],
-      locationWhere: ['urn']
-    },
-    query
-    )
-    // console.log({ userWhere, categoryWhere, where, typeWhere, clientWhere })
+      userWhere: ['email'],
+      clientWhere: [['clientUrn', 'urn']],
+      locationWhere: ['urn'],
+      searchBy: ['searchBy']
+    }, query)
+
+    console.log({ userWhere, categoryWhere, where, typeWhere, clientWhere })
     const notes = await models.annotation.findAll({
       where,
       include: [
@@ -165,7 +171,12 @@ module.exports = (app) => {
         annotationUser: (!annotationUser)
           ? null
           : `${annotationUser.first_name} ${annotationUser.last_name}`,
-        user: (!annotationUser) ? null : { text: `${annotationUser.first_name} ${annotationUser.last_name}`, value: annotationUser.email },
+        user: (!annotationUser)
+          ? null
+          : {
+            text: `${annotationUser.first_name} ${annotationUser.last_name}`,
+            value: annotationUser.email
+          },
         external_id,
         startDate,
         endDate,
