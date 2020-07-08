@@ -4,7 +4,7 @@
       <b-col>
         <b-form-group
           label-cols="4"
-          label-class="d-flex align-items-center text-secondary justify-content-start"
+          label-class="d-flex align-items-center text-primary-2 justify-content-start"
         >
           <template v-slot:label>
             <span class="ml-2">
@@ -15,15 +15,15 @@
             id="client-select"
             :value="client"
             :options="clients"
-            @input="getLocations"
             placeholder="Search"
             track-by="urn"
             label="name"
+            @input="getLocations"
           />
         </b-form-group>
         <b-form-group
           label-cols="4"
-          label-class="d-flex align-items-center text-secondary justify-content-start"
+          label-class="d-flex align-items-center text-primary-2 justify-content-start"
         >
           <template v-slot:label>
             <span class="ml-2">
@@ -41,7 +41,7 @@
         </b-form-group>
         <b-form-group
           label-cols="4"
-          label-class="d-flex align-items-center text-secondary justify-content-start"
+          label-class="d-flex align-items-center text-primary-2 justify-content-start"
         >
           <template v-slot:label>
             <span class="ml-2">
@@ -57,7 +57,7 @@
         </b-form-group>
         <b-form-group
           label-cols="4"
-          label-class="d-flex align-items-center text-secondary justify-content-start"
+          label-class="d-flex align-items-center text-primary-2 justify-content-start"
         >
           <template v-slot:label>
             <span class="ml-2">
@@ -73,7 +73,7 @@
         </b-form-group>
         <b-form-group
           label-cols="4"
-          label-class="d-flex align-items-center text-secondary justify-content-start"
+          label-class="d-flex align-items-center text-primary-2 justify-content-start"
         >
           <template v-slot:label>
             <span class="ml-2">
@@ -90,7 +90,7 @@
         <div v-show="showDates">
           <b-form-group
             label-cols="4"
-            label-class="d-flex align-items-center text-secondary justify-content-start"
+            label-class="d-flex align-items-center text-primary-2 justify-content-start"
           >
             <template v-slot:label>
               <b-icon-calendar />
@@ -105,7 +105,7 @@
           </b-form-group>
           <b-form-group
             label-cols="4"
-            label-class="d-flex align-items-center text-secondary justify-content-start"
+            label-class="d-flex align-items-center text-primary-2 justify-content-start"
           >
             <template v-slot:label>
               <b-icon-calendar />
@@ -121,7 +121,7 @@
         </div>
         <b-form-group
           label-cols="4"
-          label-class="d-flex align-items-center text-secondary justify-content-start"
+          label-class="d-flex align-items-center text-primary-2 justify-content-start"
         >
           <template v-slot:label>
             <b-icon-eye />
@@ -140,7 +140,7 @@
     </b-row>
     <b-card no-body bg-variant="neutral" class="border-0 py-2 px-3 mb-3">
       <b-row>
-        <b-col class="mb-2 text-secondary">
+        <b-col class="mb-2 text-primary-2">
           <b-form-checkbox
             :checked="isCreatedAt"
             @change="onUpdate({ key: 'isCreatedAt', value: $event })"
@@ -155,7 +155,7 @@
         <b-col cols="12">
           <b-form-group
             label="From"
-            label-class="text-secondary"
+            label-class="text-primary-2"
             label-cols="4"
           >
             <b-form-datepicker
@@ -167,7 +167,7 @@
         <b-col cols="12">
           <b-form-group
             label="To"
-            label-class="text-secondary"
+            label-class="text-primary-2"
             label-cols="4"
           >
             <b-form-datepicker
@@ -257,6 +257,7 @@ export default {
         return
       }
       this.onUpdate({ key: 'client', value: evt })
+      this.onUpdate({ key: 'location', value: [] })
       await this.$axios
         .$get(`api/hub/clients/${this.client.urn}/locations`)
         .then(l => this.onUpdate({ key: 'locations', value: l }))
