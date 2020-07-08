@@ -173,7 +173,7 @@
             <b-form-datepicker
               :value="toDate"
               :min="fromDate"
-              @input="onUpdate({ key: 'fromDate', value: $event })"
+              @input="onUpdate({ key: 'toDate', value: $event })"
             />
           </b-form-group>
         </b-col>
