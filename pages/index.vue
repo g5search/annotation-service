@@ -372,7 +372,7 @@ export default {
         })
     },
     updateCsv() {
-      this.unparse(this.$refs.notesTable.$data.localItems)
+      this.unparse(this.$refs.notesTable.filteredItems)
     },
     onDrop(row) {},
     onToggle(row) {
