@@ -21,7 +21,6 @@
           v-model="local.locations"
           :options="locations"
           :multiple="true"
-          :allow-empty="false"
           :close-on-select="false"
           :custom-label="l => `${l.display_name ? l.display_name : l.name}`"
           track-by="urn"
