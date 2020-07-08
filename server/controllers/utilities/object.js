@@ -41,7 +41,13 @@ function split(obj, group1Keys) {
     return prev
   }, { group1: {}, group2: {} })
 }
-
+/**
+ *
+ *
+ * @param {*} groups
+ * @param {*} obj
+ * @returns
+ */
 function group(groups, obj) {
   const keys = Object.keys(groups)
   if (keys.length > 0) {

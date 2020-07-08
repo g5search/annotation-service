@@ -2,6 +2,7 @@ const cors = require('cors')
 const models = require('../../models')
 const whitelist = [/chrome-extension:\/\/[a-z]*$/]
 const objectUtil = require('../../controllers/utilities/object')
+const { Op } = require('sequelize')
 const corsOpts = {
   origin: (origin, callback) => {
     if (whitelist.some(pattern => pattern.test(origin)) || !origin) {
@@ -14,7 +15,7 @@ const corsOpts = {
 
 module.exports = (app) => {
   app.options('/api/v1/note', cors(corsOpts))
-  app.post('/api/v1/note', cors(corsOpts), async(req, res) => {
+  app.post('/api/v1/note', cors(corsOpts), async (req, res) => {
     let user = null
     let annotationUserId = null
     const { body } = req
@@ -40,7 +41,7 @@ module.exports = (app) => {
   })
 
   // DUPLICATE ROUTE FOR SAME ORIGIN API (CORS is blocking this)
-  app.post('/api/v1/new-note', async(req, res) => {
+  app.post('/api/v1/new-note', async (req, res) => {
     let user = null
     let annotationUserId = null
     const { body } = req
@@ -70,15 +71,48 @@ module.exports = (app) => {
     const { id } = req.params
     const { body } = req
     console.log({ body })
-    // client
-    // locations
-    // const [annotationUser] = await models.annotationUser.findOne({
-    //   where: { email: body.user }
-    // })
-    const note = await models.annotation.findOne({ where: { id } })
-    // TODO if client or locations change, preserve previous values to reassociate SF task.
-    await note.update(body)
-    res.json(note)
+    const result = await models.sequelize.transaction(async (t) => {
+      const note = await models.annotation.findOne(
+        {
+          where: { id },
+          include: [
+            {
+              model: models.g5_updatable_location
+            },
+            {
+              model: models.g5_updatable_client
+            },
+            {
+              model: models.annotationCategory
+            },
+            {
+              model: models.annotationType
+            }
+          ]
+        },
+        { transaction: t }
+      )
+      const [category] = await models.annotationCategory.findOrCreate({
+        defaults: { name: body.annotationCategory },
+        where: { name: body.annotationCategory }
+      })
+      const [actionType] = await models.annotationType.findOrCreate({
+        defaults: { name: body.annotationType },
+        where: { name: body.annotationType }
+      })
+      const locations = await models.g5_updatable_location.findAll({
+        where: {
+          urn: {
+            [Op.in]: body.locationUrns
+          }
+        }
+      }, { transaction: t })
+      await note.setG5_updatable_locations(locations, { transaction: t })
+      await note.setAnnotationType(actionType, { transaction: t })
+      await note.setAnnotationCategory(category, { transaction: t })
+      return note.update(body, { transaction: t })
+    })
+    res.json(result)
   })
 
   // returns simplified user to client-side
@@ -98,17 +132,26 @@ module.exports = (app) => {
       typeWhere,
       userWhere,
       clientWhere,
-      noGroup: where
+      noGroup: where,
+      locationWhere,
+      dates,
+      searchBy
     } = objectUtil.group({
       categoryWhere: [['annotationName', 'name']],
       typeWhere: [['annotationType', 'name']],
       userWhere: ['email'],
       clientWhere: [['clientUrn', 'urn']],
       locationWhere: ['urn'],
-      searchBy: ['searchBy']
+      searchBy: [['searchBy', 'column']],
+      dates: ['to', 'from']
     }, query)
-
-    console.log({ userWhere, categoryWhere, where, typeWhere, clientWhere })
+    if (dates.to && dates.from) {
+      where[searchBy.column] = { [Op.between]: [dates.from, dates.to] }
+    } else if (dates.to) {
+      where[searchBy.column] = { [Op.lte]: dates.to }
+    } else if (dates.from) {
+      where[searchBy.column] = { [Op.gte]: dates.from }
+    }
     const notes = await models.annotation.findAll({
       where,
       include: [
@@ -134,7 +177,7 @@ module.exports = (app) => {
         },
         {
           model: models.g5_updatable_location,
-          // where: locationWhere,
+          where: locationWhere,
           attributes: [
             'name',
             'display_name',
