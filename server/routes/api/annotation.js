@@ -42,29 +42,33 @@ module.exports = (app) => {
 
   // DUPLICATE ROUTE FOR SAME ORIGIN API (CORS is blocking this)
   app.post('/api/v1/new-note', async (req, res) => {
-    let user = null
-    let annotationUserId = null
-    const { body } = req
-    console.log({ body, user: req.user })
-    if (req.user.email) {
-      user = await models.annotationUser.findOne({ where: { email: req.user.email } })
-      annotationUserId = user.dataValues.id
-    } else if (body.user) {
-      const [annotationUser] = await models.annotationUser.findOrCreate({
-        where: {
-          email: body.user.email
-        },
-        defaults: {
-          email: body.user.email,
-          first_name: body.user.firstName,
-          last_name: body.user.lastName
-        }
-      })
-      user = annotationUser
-      annotationUserId = annotationUser.dataValues.id
+    try {
+      let user = null
+      let annotationUserId = null
+      const { body } = req
+      console.log({ body, user: req.user })
+      if (req.user.email) {
+        user = await models.annotationUser.findOne({ where: { email: req.user.email } })
+        annotationUserId = user.dataValues.id
+      } else if (body.user) {
+        const [annotationUser] = await models.annotationUser.findOrCreate({
+          where: {
+            email: body.user.email
+          },
+          defaults: {
+            email: body.user.email,
+            first_name: body.user.firstName,
+            last_name: body.user.lastName
+          }
+        })
+        user = annotationUser
+        annotationUserId = annotationUser.dataValues.id
+      }
+      const note = await models.annotation.createAndAssociate({ ...body, annotationUserId })
+      res.json(note)
+    } catch (err) {
+      res.sendStatus(500)
     }
-    const note = await models.annotation.createAndAssociate({ ...body, annotationUserId })
-    res.json(note)
   })
 
   app.put('/api/v1/note/:id', async (req, res) => {

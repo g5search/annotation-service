@@ -8,6 +8,7 @@ $theme-colors: (
   'primary-4': #5277c2,
   'primary-5': #19356a,
   'primary-6': #94abd7,
+  'primary-7': #3606e9,
   'secondary': #7898ad,
   'tertiary': #e8513e,
   'tertiary-0': #e37f72,
@@ -16,7 +17,8 @@ $theme-colors: (
   'quaternary': #eee23e,
   'quaternary-0': #f6f4d9,
   'success': #69ca8a,
-  'neutral': #e1e5e9
+  'neutral': #e1e5e9,
+  'pale': #e8e8e8
 );
 $font-family-base: 'Heebo', sans-serif;
 $headings-font-family: 'DM Serif Display', serif;
@@ -42,6 +44,12 @@ $body-bg: RGBA(242, 242, 242, 1.00);
   & > .table.b-table > thead > tr > th {
     top: -1px !important;
   }
+}
+.custom-select,
+.form-control,
+.multiselect__tags,
+.page-link {
+  border: 2px solid #e8e8e8;
 }
 .align-middle {
   vertical-align: text-bottom;

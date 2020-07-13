@@ -10,14 +10,14 @@
           footer-bg-variant="white"
         >
           <b-form-group
-            label-class="pt-1 pb-0 text-secondary d-flex w-100 align-items-center justify-content-start"
+            label-class="pt-1 pb-0 text-primary-1 d-flex w-100 align-items-center justify-content-start"
             class="mb-1 mt-0"
           >
             <template v-slot:label>
               <b-icon-briefcase />
               <span class="ml-2 flex-grow-1">
                 Client
-                <span class="smaller roman text-tertiary">
+                <span class="smaller text-tertiary">
                   *
                 </span>
               </span>
@@ -33,7 +33,7 @@
           </b-form-group>
           <b-form-group
             v-show="clientLocations"
-            label-class="pb-0 pt-1 text-secondary"
+            label-class="pb-0 pt-1 text-primary-1"
             class="my-1"
           >
             <template v-slot:label>
@@ -46,6 +46,7 @@
               :multiple="true"
               :close-on-select="false"
               :clear-on-select="false"
+              :custom-label="l => `${l.display_name ? l.display_name : l.name}`"
               placeholder="Search"
               track-by="urn"
               label="name"
@@ -63,16 +64,16 @@
               </template>
             </vue-multiselect>
           </b-form-group>
-          <b-card no-body class="my-2 py-1 px-2">
+          <b-card no-body class="my-2 py-3 pl-4 pr-2">
             <b-form-group
               label-cols="4"
-              label-class="text-secondary py-1"
+              label-class="text-primary-1 py-1"
               class="my-1"
             >
               <template v-slot:label>
                 <b-icon-collection />
                 Category
-                <span class="smaller roman text-tertiary">
+                <span class="smaller text-tertiary">
                   *
                 </span>
               </template>
@@ -83,7 +84,7 @@
             </b-form-group>
             <b-form-group
               label-cols="4"
-              label-class="text-secondary py-1"
+              label-class="text-primary-1 py-1"
               class="my-1"
             >
               <template v-slot:label>
@@ -99,43 +100,42 @@
             </b-form-group>
             <div v-show="showDates">
               <b-form-group
-                label-cols="3"
-                label-class="text-secondary"
-                class="mb-0 mt-1"
+                label-cols="4"
+                label-class="text-primary-1"
+                class="my-1"
               >
                 <template v-slot:label>
+                  <b-icon-calendar-date />
                   Start Date
                 </template>
                 <b-form-datepicker
                   v-model="startDate"
-                  size="sm"
                 />
               </b-form-group>
               <b-form-group
-                label-cols="3"
-                label-class="text-secondary"
-                class="my-0"
+                label-cols="4"
+                label-class="text-primary-1"
               >
                 <template v-slot:label>
+                  <b-icon-calendar-date />
                   End Date
                 </template>
                 <b-form-datepicker
                   v-model="endDate"
                   reset-button
                   reset-button-variant="outline-secondary"
-                  size="sm"
                 />
               </b-form-group>
             </div>
           </b-card>
           <b-card
-            :bg-variant="isInternal ? 'quaternary-lt4' : 'white'"
+            :bg-variant="isInternal ? 'quaternary-0' : 'white'"
             no-body
             class="border-0 p-2 mb-2"
           >
             <b-form-group
               label-class="d-flex w-100 align-items-center justify-content-between"
-              class="my-1 text-secondary"
+              class="my-1 text-primary-1"
             >
               <template v-slot:label>
                 <span>
@@ -161,99 +161,100 @@
                   <div class="d-flex justify-content-start menubar">
                     <b-btn
                       :class="[{ 'is-active': isActive.bold() }, 'menubar__btn']"
-                      variant="outline-secondary"
+                      variant="outline-primary-1"
                       @click="commands.bold"
                     >
-                      <b-icon-type-bold />
+                      <b-icon-type-bold style="vertical-align: -0.15em;" />
                     </b-btn>
                     <b-btn
                       :class="[{ 'is-active': isActive.italic() }, 'menubar__btn']"
-                      variant="outline-secondary"
+                      variant="outline-primary-1"
                       @click="commands.italic"
                     >
-                      <b-icon-type-italic />
+                      <b-icon-type-italic style="vertical-align: -0.15em;" />
                     </b-btn>
                     <b-btn
                       :class="[{ 'is-active': isActive.underline() }, 'menubar__btn']"
-                      variant="outline-secondary"
+                      variant="outline-primary-1"
                       @click="commands.underline"
                     >
-                      <b-icon-type-underline />
+                      <b-icon-type-underline style="vertical-align: -0.15em;" />
                     </b-btn>
                     <b-btn
                       :class="[{ 'is-active': isActive.strike() }, 'menubar__btn']"
-                      variant="outline-secondary"
+                      variant="outline-primary-1"
                       @click="commands.strike"
                     >
-                      <b-icon-type-strikethrough />
+                      <b-icon-type-strikethrough style="vertical-align: -0.15em;" />
                     </b-btn>
                     <b-btn
                       :class="[{ 'is-active': isActive.ordered_list() }, 'menubar__btn']"
-                      variant="outline-secondary"
+                      variant="outline-primary-1"
                       @click="commands.ordered_list"
                     >
-                      <b-icon-list-ol />
+                      <b-icon-list-ol style="vertical-align: -0.15em;" />
                     </b-btn>
                     <b-btn
                       :class="[{ 'is-active': isActive.bullet_list() }, 'menubar__btn']"
-                      variant="outline-secondary"
+                      variant="outline-primary-1"
                       @click="commands.bullet_list"
                     >
-                      <b-icon-list-ul />
+                      <b-icon-list-ul style="vertical-align: -0.15em;" />
                     </b-btn>
-                    <div class="menubar__spacer bg-secondary" />
+                    <div class="menubar__spacer bg-primary-1" />
                   </div>
                 </editor-menu-bar>
                 <editor-content :editor="editor" class="editor__content" />
               </div>
             </b-form-group>
           </b-card>
-          <b-card no-body class="mb-1 p-1">
+          <b-card no-body class="mb-1 p-2">
             <b-form-checkbox
               v-model="backdate"
               switch
               size="sm"
-              class="text-secondary"
+              class="text-muted"
             >
-              <b-icon-calendar />
+              <b-icon-calendar-fill />
               Manual Note Date
             </b-form-checkbox>
-            <div v-show="backdate">
+            <div v-show="backdate" class="px-2">
               <b-form-group
-                label-cols="3"
-                label-class="text-secondary"
-                class="my-0"
+                label-cols="4"
+                label-class="text-primary-1"
+                class="my-3"
               >
                 <template v-slot:label>
+                  <b-icon-calendar-date />
                   Note Date
                 </template>
                 <b-form-datepicker
                   v-model="noteDate"
                   reset-button
                   reset-button-variant="outline-secondary"
-                  size="sm"
                 />
               </b-form-group>
             </div>
           </b-card>
           <template v-slot:footer>
-            <b-btn-group class="w-100 d-flex">
+            <b-btn-group class="w-100 d-flex mt-3">
               <b-btn
                 :disabled="!isValid"
-                :variant="isValid ? 'secondary' : 'outline-secondary'"
-                class="roman flex-grow-1 btn-rad"
+                :variant="isValid ? 'primary-1' : 'outline-primary-1'"
+                class="h1 flex-grow-1 btn-rad"
                 @click="onSubmit"
               >
-                <b-icon-bookmark-plus />
+                <b-spinner v-if="isBusy" small style="vertical-align: -0.15em;" />
+                <b-icon-bookmark-plus v-else style="vertical-align: -0.15em;" />
                 Save Note
               </b-btn>
               <b-btn
                 id="reset"
-                variant="outline-tertiary"
-                class="ml-1 btn-rad px-2 roman flex-grow-0"
+                variant="tertiary-2"
+                class="h1 btn-rad flex-grow-0"
                 @click="onReset"
               >
-                <b-icon-trash />
+                <b-icon-trash style="vertical-align: -0.15em;" />
               </b-btn>
             </b-btn-group>
           </template>
@@ -262,10 +263,11 @@
             :show="dismissCountDown"
             variant="success"
             dismissible
+            class="w-100"
             @dismissed="dismissCountDown = 0"
             @dismiss-count-down="countDownChanged"
           >
-            <b-icon-check-circle />
+            <b-icon-check-circle scale="1.5" />
             Note Saved!
           </b-alert>
         </b-card>
@@ -302,7 +304,7 @@ export default {
       showLocation: false,
       showDates: false,
       backdate: false,
-      theme: 'secondary',
+      theme: 'primary-1',
       client: null,
       clientLocations: [],
       detectedClient: false,
@@ -377,12 +379,17 @@ export default {
     },
     onReset() {
       this.client = null
+      this.isBusy = false
       this.locations = []
       this.isInternal = true
       this.showAlert = true
       this.category = null
       this.actionType = null
       this.autoDetect = false
+      this.startDate = null
+      this.endDate = null
+      this.backdate = false
+      this.createdAt = null
       this.editor.clearContent()
     },
     countDownChanged(dismissCountDown) {
@@ -391,8 +398,12 @@ export default {
     showAlert() {
       this.dismissCountDown = this.dismissSecs
     },
+    onError() {
+      this.isError = true
+    },
     onSubmit() {
       const endpoint = 'api/v1/new-note'
+      this.isBusy = true
       this.$axios
         .$post(endpoint, {
           annotation: this.annotation.json,
@@ -406,11 +417,9 @@ export default {
           clientUrn: this.client.urn,
           locationUrns: this.locations.map(l => l.urn)
         })
-        .then(() => this.onReset())
-        .catch(() => {
-          this.isError = true
-          this.onReset()
-        })
+        .then(() => this.showAlert())
+        .catch(() => this.onError())
+        .finally(() => this.onReset())
     },
     onClientSelect(evt) {
       this.$axios
@@ -441,7 +450,7 @@ export default {
   &__content {
     font-size: 0.9em;
     padding: 0.5em 0.5em 0.25em;
-    border: 1px solid #7898ad;
+    border: 1px solid #0b233f;
     border-top: none;
     color: #0b233f;
     & .is-editor-empty:first-child::before {
@@ -464,7 +473,7 @@ export default {
       margin: 0;
       border-radius: 0;
       &.is-active {
-        background-color: #7898ad;
+        background-color: #0b233f;
         color: white;
       }
     }

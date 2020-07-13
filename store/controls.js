@@ -95,6 +95,9 @@ export const actions = {
   async onUpdate({ commit }, payload) {
     await commit('ON_UPDATE', payload)
   },
+  async onRemove({ commit }, payload) {
+    await commit('ON_REMOVE', payload)
+  },
   async onReset({ commit }) {
     await commit('ON_RESET')
   },
@@ -133,9 +136,14 @@ export const mutations = {
   ON_UPDATE(state, payload) {
     state[payload.key] = payload.value
   },
+  ON_REMOVE(state, payload) {
+    const newState = state[payload.key].filter(k => k.urn !== payload.value.urn)
+    state[payload.key] = newState
+  },
   ON_RESET(state) {
     state.client = null
     state.location = []
+    state.locations = []
     state.category = null
     state.actionType = null
     state.user = null

@@ -23,21 +23,21 @@
       <b-tabs card class="my-0 bg-white">
         <b-tab no-body>
           <template v-slot:title>
-            <b-icon-filter scale="0.8" />
+            <b-icon-filter scale="0.8" style="vertical-align: -0.15em;" />
             Filters
           </template>
           <controls :is-busy="isBusy" @on-submit="onSubmit" />
         </b-tab>
         <b-tab no-body>
           <template v-slot:title>
-            <b-icon-card-text scale="0.8" />
+            <b-icon-card-text scale="0.8" style="vertical-align: -0.15em;" />
             New Note
           </template>
           <note-editor />
         </b-tab>
         <b-tab>
           <template v-slot:title>
-            <b-icon-chat-quote scale="0.8" />
+            <b-icon-chat-quote scale="0.8" style="vertical-align: -0.15em;" />
             Feedback
           </template>
           <feedback-form />
@@ -59,12 +59,12 @@
             <b-input-group>
               <template v-slot:prepend>
                 <b-input-group-text class="bg-transparent border-0">
-                  <b-icon-search />
+                  <b-icon icon="search" />
                 </b-input-group-text>
               </template>
               <b-form-input
                 v-model="search"
-                class="h1"
+                placeholder="Search Notes..."
               />
               <template v-slot:append>
                 <b-btn
@@ -107,6 +107,7 @@
               v-model="currentPage"
               :total-rows="totalRows"
               :per-page="perPage"
+              pills
               class="my-0 mx-2"
             />
             <b-btn
@@ -142,6 +143,7 @@
             :current-page="currentPage"
             :per-page="perPage"
             :busy="isBusy"
+            filter-included-fields="note"
             primary-key="id"
             show-empty
             responsive
@@ -153,7 +155,7 @@
           >
             <template v-slot:table-busy>
               <div class="text-center h1 align-middle">
-                <b-spinner scale="5" />
+                <b-spinner scale="5" style="vertical-align: -0.15em;" />
                 Loading Those Notes...
               </div>
             </template>
@@ -470,7 +472,7 @@ export default {
   bottom: 0%;
   right: 0%;
   z-index: 9999;
-  transform: translate(-100%, -100%) scale(0.55);
+  transform: translate(-50%, -50%) scale(0.5);
   &:hover {
     cursor: pointer;
   }
