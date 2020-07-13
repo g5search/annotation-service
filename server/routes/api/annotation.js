@@ -127,6 +127,7 @@ module.exports = (app) => {
 
   app.get('/api/v1/notes', async (req, res) => {
     const { query } = req
+
     const {
       categoryWhere,
       typeWhere,
@@ -141,10 +142,11 @@ module.exports = (app) => {
       typeWhere: [['annotationType', 'name']],
       userWhere: ['email'],
       clientWhere: [['clientUrn', 'urn']],
-      locationWhere: ['urn'],
+      locationWhere: [['locationUrns', 'urn']],
       searchBy: [['searchBy', 'column']],
       dates: ['to', 'from']
     }, query)
+
     if (dates.to && dates.from) {
       where[searchBy.column] = { [Op.between]: [dates.from, dates.to] }
     } else if (dates.to) {
@@ -152,6 +154,7 @@ module.exports = (app) => {
     } else if (dates.from) {
       where[searchBy.column] = { [Op.gte]: dates.from }
     }
+
     const notes = await models.annotation.findAll({
       where,
       include: [
