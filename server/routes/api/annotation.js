@@ -185,6 +185,7 @@ module.exports = (app) => {
         {
           model: models.g5_updatable_location,
           where: locationWhere,
+          required: false,
           attributes: [
             'name',
             'display_name',

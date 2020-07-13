@@ -110,6 +110,8 @@
                 </template>
                 <b-form-datepicker
                   v-model="startDate"
+                  reset-button
+                  reset-button-variant="outline-secondary"
                 />
               </b-form-group>
               <b-form-group
