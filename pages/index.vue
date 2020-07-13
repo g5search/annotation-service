@@ -419,7 +419,20 @@ export default {
         })
     },
     updateCsv() {
-      this.unparse(this.$refs.notesTable.filteredItems)
+      const columns = [
+        'id',
+        'internal',
+        'annotationType',
+        'annotationUser',
+        'startDate',
+        'endDate',
+        'createdAt',
+        'updatedAt',
+        'note',
+        'clientName',
+        'locationNames'
+      ]
+      this.unparse(this.$refs.notesTable.filteredItems, columns)
     },
     onDrop(row) {},
     onToggle(row) {
