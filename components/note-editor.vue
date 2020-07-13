@@ -164,42 +164,42 @@
                       variant="outline-primary-1"
                       @click="commands.bold"
                     >
-                      <b-icon-type-bold style="vertical-align: -0.15em;" />
+                      <b-icon-type-bold />
                     </b-btn>
                     <b-btn
                       :class="[{ 'is-active': isActive.italic() }, 'menubar__btn']"
                       variant="outline-primary-1"
                       @click="commands.italic"
                     >
-                      <b-icon-type-italic style="vertical-align: -0.15em;" />
+                      <b-icon-type-italic />
                     </b-btn>
                     <b-btn
                       :class="[{ 'is-active': isActive.underline() }, 'menubar__btn']"
                       variant="outline-primary-1"
                       @click="commands.underline"
                     >
-                      <b-icon-type-underline style="vertical-align: -0.15em;" />
+                      <b-icon-type-underline />
                     </b-btn>
                     <b-btn
                       :class="[{ 'is-active': isActive.strike() }, 'menubar__btn']"
                       variant="outline-primary-1"
                       @click="commands.strike"
                     >
-                      <b-icon-type-strikethrough style="vertical-align: -0.15em;" />
+                      <b-icon-type-strikethrough />
                     </b-btn>
                     <b-btn
                       :class="[{ 'is-active': isActive.ordered_list() }, 'menubar__btn']"
                       variant="outline-primary-1"
                       @click="commands.ordered_list"
                     >
-                      <b-icon-list-ol style="vertical-align: -0.15em;" />
+                      <b-icon-list-ol />
                     </b-btn>
                     <b-btn
                       :class="[{ 'is-active': isActive.bullet_list() }, 'menubar__btn']"
                       variant="outline-primary-1"
                       @click="commands.bullet_list"
                     >
-                      <b-icon-list-ul style="vertical-align: -0.15em;" />
+                      <b-icon-list-ul />
                     </b-btn>
                     <div class="menubar__spacer bg-primary-1" />
                   </div>
@@ -267,7 +267,7 @@
             @dismissed="dismissCountDown = 0"
             @dismiss-count-down="countDownChanged"
           >
-            <b-icon-check-circle scale="1.5" />
+            <b-icon-check-circle scale="1.25" />
             Note Saved!
           </b-alert>
         </b-card>
@@ -437,13 +437,11 @@ export default {
   position: relative;
   & #submission-status {
     position: absolute;
-    width: 75%;
-    top: 50%;
+    top: 0%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -100%);
     border-radius: 5px;
-    box-shadow: 0px 5px 15px rgba(12, 35, 63, 0.2),
-                0px 10px 20px rgba(12, 35, 63, 0.2);
+    border: 2px solid #69ca8a;
   }
 }
 .editor {
@@ -479,80 +477,45 @@ export default {
     }
   }
 }
-.note {
-  &__content {
-    font-size: 0.9em;
-  }
-  & .menubar {
-    box-shadow: 0 2px 10px rgba(120, 152, 173, 0.2);
-    transition: 200ms ease-out;
-    display: flex;
-    &:hover {
-      box-shadow: 0 2px 15px rgba(120, 152, 173, 0.2);
-    }
-    &__spacer {
-      flex: 1 1 auto;
-    }
-    &__btn {
-      position: relative;
-      padding: 0.15em 0.25em;
-      margin: 0;
-      & .is-active {
-        background-color: #0b233f;
-        color: white;
-      }
-      &:hover {
-        &.draft-btn::after {
-          content: 'save';
-          position: absolute;
-          color: #0b233f;
-          left: 50%;
-          transform: translate(-50%, -80%);
-          height: 100%;
-        }
-      }
-    }
-  }
-}
-.close-container {
-  position: relative;
-  & .close-tab {
-    position: absolute;
-    right: 0;
-    border-radius: 50%;
-    padding: 0 0.05em;
-    transform: translate(75%, -275%);
-    transition: all 200ms ease;
-    opacity: 0;
-    transition-delay: 100ms;;
-  }
-  &:hover .close-tab {
-    transform: translate(75%, -75%);
-    opacity: 1;
-  }
-}
-.add-btn {
-  position: relative;
-  border: none;
-  margin-left: 0.15em;
-  padding: 0;
-  transition: 200ms ease-in-out;
-  &:hover,
-  &:active {
-    background-color: #dee2e6;
-    border: none;
-    outline: none;
-    & .nav-link::after {
-      position: absolute;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      height: 100%;
-      content: "add";
-    }
-  }
-  & .nav-link {
-    padding-left: 0.25em;
-    padding-right: 0.25em;
-  }
-}
+// .close-container {
+//   position: relative;
+//   & .close-tab {
+//     position: absolute;
+//     right: 0;
+//     border-radius: 50%;
+//     padding: 0 0.05em;
+//     transform: translate(75%, -275%);
+//     transition: all 200ms ease;
+//     opacity: 0;
+//     transition-delay: 100ms;;
+//   }
+//   &:hover .close-tab {
+//     transform: translate(75%, -75%);
+//     opacity: 1;
+//   }
+// }
+// .add-btn {
+//   position: relative;
+//   border: none;
+//   margin-left: 0.15em;
+//   padding: 0;
+//   transition: 200ms ease-in-out;
+//   &:hover,
+//   &:active {
+//     background-color: #dee2e6;
+//     border: none;
+//     outline: none;
+//     & .nav-link::after {
+//       position: absolute;
+//       left: 50%;
+//       transform: translate(-50%, -50%);
+//       height: 100%;
+//       content: "add";
+//     }
+//   }
+//   & .nav-link {
+//     padding-left: 0.25em;
+//     padding-right: 0.25em;
+//   }
+// }
 </style>
