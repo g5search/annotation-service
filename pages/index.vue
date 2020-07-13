@@ -303,28 +303,28 @@ export default {
     store.dispatch('controls/fillClients')
   },
   async asyncData({ $axios }) {
-    const reject = [
-      'id',
-      'annotation',
-      'external_id',
-      'client',
-      'locations',
-      'user',
-      'startDate',
-      'endDate'
-    ]
+    // const reject = [
+    //   'id',
+    //   'annotation',
+    //   'external_id',
+    //   'client',
+    //   'locations',
+    //   'user',
+    //   'startDate',
+    //   'endDate'
+    // ]
     const notes = await $axios.$get('api/v1/notes')
     const me = await $axios.$get('api/v1/whoami')
     return {
-      fields: [
-        ...Object.keys(notes[0])
-          .map(key => ({
-            key,
-            sortable: true,
-            class: 'text-center align-middle'
-          })).filter(field => !reject.includes(field.key)),
-        { key: 'Edit', class: 'text-center align-middle' }
-      ],
+      // fields: [
+      //   ...Object.keys(notes[0])
+      //     .map(key => ({
+      //       key,
+      //       sortable: true,
+      //       class: 'text-center align-middle'
+      //     })).filter(field => !reject.includes(field.key)),
+      //   { key: 'Edit', class: 'text-center align-middle' }
+      // ],
       me,
       notes,
       totalRows: notes.length
@@ -340,7 +340,75 @@ export default {
       currentPage: 1,
       perPage: 10,
       pageOptions: [10, 20, 50, 100],
-      search: ''
+      search: '',
+      fields: [
+        {
+          key: 'internal',
+          label: 'Visibility',
+          sortable: true,
+          class: 'align-middle text-center'
+        },
+        {
+          key: 'annotationCategory',
+          label: 'Category',
+          sortable: true,
+          class: 'align-middle text-center'
+        },
+        {
+          key: 'annotationType',
+          label: 'Action Type',
+          sortable: true,
+          class: 'align-middle text-center'
+        },
+        {
+          key: 'annotationUser',
+          label: 'User',
+          sortable: true,
+          class: 'align-middle text-center'
+        },
+        {
+          key: 'createdAt',
+          label: 'Created',
+          sortable: true,
+          class: 'align-middle text-center'
+        },
+        {
+          key: 'updatedAt',
+          label: 'Updated',
+          sortable: true,
+          class: 'align-middle text-center'
+        },
+        {
+          key: 'salesforceSync',
+          label: 'Synced',
+          sortable: true,
+          class: 'align-middle text-center'
+        },
+        {
+          key: 'note',
+          label: 'Note',
+          sortable: true,
+          class: 'align-middle'
+        },
+        {
+          key: 'clientName',
+          label: 'Client',
+          sortable: true,
+          class: 'align-middle'
+        },
+        {
+          key: 'locationNames',
+          label: 'Locations',
+          sortable: true,
+          class: 'align-middle'
+        },
+        {
+          key: 'edit',
+          label: 'Edit',
+          sortable: false,
+          class: 'align-middle text-center'
+        }
+      ]
     }
   },
   computed: {
@@ -384,27 +452,27 @@ export default {
       this.$emit('submitting', payload)
       this.onUpdate(payload)
     },
-    createFields(row) {
-      const reject = [
-        'id',
-        'annotation',
-        'external_id',
-        'client',
-        'locations',
-        'user',
-        'startDate',
-        'endDate'
-      ]
-      return [
-        ...Object.keys(row)
-          .map(key => ({
-            key,
-            sortable: true,
-            class: 'text-center align-middle'
-          })).filter(field => !reject.includes(field.key)),
-        { key: 'Edit', class: 'text-center align-middle' }
-      ]
-    },
+    // createFields(row) {
+    //   const reject = [
+    //     'id',
+    //     'annotation',
+    //     'external_id',
+    //     'client',
+    //     'locations',
+    //     'user',
+    //     'startDate',
+    //     'endDate'
+    //   ]
+    //   return [
+    //     ...Object.keys(row)
+    //       .map(key => ({
+    //         key,
+    //         sortable: true,
+    //         class: 'text-center align-middle'
+    //       })).filter(field => !reject.includes(field.key)),
+    //     { key: 'Edit', class: 'text-center align-middle' }
+    //   ]
+    // },
     onUpdate(evt) {
       const userEmail = evt.userEmail ? `email=${evt.userEmail}&` : ''
       const clientUrn = evt.clientUrn ? `clientUrn=${evt.clientUrn}&` : ''
@@ -423,7 +491,7 @@ export default {
         .$get(endpoint)
         .then((res) => {
           if (res.length > 0) {
-            this.fields = this.createFields(res[0])
+            // this.fields = this.createFields(res[0])
             this.totalRows = res.length
             this.notes = res
           } else {
@@ -449,7 +517,7 @@ export default {
   bottom: 0%;
   right: 0%;
   z-index: 9999;
-  transform: translate(-100%, -100%);
+  transform: translate(-100%, -100%) scale(0.75);
   &:hover {
     cursor: pointer;
   }
