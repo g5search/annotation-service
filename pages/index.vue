@@ -143,7 +143,7 @@
             :current-page="currentPage"
             :per-page="perPage"
             :busy="isBusy"
-            filter-included-fields="note"
+            :filter-included-fields="['note', 'locationNames', 'clientName']"
             primary-key="id"
             show-empty
             responsive

@@ -46,7 +46,7 @@
               :multiple="true"
               :close-on-select="false"
               :clear-on-select="false"
-              :custom-label="l => `${l.display_name ? l.display_name : l.name}`"
+              :custom-label="l => `${l.displayName ? l.displayName : l.name}`"
               placeholder="Search"
               track-by="urn"
               label="name"
@@ -382,7 +382,7 @@ export default {
       this.isBusy = false
       this.locations = []
       this.isInternal = true
-      this.showAlert = true
+      this.showDates = false
       this.category = null
       this.actionType = null
       this.autoDetect = false
