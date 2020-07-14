@@ -1,7 +1,9 @@
 const cors = require('cors')
+const axios = require('axios')
 const models = require('../../models')
 const whitelist = [/chrome-extension:\/\/[a-z]*$/]
 const objectUtil = require('../../controllers/utilities/object')
+const crsSync = require('../../controllers/jobs/crsSync')
 const { Op } = require('sequelize')
 const corsOpts = {
   origin: (origin, callback) => {
@@ -114,7 +116,6 @@ module.exports = (app) => {
     })
     res.json(result)
   })
-
   // returns simplified user to client-side
   app.get('/api/v1/whoami', async (req, res) => {
     if (req.user.email) {
@@ -242,5 +243,12 @@ module.exports = (app) => {
       attributes: ['first_name', 'last_name', 'email']
     })
     res.json(strategists)
+  })
+
+  app.get('/api/v1/crs/sync', async (req, res) => {
+    const response = await axios.get('http://localhost:9541/api/annotation')
+    crsSync(response.data)
+    const { data } = response
+    res.json(response.data)
   })
 }
