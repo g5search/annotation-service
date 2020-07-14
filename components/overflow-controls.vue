@@ -3,10 +3,11 @@
     <b-row no-gutters>
       <b-col>
         <b-form-group
+          :label-class="labelClass"
           label-cols="4"
-          label-class="d-flex align-items-center text-primary-2 justify-content-start"
         >
           <template v-slot:label>
+            <b-icon icon="briefcase" scale="1.1" />
             <span class="ml-2">
               Client
             </span>
@@ -22,10 +23,11 @@
           />
         </b-form-group>
         <b-form-group
+          :label-class="labelClass"
           label-cols="4"
-          label-class="d-flex align-items-center text-primary-2 justify-content-start"
         >
           <template v-slot:label>
+            <b-icon icon="building" scale="1.1" />
             <span class="ml-2">
               Location
             </span>
@@ -34,16 +36,16 @@
             id="location-select"
             :value="location"
             :options="locations"
-            :multiple="true"
             :custom-label="l => `${l.display_name ? l.display_name : l.name}`"
             @input="onUpdate({ key: 'location', value: $event })"
           />
         </b-form-group>
         <b-form-group
+          :label-class="labelClass"
           label-cols="4"
-          label-class="d-flex align-items-center text-primary-2 justify-content-start"
         >
           <template v-slot:label>
+            <b-icon icon="person" scale="1.1" />
             <span class="ml-2">
               User
             </span>
@@ -56,10 +58,11 @@
           />
         </b-form-group>
         <b-form-group
+          :label-class="labelClass"
           label-cols="4"
-          label-class="d-flex align-items-center text-primary-2 justify-content-start"
         >
           <template v-slot:label>
+            <b-icon-collection scale="1.1" />
             <span class="ml-2">
               Category
             </span>
@@ -72,10 +75,11 @@
           />
         </b-form-group>
         <b-form-group
+          :label-class="labelClass"
           label-cols="4"
-          label-class="d-flex align-items-center text-primary-2 justify-content-start"
         >
           <template v-slot:label>
+            <b-icon icon="puzzle" scale="1.1" />
             <span class="ml-2">
               Action
             </span>
@@ -89,11 +93,11 @@
         </b-form-group>
         <div v-show="showDates">
           <b-form-group
+            :label-class="labelClass"
             label-cols="4"
-            label-class="d-flex align-items-center text-primary-2 justify-content-start"
           >
             <template v-slot:label>
-              <b-icon-calendar />
+              <b-icon icon="calendar" />
               <span class="ml-2">
                 Start Date
               </span>
@@ -104,8 +108,8 @@
             />
           </b-form-group>
           <b-form-group
+            :label-class="labelClass"
             label-cols="4"
-            label-class="d-flex align-items-center text-primary-2 justify-content-start"
           >
             <template v-slot:label>
               <b-icon-calendar />
@@ -120,11 +124,11 @@
           </b-form-group>
         </div>
         <b-form-group
+          :label-class="labelClass"
           label-cols="4"
-          label-class="d-flex align-items-center text-primary-2 justify-content-start"
         >
           <template v-slot:label>
-            <b-icon-eye />
+            <b-icon icon="eye" scale="1.1" />
             <span class="ml-2">
               Visibility
             </span>
@@ -138,9 +142,9 @@
         </b-form-group>
       </b-col>
     </b-row>
-    <b-card no-body bg-variant="neutral" class="border-0 py-2 px-3 mb-3">
+    <b-card no-body bg-variant="pale" class="border-0 py-2 px-3 mb-3">
       <b-row>
-        <b-col class="mb-2 text-primary-2">
+        <b-col class="mb-2 text-muted">
           <b-form-checkbox
             :checked="isCreatedAt"
             @change="onUpdate({ key: 'isCreatedAt', value: $event })"
@@ -155,7 +159,7 @@
         <b-col cols="12">
           <b-form-group
             label="From"
-            label-class="text-primary-2"
+            label-class="text-primary-1"
             label-cols="4"
           >
             <b-form-datepicker
@@ -167,7 +171,7 @@
         <b-col cols="12">
           <b-form-group
             label="To"
-            label-class="text-primary-2"
+            label-class="text-primary-1"
             label-cols="4"
           >
             <b-form-datepicker
@@ -218,6 +222,16 @@ export default {
       default: false
     }
   },
+  data() {
+    return {
+      labelClass: [
+        'd-flex',
+        'align-items-center',
+        'text-primary-1',
+        'justify-content-start'
+      ]
+    }
+  },
   computed: {
     ...mapState({
       client: state => state.controls.client,
@@ -246,6 +260,7 @@ export default {
   methods: {
     ...mapActions({
       onUpdate: 'controls/onUpdate',
+      // onRemove: 'controls/onRemove',
       reset: 'controls/onReset'
     }),
     onReset() {

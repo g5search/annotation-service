@@ -28,6 +28,7 @@ export const state = () => ({
       { text: 'Select a Category First', value: null }
     ],
     'Account Changes': [
+      { text: 'Select Option', value: null },
       'Smart Bidding Strategy Change',
       'Specials/Promotions',
       'Spend Optimizer Version Change',
@@ -35,14 +36,17 @@ export const state = () => ({
       'Whitelisting Events Change'
     ],
     'General Note': [
+      { text: 'Select Option', value: null },
       'NA'
     ],
     'Customer Contact': [
+      { text: 'Select Option', value: null },
       'Action Items',
       'Analysis/Notes'
     ],
     // eslint-disable-next-line
     'Optimizations': [
+      { text: 'Select Option', value: null },
       'Added Negative Keywords',
       'Added Keywords',
       'Changed Location Strategy',
@@ -56,15 +60,18 @@ export const state = () => ({
       'Manual Bid Adjustments'
     ],
     Other: [
+      { text: 'Select Option', value: null },
       'Uncontrollable Circumstances'
     ],
     'Technical Issue': [
+      { text: 'Select Option', value: null },
       'DA WoW',
       'Dynamic Pricing',
       'Dynamic Availability',
       'Reporting Issue'
     ],
     'Implementation Dates': [
+      { text: 'Select Option', value: null },
       'Dynamic Pricing Start',
       'Dynamic Pricing End',
       'Dynamic Availability Start',
@@ -94,6 +101,9 @@ export const state = () => ({
 export const actions = {
   async onUpdate({ commit }, payload) {
     await commit('ON_UPDATE', payload)
+  },
+  async onRemove({ commit }, payload) {
+    await commit('ON_REMOVE', payload)
   },
   async onReset({ commit }) {
     await commit('ON_RESET')
@@ -133,9 +143,14 @@ export const mutations = {
   ON_UPDATE(state, payload) {
     state[payload.key] = payload.value
   },
+  ON_REMOVE(state, payload) {
+    const newState = state[payload.key].filter(k => k.urn !== payload.value.urn)
+    state[payload.key] = newState
+  },
   ON_RESET(state) {
     state.client = null
     state.location = []
+    state.locations = []
     state.category = null
     state.actionType = null
     state.user = null

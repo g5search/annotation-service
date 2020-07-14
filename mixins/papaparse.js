@@ -7,8 +7,11 @@ export default {
     }
   },
   methods: {
-    unparse(items) {
-      this.csv = Papa.unparse(items)
+    unparse(items, columns = null) {
+      this.csv = Papa.unparse(items, {
+        header: true,
+        columns
+      })
       const csvData = new Blob([this.csv], {
         type: 'text/csv;charset=utf-8;'
       })

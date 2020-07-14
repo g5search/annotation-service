@@ -23,21 +23,21 @@
       <b-tabs card class="my-0 bg-white">
         <b-tab no-body>
           <template v-slot:title>
-            <b-icon-filter scale="0.8" />
+            <b-icon-filter scale="0.8" style="vertical-align: -0.15em;" />
             Filters
           </template>
           <controls :is-busy="isBusy" @on-submit="onSubmit" />
         </b-tab>
         <b-tab no-body>
           <template v-slot:title>
-            <b-icon-card-text scale="0.8" />
+            <b-icon-card-text scale="0.8" style="vertical-align: -0.15em;" />
             New Note
           </template>
           <note-editor />
         </b-tab>
         <b-tab>
           <template v-slot:title>
-            <b-icon-chat-quote scale="0.8" />
+            <b-icon-chat-quote scale="0.8" style="vertical-align: -0.15em;" />
             Feedback
           </template>
           <feedback-form />
@@ -52,25 +52,25 @@
         <b-card
           bg-variant="white"
           body-class="p-0"
-          header-class="d-flex primary-header"
+          header-class="d-flex"
           header-bg-variant="light"
         >
           <template v-slot:header>
             <b-input-group>
               <template v-slot:prepend>
-                <b-input-group-text class="bg-transparent text-light border-0">
-                  <b-icon-search />
+                <b-input-group-text class="bg-transparent border-0">
+                  <b-icon icon="search" />
                 </b-input-group-text>
               </template>
               <b-form-input
                 v-model="search"
-                class="h1 text-white"
+                placeholder="Search Notes..."
               />
               <template v-slot:append>
                 <b-btn
                   v-show="search !== ''"
                   @click="onClear"
-                  variant="transparent text-light"
+                  variant="transparent"
                 >
                   <b-icon-x-circle />
                 </b-btn>
@@ -79,7 +79,7 @@
             <b-btn
               id="filter-me-btn"
               @click="onFilterMe"
-              variant="transparent text-light"
+              variant="transparent"
               class="ml-2 align-middle"
             >
               <b-icon-person-circle />
@@ -94,7 +94,7 @@
             </b-tooltip>
             <b-input-group class="ml-2 w-50">
               <template v-slot:prepend>
-                <b-input-group-text class="text-light bg-transparent border-0">
+                <b-input-group-text class="bg-transparent border-0">
                   Show Rows
                 </b-input-group-text>
               </template>
@@ -107,13 +107,14 @@
               v-model="currentPage"
               :total-rows="totalRows"
               :per-page="perPage"
+              pills
               class="my-0 mx-2"
             />
             <b-btn
               id="download-csv-btn"
               :href="downloadCsv"
               download="notes.csv"
-              variant="transparent text-light"
+              variant="transparent"
               class="d-flex align-items-center mr-2"
             >
               <b-icon icon="file-spreadsheet" />
@@ -127,7 +128,7 @@
               Download a CSV of the current table
             </b-tooltip>
             <b-btn
-              variant="transparent text-light"
+              variant="transparent"
               class="d-flex align-items-center"
               @click="isOpen = !isOpen"
             >
@@ -142,20 +143,19 @@
             :current-page="currentPage"
             :per-page="perPage"
             :busy="isBusy"
+            :filter-included-fields="['note', 'locationNames', 'clientName']"
             primary-key="id"
             show-empty
-            no-border-collapse
             responsive
             small
             hover
             striped
             sticky-header
             outlined
-            thead-tr-class="primary-header"
           >
             <template v-slot:table-busy>
               <div class="text-center h1 align-middle">
-                <b-spinner scale="5" />
+                <b-spinner scale="5" style="vertical-align: -0.15em;" />
                 Loading Those Notes...
               </div>
             </template>
@@ -219,7 +219,7 @@
               <b-badge
                 v-for="(loc, i) in row.item.locationNames"
                 v-else
-                :key="loc"
+                :key="`${loc}-${row.item.id}`"
                 :variant="`primary-${i}`"
                 class="mr-1"
               >
@@ -246,7 +246,6 @@
                 <b-btn
                   :variant="row.detailsShowing ? 'primary' : 'transparent'"
                   class="align-middle"
-                  pill
                   @click="onToggle(row)"
                 >
                   <b-icon-pencil-square scale="1.2" />
@@ -254,7 +253,6 @@
                 <b-btn
                   variant="transparent"
                   class="ml-2 align-middle text-tertiary"
-                  pill
                   @click="onDrop(row)"
                 >
                   <b-icon-trash scale="1.2" />
@@ -303,28 +301,9 @@ export default {
     store.dispatch('controls/fillClients')
   },
   async asyncData({ $axios }) {
-    const reject = [
-      'id',
-      'annotation',
-      'external_id',
-      'client',
-      'locations',
-      'user',
-      'startDate',
-      'endDate'
-    ]
     const notes = await $axios.$get('api/v1/notes')
     const me = await $axios.$get('api/v1/whoami')
     return {
-      fields: [
-        ...Object.keys(notes[0])
-          .map(key => ({
-            key,
-            sortable: true,
-            class: 'text-center align-middle'
-          })).filter(field => !reject.includes(field.key)),
-        { key: 'Edit', class: 'text-center align-middle' }
-      ],
       me,
       notes,
       totalRows: notes.length
@@ -340,7 +319,75 @@ export default {
       currentPage: 1,
       perPage: 10,
       pageOptions: [10, 20, 50, 100],
-      search: ''
+      search: '',
+      fields: [
+        {
+          key: 'internal',
+          label: 'Visibility',
+          sortable: true,
+          class: 'align-middle text-center'
+        },
+        {
+          key: 'annotationCategory',
+          label: 'Category',
+          sortable: true,
+          class: 'align-middle text-center'
+        },
+        {
+          key: 'annotationType',
+          label: 'Action Type',
+          sortable: true,
+          class: 'align-middle text-center'
+        },
+        {
+          key: 'annotationUser',
+          label: 'User',
+          sortable: true,
+          class: 'align-middle text-center'
+        },
+        {
+          key: 'createdAt',
+          label: 'Created',
+          sortable: true,
+          class: 'align-middle text-center'
+        },
+        {
+          key: 'updatedAt',
+          label: 'Updated',
+          sortable: true,
+          class: 'align-middle text-center'
+        },
+        {
+          key: 'salesforceSync',
+          label: 'Synced',
+          sortable: true,
+          class: 'align-middle text-center'
+        },
+        {
+          key: 'note',
+          label: 'Note',
+          sortable: true,
+          class: 'align-middle'
+        },
+        {
+          key: 'clientName',
+          label: 'Client',
+          sortable: true,
+          class: 'align-middle'
+        },
+        {
+          key: 'locationNames',
+          label: 'Locations',
+          sortable: true,
+          class: 'align-middle'
+        },
+        {
+          key: 'edit',
+          label: 'Edit',
+          sortable: false,
+          class: 'align-middle text-center'
+        }
+      ]
     }
   },
   computed: {
@@ -372,38 +419,28 @@ export default {
         })
     },
     updateCsv() {
-      this.unparse(this.$refs.notesTable.filteredItems)
+      const columns = [
+        'id',
+        'internal',
+        'annotationType',
+        'annotationUser',
+        'startDate',
+        'endDate',
+        'createdAt',
+        'updatedAt',
+        'note',
+        'clientName',
+        'locationNames'
+      ]
+      this.unparse(this.$refs.notesTable.filteredItems, columns)
     },
     onDrop(row) {},
     onToggle(row) {
       row.toggleDetails()
-      // this.refetch()
     },
     onSubmit(payload) {
-      // this.isBusy = !this.isBusy
       this.$emit('submitting', payload)
       this.onUpdate(payload)
-    },
-    createFields(row) {
-      const reject = [
-        'id',
-        'annotation',
-        'external_id',
-        'client',
-        'locations',
-        'user',
-        'startDate',
-        'endDate'
-      ]
-      return [
-        ...Object.keys(row)
-          .map(key => ({
-            key,
-            sortable: true,
-            class: 'text-center align-middle'
-          })).filter(field => !reject.includes(field.key)),
-        { key: 'Edit', class: 'text-center align-middle' }
-      ]
     },
     onUpdate(evt) {
       const userEmail = evt.userEmail ? `email=${evt.userEmail}&` : ''
@@ -423,7 +460,6 @@ export default {
         .$get(endpoint)
         .then((res) => {
           if (res.length > 0) {
-            this.fields = this.createFields(res[0])
             this.totalRows = res.length
             this.notes = res
           } else {
@@ -449,7 +485,7 @@ export default {
   bottom: 0%;
   right: 0%;
   z-index: 9999;
-  transform: translate(-100%, -100%);
+  transform: translate(-50%, -50%) scale(0.5);
   &:hover {
     cursor: pointer;
   }
@@ -479,28 +515,9 @@ export default {
     }
   }
 }
-.primary-header {
-  background: linear-gradient(35deg, #19356a, #2f38b0 ,#0b233f);
-  box-shadow: 0 5px 50px rgba(0, 0, 0, 0.25);
-  z-index: 10;
-  transition: 200ms ease-in-out;
-  &:hover {
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
-  }
-  & .input-group > .form-control {
-    background-color: transparent;
-    border: none;
-    border-bottom: 2px solid white;
-    transition: 200ms ease;
-    &:focus {
-      border-bottom-width: 1px;
-    }
-  }
-}
 .hover-anchor {
   position: relative;
   background-color: inherit;
-  // transition: 200ms ease-in-out;
   border-radius: 20px / 50% 0 0 50%;
   height: calc(100% + 10px);
   padding: 5px 0;

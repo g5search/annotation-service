@@ -44,29 +44,33 @@ module.exports = (app) => {
 
   // DUPLICATE ROUTE FOR SAME ORIGIN API (CORS is blocking this)
   app.post('/api/v1/new-note', async (req, res) => {
-    let user = null
-    let annotationUserId = null
-    const { body } = req
-    console.log({ body, user: req.user })
-    if (req.user.email) {
-      user = await models.annotationUser.findOne({ where: { email: req.user.email } })
-      annotationUserId = user.dataValues.id
-    } else if (body.user) {
-      const [annotationUser] = await models.annotationUser.findOrCreate({
-        where: {
-          email: body.user.email
-        },
-        defaults: {
-          email: body.user.email,
-          first_name: body.user.firstName,
-          last_name: body.user.lastName
-        }
-      })
-      user = annotationUser
-      annotationUserId = annotationUser.dataValues.id
+    try {
+      let user = null
+      let annotationUserId = null
+      const { body } = req
+      console.log({ body, user: req.user })
+      if (req.user.email) {
+        user = await models.annotationUser.findOne({ where: { email: req.user.email } })
+        annotationUserId = user.dataValues.id
+      } else if (body.user) {
+        const [annotationUser] = await models.annotationUser.findOrCreate({
+          where: {
+            email: body.user.email
+          },
+          defaults: {
+            email: body.user.email,
+            first_name: body.user.firstName,
+            last_name: body.user.lastName
+          }
+        })
+        user = annotationUser
+        annotationUserId = annotationUser.dataValues.id
+      }
+      const note = await models.annotation.createAndAssociate({ ...body, annotationUserId })
+      res.json(note)
+    } catch (err) {
+      res.sendStatus(500)
     }
-    const note = await models.annotation.createAndAssociate({ ...body, annotationUserId })
-    res.json(note)
   })
 
   app.put('/api/v1/note/:id', async (req, res) => {
@@ -128,6 +132,7 @@ module.exports = (app) => {
 
   app.get('/api/v1/notes', async (req, res) => {
     const { query } = req
+
     const {
       categoryWhere,
       typeWhere,
@@ -142,10 +147,11 @@ module.exports = (app) => {
       typeWhere: [['annotationType', 'name']],
       userWhere: ['email'],
       clientWhere: [['clientUrn', 'urn']],
-      locationWhere: ['urn'],
+      locationWhere: [['locationUrns', 'urn']],
       searchBy: [['searchBy', 'column']],
       dates: ['to', 'from']
     }, query)
+
     if (dates.to && dates.from) {
       where[searchBy.column] = { [Op.between]: [dates.from, dates.to] }
     } else if (dates.to) {
@@ -153,6 +159,7 @@ module.exports = (app) => {
     } else if (dates.from) {
       where[searchBy.column] = { [Op.gte]: dates.from }
     }
+
     const notes = await models.annotation.findAll({
       where,
       include: [
@@ -179,6 +186,7 @@ module.exports = (app) => {
         {
           model: models.g5_updatable_location,
           where: locationWhere,
+          required: false,
           attributes: [
             'name',
             'display_name',
@@ -206,7 +214,7 @@ module.exports = (app) => {
         g5_updatable_client,
         g5_updatable_locations
       } = note.dataValues
-
+      // TODO remove reducing functions duplicate data in the return. We need to full objects on the front-end
       return {
         id,
         internal,
@@ -230,7 +238,9 @@ module.exports = (app) => {
         note: html,
         annotation,
         clientName: g5_updatable_client ? g5_updatable_client.name : null,
-        locationNames: g5_updatable_locations.map(l => l.name),
+        locationNames: g5_updatable_locations.map((l) => {
+          return l.display_name ? l.display_name : l.name
+        }),
         client: g5_updatable_client,
         locations: g5_updatable_locations
       }
