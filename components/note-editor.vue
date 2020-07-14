@@ -404,7 +404,7 @@ export default {
       this.isError = true
     },
     onSubmit() {
-      const endpoint = 'api/v1/new-note'
+      const endpoint = 'api/v1/note'
       this.isBusy = true
       this.$axios
         .$post(endpoint, {

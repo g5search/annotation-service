@@ -1,5 +1,5 @@
 const moment = require('moment')
-// const models = require('../../models')
+const models = require('../../models')
 const sfApi = require('../salesforce')
 const {
   SF_USERNAME: sfUsername,
@@ -7,8 +7,7 @@ const {
   SF_TOKEN: sfToken
 } = process.env
 
-module.exports = async function (job, models) {
-  console.log('starting')
+module.exports = async function (job) {
   const whatId = null
   const { id } = job.data
   const dbAnnotation = await models.annotation.findOne({
@@ -37,23 +36,15 @@ module.exports = async function (job, models) {
   const { Id: userId } = await sfApi.getUserId({ email: annotationUser.dataValues.email }, ['Id'])
 
   if (locationUrns.length > 0) {
-    console.log(locationUrns.length)
     for (let i = 0; i < locationUrns.length; i++) {
-      try {
-        const { Id } = await sfApi.findLocation({ Location_URN__c: locationUrns[i] }, ['Id'])
-        await sfApi.createNote(Id, userId, annotationCategory.dataValues.name, annotationType.dataValues.name, internal, html, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name, 'DA Task')
-      } catch (error) {
-        console.log({ error })
-      }
+      const { Id } = await sfApi.findLocation({ Location_URN__c: locationUrns[i] }, ['Id'])
+      const { id: noteId } = await sfApi.createNote(Id, userId, annotationCategory.dataValues.name, annotationType ? annotationType.dataValues.name : null, internal, html, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name, 'DA Task')
+      await dbAnnotation.g5_updatable_locations[i].annotationLocation.update({ salesforce_id: noteId })
     }
   } else {
-    try {
-      const { Id } = await sfApi.findAccount({ Client_URN__c: g5_updatable_client.dataValues.urn }, ['Id'])
-      await sfApi.createNote(Id, userId, annotationCategory.dataValues.name, annotationType.dataValues.name, internal, html, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name, 'DA Task')
-    } catch (error) {
-      console.log({ error })
-    }
+    const { Id } = await sfApi.findAccount({ Client_URN__c: g5_updatable_client.dataValues.urn }, ['Id'])
+    await sfApi.createNote(Id, userId, annotationCategory.dataValues.name, annotationType.dataValues.name, internal, html, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name, 'DA Task')
   }
   await sfApi.logout()
-  // send to SF
+  await dbAnnotation.update({ salesforceSync: true })
 }

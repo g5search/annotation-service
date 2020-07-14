@@ -1,7 +1,11 @@
 const cors = require('cors')
 const axios = require('axios')
 const models = require('../../models')
-const whitelist = [/chrome-extension:\/\/[a-z]*$/]
+const whitelist = [
+  /chrome-extension:\/\/[a-z]*$/,
+  /http:\/\/localhost:[\d]*/,
+  /https:\/\/notes\.g5marketingcloud\.com/
+]
 const objectUtil = require('../../controllers/utilities/object')
 const crsSync = require('../../controllers/jobs/crsSync')
 const { Op } = require('sequelize')
@@ -42,36 +46,36 @@ module.exports = (app) => {
     res.json(note)
   })
 
-  // DUPLICATE ROUTE FOR SAME ORIGIN API (CORS is blocking this)
-  app.post('/api/v1/new-note', async (req, res) => {
-    try {
-      let user = null
-      let annotationUserId = null
-      const { body } = req
-      console.log({ body, user: req.user })
-      if (req.user.email) {
-        user = await models.annotationUser.findOne({ where: { email: req.user.email } })
-        annotationUserId = user.dataValues.id
-      } else if (body.user) {
-        const [annotationUser] = await models.annotationUser.findOrCreate({
-          where: {
-            email: body.user.email
-          },
-          defaults: {
-            email: body.user.email,
-            first_name: body.user.firstName,
-            last_name: body.user.lastName
-          }
-        })
-        user = annotationUser
-        annotationUserId = annotationUser.dataValues.id
-      }
-      const note = await models.annotation.createAndAssociate({ ...body, annotationUserId })
-      res.json(note)
-    } catch (err) {
-      res.sendStatus(500)
-    }
-  })
+  // // DUPLICATE ROUTE FOR SAME ORIGIN API (CORS is blocking this)
+  // app.post('/api/v1/new-note', async (req, res) => {
+  //   try {
+  //     let user = null
+  //     let annotationUserId = null
+  //     const { body } = req
+  //     console.log({ body, user: req.user })
+  //     if (req.user.email) {
+  //       user = await models.annotationUser.findOne({ where: { email: req.user.email } })
+  //       annotationUserId = user.dataValues.id
+  //     } else if (body.user) {
+  //       const [annotationUser] = await models.annotationUser.findOrCreate({
+  //         where: {
+  //           email: body.user.email
+  //         },
+  //         defaults: {
+  //           email: body.user.email,
+  //           first_name: body.user.firstName,
+  //           last_name: body.user.lastName
+  //         }
+  //       })
+  //       user = annotationUser
+  //       annotationUserId = annotationUser.dataValues.id
+  //     }
+  //     const note = await models.annotation.createAndAssociate({ ...body, annotationUserId })
+  //     res.json(note)
+  //   } catch (err) {
+  //     res.sendStatus(500)
+  //   }
+  // })
 
   app.put('/api/v1/note/:id', async (req, res) => {
     const { id } = req.params
