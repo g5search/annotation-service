@@ -252,7 +252,7 @@
                   class="align-middle"
                   @click="onToggle(row)"
                 >
-                  <b-icon-pencil-square scale="1.2" />
+                  <b-icon-pencil scale="1.2" />
                 </b-btn>
                 <b-btn
                   variant="transparent"
