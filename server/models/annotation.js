@@ -23,7 +23,7 @@ module.exports = (sequelize) => {
       type: DATEONLY
     },
     html: {
-      type: STRING
+      type: STRING(1000)
     },
     salesforceSync: {
       type: BOOLEAN
