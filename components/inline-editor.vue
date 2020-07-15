@@ -239,6 +239,8 @@ export default {
           updatedAt: new Date().toISOString(),
           internal: this.local.internal,
           annotationCategory: this.local.annotationCategory.value,
+          annotation: this.content.annotation.json,
+          html: this.content.note,
           annotationType: this.local.annotationType,
           annotationUser: this.local.user.value,
           clientUrn: this.local.client.urn,
