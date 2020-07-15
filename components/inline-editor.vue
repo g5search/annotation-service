@@ -95,13 +95,17 @@
           :options="actionTypes[`${local.annotationCategory.value}`]"
         />
       </b-form-group>
-      <div v-if="local.startDate || local.endDate">
-        <b-form-datepicker
-          :value-as-date="local.startDate"
-        />
-        <b-form-datepicker
-          :value-as-date="local.endDate"
-        />
+      <div v-show="showDates">
+        <b-form-group label="Start Date">
+          <b-form-datepicker
+            v-model="local.startDate"
+          />
+        </b-form-group>
+        <b-form-group label="End Date">
+          <b-form-datepicker
+            v-model="local.endDate"
+          />
+        </b-form-group>
       </div>
       <text-menu
         :content="note"
@@ -200,6 +204,18 @@ export default {
   computed: {
     id() {
       return this.content.id
+    },
+    showDates() {
+      const matches = [
+        'Specials/Promotions',
+        'Testing',
+        'Uncontrollable Circumstance',
+        'DA WoW',
+        'Other',
+        'Dynamic Pricing',
+        'Dynamic Availability'
+      ]
+      return matches.includes(this.local.annotationType)
     }
   },
   async created() {
@@ -210,6 +226,8 @@ export default {
     this.createdAt = this.content.createdAt
     this.category = this.content.annotationCategory
     this.actionType = this.content.actionType
+    this.startDate = this.local.startDate || null
+    this.endDate = this.local.endDate || null
     this.locations = await this.getClientLocations(this.content.client.urn)
   },
   methods: {
