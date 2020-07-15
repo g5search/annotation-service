@@ -58,21 +58,25 @@
           <template v-slot:header>
             <b-input-group>
               <template v-slot:prepend>
-                <b-input-group-text class="bg-transparent border-0">
+                <b-input-group-text class="inset-label bg-transparent text-darker border-0">
                   <b-icon icon="search" />
                 </b-input-group-text>
               </template>
               <b-form-input
                 v-model="search"
+                type="text"
+                debounce="500"
                 placeholder="Search Notes..."
+                class="inset-padding"
               />
               <template v-slot:append>
                 <b-btn
                   v-show="search !== ''"
-                  @click="onClear"
                   variant="transparent"
+                  class="inset-btn text-darker"
+                  @click="onClear"
                 >
-                  <b-icon-x-circle />
+                  <b-icon-x-circle-fill />
                 </b-btn>
               </template>
             </b-input-group>
@@ -143,7 +147,7 @@
             :current-page="currentPage"
             :per-page="perPage"
             :busy="isBusy"
-            :filter-included-fields="['note', 'locationNames', 'clientName']"
+            :filter-included-fields="['note']"
             primary-key="id"
             show-empty
             responsive
@@ -485,7 +489,7 @@ export default {
   bottom: 0%;
   right: 0%;
   z-index: 9999;
-  transform: translate(-50%, -50%) scale(0.5);
+  transform: translate(-50%, -50%) scale(0.65);
   &:hover {
     cursor: pointer;
   }
@@ -513,6 +517,36 @@ export default {
       user-select: none;
       pointer-events: none;
     }
+  }
+}
+.inset-label {
+  position: relative;
+}
+.inset-label > svg {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  transform: translate(100%, 0%) scale(0.8);
+}
+.inset-padding {
+  padding: 0 2em;
+  border-radius: 5px !important;
+  transition: 200ms ease-in-out;
+  background-color: #e8e8e8;
+  &:focus {
+    padding: 0 1em;
+    border-color: #e8e8e8;
+    background-color: white;
+    box-shadow: 0 0 0.2em 0.2em rgba(11, 35, 63, 0.25);
+  }
+}
+.inset-btn {
+  z-index: 10;
+  position: absolute;
+  right: 0;
+  transform: translateX(-0%);
+  & svg {
+    vertical-align: -0.25em !important;
   }
 }
 .hover-anchor {
