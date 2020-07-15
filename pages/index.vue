@@ -52,27 +52,31 @@
         <b-card
           bg-variant="white"
           body-class="p-0"
-          header-class="d-flex"
+          header-class="d-flex fixed-height"
           header-bg-variant="light"
         >
           <template v-slot:header>
             <b-input-group>
               <template v-slot:prepend>
-                <b-input-group-text class="bg-transparent border-0">
+                <b-input-group-text class="inset-label bg-transparent text-darker border-0">
                   <b-icon icon="search" />
                 </b-input-group-text>
               </template>
               <b-form-input
                 v-model="search"
+                type="text"
+                debounce="500"
                 placeholder="Search Notes..."
+                class="inset-padding"
               />
               <template v-slot:append>
                 <b-btn
                   v-show="search !== ''"
-                  @click="onClear"
                   variant="transparent"
+                  class="inset-btn text-darker"
+                  @click="onClear"
                 >
-                  <b-icon-x-circle />
+                  <b-icon-x-circle-fill />
                 </b-btn>
               </template>
             </b-input-group>
@@ -143,7 +147,7 @@
             :current-page="currentPage"
             :per-page="perPage"
             :busy="isBusy"
-            :filter-included-fields="['note', 'locationNames', 'clientName']"
+            :filter-included-fields="['note']"
             primary-key="id"
             show-empty
             responsive
@@ -181,30 +185,20 @@
               </div>
             </template>
             <template v-slot:cell(annotationCategory)="row">
-              {{ row.item.annotationCategory.text }}
+              <small class="text-muted">
+                {{ row.item.annotationCategory.text }}
+              </small>
             </template>
             <template v-slot:cell(annotationType)="row">
-              {{ row.item.annotationType }}
-              <b-form-text
-                v-if="row.item.startDate"
-              >
-                <b-row no-gutters>
-                  <b-col cols="6">
-                    Start
-                  </b-col>
-                  <b-col cols="6">
-                    End
-                  </b-col>
-                </b-row>
-                <b-row no-gutters>
-                  <b-col cols="6">
-                    {{ row.item.startDate }}
-                  </b-col>
-                  <b-col cols="6">
-                    {{ row.item.endDate }}
-                  </b-col>
-                </b-row>
-              </b-form-text>
+              <small class="text-muted">
+                {{ row.item.annotationType }}
+              </small>
+              <b-badge v-if="row.item.startDate" variant="neutral" class="mb-1 px-2">
+                Start: {{ row.item.startDate }}
+              </b-badge>
+              <b-badge v-if="row.item.endDate" variant="neutral" class="mb-1 px-2">
+                End: {{ row.item.endDate }}
+              </b-badge>
             </template>
             <template v-slot:cell(createdAt)="row">
               {{ new Date(row.item.createdAt).toLocaleDateString() }}
@@ -248,7 +242,7 @@
                   class="align-middle"
                   @click="onToggle(row)"
                 >
-                  <b-icon-pencil-square scale="1.2" />
+                  <b-icon-pencil scale="1.2" />
                 </b-btn>
                 <b-btn
                   variant="transparent"
@@ -317,8 +311,8 @@ export default {
       isBusy: false,
       isError: false,
       currentPage: 1,
-      perPage: 10,
-      pageOptions: [10, 20, 50, 100],
+      perPage: 20,
+      pageOptions: [20, 50, 100, 200],
       search: '',
       fields: [
         {
@@ -485,7 +479,7 @@ export default {
   bottom: 0%;
   right: 0%;
   z-index: 9999;
-  transform: translate(-50%, -50%) scale(0.5);
+  transform: translate(-50%, -50%) scale(0.65);
   &:hover {
     cursor: pointer;
   }
@@ -513,6 +507,39 @@ export default {
       user-select: none;
       pointer-events: none;
     }
+  }
+}
+.fixed-height {
+  max-height: 75px;
+}
+.inset-label {
+  position: relative;
+}
+.inset-label > svg {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  transform: translate(100%, 0%) scale(0.8);
+}
+.inset-padding {
+  padding: 0 2em;
+  border-radius: 5px !important;
+  transition: 200ms ease-in-out;
+  background-color: #e8e8e8;
+  &:focus {
+    padding: 0 1em;
+    border-color: #e8e8e8;
+    background-color: white;
+    box-shadow: 0 0 0.2em 0.2em rgba(11, 35, 63, 0.25);
+  }
+}
+.inset-btn {
+  z-index: 10;
+  position: absolute;
+  right: 0;
+  transform: translateX(-0%);
+  & svg {
+    vertical-align: -0.25em !important;
   }
 }
 .hover-anchor {

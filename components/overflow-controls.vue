@@ -147,9 +147,9 @@
         <b-col class="mb-2 text-muted">
           <b-form-checkbox
             :checked="isCreatedAt"
-            @change="onUpdate({ key: 'isCreatedAt', value: $event })"
             switch
             size="sm"
+            @change="onUpdate({ key: 'isCreatedAt', value: $event })"
           >
             Filter by {{ isCreatedAt ? 'Created' : 'Updated' }} Date Range
           </b-form-checkbox>
