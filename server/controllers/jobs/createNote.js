@@ -43,7 +43,8 @@ module.exports = async function (job) {
     }
   } else {
     const { Id } = await sfApi.findAccount({ Client_URN__c: g5_updatable_client.dataValues.urn }, ['Id'])
-    await sfApi.createNote(Id, userId, annotationCategory.dataValues.name, annotationType.dataValues.name, internal, html, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name, 'DA Task')
+    const { id: noteId } = await sfApi.createNote(Id, userId, annotationCategory.dataValues.name, annotationType.dataValues.name, internal, html, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name, 'DA Task')
+    await dbAnnotation.update({ externalId: noteId })
   }
   await sfApi.logout()
   await dbAnnotation.update({ salesforceSync: true })

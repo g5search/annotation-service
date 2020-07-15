@@ -1,4 +1,4 @@
-const { INTEGER, STRING, JSONB, BOOLEAN, DATEONLY } = require('sequelize')
+const { STRING } = require('sequelize')
 
 module.exports = sequelize => sequelize.define('annotationLocation', {
   salesforce_id: {

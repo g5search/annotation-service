@@ -1,5 +1,6 @@
 const cors = require('cors')
 const axios = require('axios')
+const { Op } = require('sequelize')
 const models = require('../../models')
 const whitelist = [
   /chrome-extension:\/\/[a-z]*$/,
@@ -8,7 +9,6 @@ const whitelist = [
 ]
 const objectUtil = require('../../controllers/utilities/object')
 const crsSync = require('../../controllers/jobs/crsSync')
-const { Op } = require('sequelize')
 const corsOpts = {
   origin: (origin, callback) => {
     if (whitelist.some(pattern => pattern.test(origin)) || !origin) {
@@ -45,37 +45,6 @@ module.exports = (app) => {
     const note = await models.annotation.createAndAssociate({ ...body, annotationUserId })
     res.json(note)
   })
-
-  // // DUPLICATE ROUTE FOR SAME ORIGIN API (CORS is blocking this)
-  // app.post('/api/v1/new-note', async (req, res) => {
-  //   try {
-  //     let user = null
-  //     let annotationUserId = null
-  //     const { body } = req
-  //     console.log({ body, user: req.user })
-  //     if (req.user.email) {
-  //       user = await models.annotationUser.findOne({ where: { email: req.user.email } })
-  //       annotationUserId = user.dataValues.id
-  //     } else if (body.user) {
-  //       const [annotationUser] = await models.annotationUser.findOrCreate({
-  //         where: {
-  //           email: body.user.email
-  //         },
-  //         defaults: {
-  //           email: body.user.email,
-  //           first_name: body.user.firstName,
-  //           last_name: body.user.lastName
-  //         }
-  //       })
-  //       user = annotationUser
-  //       annotationUserId = annotationUser.dataValues.id
-  //     }
-  //     const note = await models.annotation.createAndAssociate({ ...body, annotationUserId })
-  //     res.json(note)
-  //   } catch (err) {
-  //     res.sendStatus(500)
-  //   }
-  // })
 
   app.put('/api/v1/note/:id', async (req, res) => {
     const { id } = req.params
@@ -124,15 +93,6 @@ module.exports = (app) => {
     })
     res.json(result)
   })
-  // returns simplified user to client-side
-  app.get('/api/v1/whoami', async (req, res) => {
-    if (req.user.email) {
-      const { email, firstName, lastName } = req.user
-      res.json({ email, firstName, lastName })
-    } else {
-      res.sendStatus(404)
-    }
-  })
 
   app.get('/api/v1/notes', async (req, res) => {
     const { query } = req
@@ -163,7 +123,6 @@ module.exports = (app) => {
     } else if (dates.from) {
       where[searchBy.column] = { [Op.gte]: dates.from }
     }
-
     const notes = await models.annotation.findAll({
       where,
       include: [
@@ -173,7 +132,8 @@ module.exports = (app) => {
         },
         {
           model: models.annotationType,
-          where: typeWhere
+          where: typeWhere,
+          required: false
         },
         {
           model: models.annotationUser,
@@ -199,7 +159,6 @@ module.exports = (app) => {
         }
       ]
     })
-    console.log({ notes: notes.length })
     const mappedNotes = notes.map((note) => {
       const {
         id,
@@ -262,7 +221,6 @@ module.exports = (app) => {
   app.get('/api/v1/crs/sync', async (req, res) => {
     const response = await axios.get('http://localhost:9541/api/annotation')
     crsSync(response.data)
-    const { data } = response
     res.json(response.data)
   })
 }
