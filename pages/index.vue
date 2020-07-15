@@ -52,7 +52,7 @@
         <b-card
           bg-variant="white"
           body-class="p-0"
-          header-class="d-flex"
+          header-class="d-flex fixed-height"
           header-bg-variant="light"
         >
           <template v-slot:header>
@@ -185,30 +185,20 @@
               </div>
             </template>
             <template v-slot:cell(annotationCategory)="row">
-              {{ row.item.annotationCategory.text }}
+              <small class="text-muted">
+                {{ row.item.annotationCategory.text }}
+              </small>
             </template>
             <template v-slot:cell(annotationType)="row">
-              {{ row.item.annotationType }}
-              <b-form-text
-                v-if="row.item.startDate"
-              >
-                <b-row no-gutters>
-                  <b-col cols="6">
-                    Start
-                  </b-col>
-                  <b-col cols="6">
-                    End
-                  </b-col>
-                </b-row>
-                <b-row no-gutters>
-                  <b-col cols="6">
-                    {{ row.item.startDate }}
-                  </b-col>
-                  <b-col cols="6">
-                    {{ row.item.endDate }}
-                  </b-col>
-                </b-row>
-              </b-form-text>
+              <small class="text-muted">
+                {{ row.item.annotationType }}
+              </small>
+              <b-badge v-if="row.item.startDate" variant="neutral" class="mb-1 px-2">
+                Start: {{ row.item.startDate }}
+              </b-badge>
+              <b-badge v-if="row.item.endDate" variant="neutral" class="mb-1 px-2">
+                End: {{ row.item.endDate }}
+              </b-badge>
             </template>
             <template v-slot:cell(createdAt)="row">
               {{ new Date(row.item.createdAt).toLocaleDateString() }}
@@ -321,8 +311,8 @@ export default {
       isBusy: false,
       isError: false,
       currentPage: 1,
-      perPage: 10,
-      pageOptions: [10, 20, 50, 100],
+      perPage: 20,
+      pageOptions: [20, 50, 100, 200],
       search: '',
       fields: [
         {
@@ -518,6 +508,9 @@ export default {
       pointer-events: none;
     }
   }
+}
+.fixed-height {
+  max-height: 75px;
 }
 .inset-label {
   position: relative;
