@@ -302,7 +302,7 @@ export default {
   },
   async asyncData({ $axios }) {
     const notes = await $axios.$get('api/v1/notes')
-    const me = await $axios.$get('api/v1/whoami')
+    const me = await $axios.$get('api/v1/me')
     return {
       me,
       notes,
