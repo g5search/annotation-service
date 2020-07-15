@@ -7,10 +7,11 @@ const conn = new jsforce.Connection({
 
 module.exports = {
   createNote,
+  deleteNote,
+  updateNote,
   login,
   logout,
   getUserId,
-  updateNote,
   findAccount,
   findLocation
 }
@@ -29,7 +30,9 @@ function createNote (WhatId, OwnerId, Task_Category__c, Task_Action_Type__c, Int
     Task_Types__c
   })
 }
-
+function deleteNote(id) {
+  return conn.sobject('Task').destroy(id)
+}
 function getUserId(where, attributes) {
   return conn.sobject('User').find(where, attributes)
     .then(accounts => util.pick(accounts[0], attributes))
@@ -61,8 +64,6 @@ async function findAccount(where, attributes) {
 }
 
 async function findLocation(where, attributes) {
-  console.log({ where })
   const accounts = await conn.sobject('Location__c').find(where, attributes)
-  console.log({ account: accounts[0] })
   return util.pick(accounts[0], attributes)
 }

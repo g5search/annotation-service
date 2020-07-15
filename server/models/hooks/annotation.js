@@ -1,5 +1,6 @@
 const { salesforce } = require('../../controllers/queue')
 const createNote = require('../../controllers/jobs/createNote')
+const { options } = require('../../controllers/express')
 console.log('importing')
 module.exports = (models) => {
   models.annotation.addHook('afterCreate', (instance, options) => {
@@ -14,5 +15,8 @@ module.exports = (models) => {
         return instance
       }
     }
+  })
+  models.annotation.addHook('afterUpdate', async (instance, options) => {
+    await salesforce.add('update', instance.dataValues)
   })
 }
