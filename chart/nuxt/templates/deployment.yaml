@@ -123,6 +123,11 @@ spec:
               secretKeyRef:
                 name: annotation
                 key: REDIS_URL
+          - name: SLACK_FEEDBACK_URL
+            valueFrom: 
+              secretKeyRef:
+                name: annotation
+                key: SLACK_FEEDBACK_URL 
           - name: PORT
             value : "{{ .Values.service.servicePort }}"
         {{- if .Values.image.livenessProbe }}
