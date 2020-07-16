@@ -160,6 +160,8 @@
             :current-page="currentPage"
             :per-page="perPage"
             :busy="isBusy"
+            :sort-by.sync="sortBy"
+            :sort-desc.sync="sortDesc"
             :filter-included-fields="['note']"
             primary-key="id"
             show-empty
@@ -335,6 +337,8 @@ export default {
       isBusy: false,
       isError: false,
       isFiltered: false,
+      sortBy: 'createdAt',
+      sortDesc: true,
       currentPage: 1,
       perPage: 20,
       pageOptions: [20, 50, 100, 200],
@@ -489,7 +493,7 @@ export default {
     onUpdate(evt) {
       const userEmail = evt.userEmail ? `email=${evt.userEmail}&` : ''
       const clientUrn = evt.clientUrn ? `clientUrn=${evt.clientUrn}&` : ''
-      const locationUrns = (evt.locationUrns) ? `locationUrns=${evt.locationUrns}&` : ''
+      const locationUrns = evt.locationUrns ? `locationUrns=${evt.locationUrns}&` : ''
       const searchBy = `searchBy=${evt.searchBy}&`
       const fromDate = evt.from ? `from=${evt.from}&` : ''
       const toDate = evt.to ? `to=${evt.to}&` : ''
@@ -508,6 +512,11 @@ export default {
           } else {
             this.totalRows = 0
             this.notes = []
+          }
+          if (evt.locationUrns) {
+            this.sortBy = 'locationNames'
+          } else {
+            this.sortBy = 'createdAt'
           }
         })
         .catch(() => {
