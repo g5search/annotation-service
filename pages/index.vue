@@ -401,7 +401,7 @@ export default {
         },
         {
           key: 'locationNames',
-          label: 'Locations',
+          label: 'Location Name(s)',
           sortable: true,
           class: 'align-middle'
         },

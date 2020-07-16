@@ -81,7 +81,7 @@
           <template v-slot:label>
             <b-icon icon="puzzle" scale="1.1" />
             <span class="ml-2">
-              Action
+              Action Type
             </span>
           </template>
           <b-form-select
