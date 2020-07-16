@@ -23,7 +23,7 @@
     "bcrypt": "^4.0.1",
     "bootstrap": "^4.5.0",
     "bootstrap-vue": "^2.15.0",
-    "bull-board": "^0.7.0",
+    "bull-arena": "^2.8.1",
     "cors": "^2.8.5",
     "cross-env": "^5.2.0",
     "dotenv": "^8.2.0",

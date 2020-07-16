@@ -46,11 +46,16 @@ module.exports = (app) => {
     res.json(note)
   })
 
-  app.put('/api/v1/note/:id', async (req, res) => {
+  app.put('/api/v1/note/:id', (req, res) => {
     const { id } = req.params
     const { body } = req
     console.log({ body })
-    const result = await models.sequelize.transaction(async (t) => {
+    models.sequelize.transaction(async (t) => {
+      t.afterCommit(async () => {
+        const reload = await note.reload()
+        console.log({ reload: reload.dataValues })
+        res.json(reload)
+      })
       const note = await models.annotation.findOne(
         {
           where: { id },
@@ -91,7 +96,8 @@ module.exports = (app) => {
       await note.setAnnotationCategory(category, { transaction: t })
       return note.update(body, { transaction: t })
     })
-    res.json(result)
+    // console.log('Sending Results', result)
+    // res.json(result)
   })
 
   app.get('/api/v1/notes', async (req, res) => {

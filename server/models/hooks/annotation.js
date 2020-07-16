@@ -17,6 +17,19 @@ module.exports = (models) => {
     }
   })
   models.annotation.addHook('afterUpdate', async (instance, options) => {
-    await salesforce.add('update', instance.dataValues)
+    if (options.transaction) {
+      // Save done within a transaction, wait until transaction is committed to
+      // notify listeners the instance has been saved
+      try {
+        options.transaction.afterCommit(async () => {
+          const reload = await instance.reload()
+          await reload
+          salesforce.add('update', reload)
+          return instance
+        })
+      } catch (error) {
+        console.log({ error })
+      }
+    }
   })
 }
