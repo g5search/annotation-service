@@ -80,11 +80,17 @@
                 </b-btn>
               </template>
             </b-input-group>
-            <b-btn
+            <!-- <b-btn
               id="filter-me-btn"
-              @click="onFilterMe"
               variant="transparent"
               class="ml-2 align-middle"
+              to="/loading"
+            > -->
+            <b-btn
+              id="filter-me-btn"
+              variant="transparent"
+              class="ml-2 align-middle"
+              @click="onFilterMe"
             >
               <b-icon-person-circle />
             </b-btn>
@@ -119,9 +125,22 @@
               :href="downloadCsv"
               download="notes.csv"
               variant="transparent"
-              class="d-flex align-items-center mr-2"
+              class="mr-2"
             >
-              <b-icon icon="file-spreadsheet" />
+              <b-iconstack>
+                <b-icon
+                  stacked
+                  icon="file-earmark-spreadsheet"
+                  scale="1.25"
+                />
+                <b-icon
+                  stacked
+                  icon="arrow-down-square-fill"
+                  shift-h="8"
+                  shift-v="8"
+                  scale="0.75"
+                />
+              </b-iconstack>
             </b-btn>
             <b-tooltip
               target="download-csv-btn"
@@ -201,10 +220,16 @@
               </b-badge>
             </template>
             <template v-slot:cell(createdAt)="row">
-              {{ new Date(row.item.createdAt).toLocaleDateString() }}
+              <b-badge variant="neutral">
+                <!-- {{ new Date(row.item.createdAt).toDateString() }} -->
+                {{ formatDate(row.item.createdAt) }}
+              </b-badge>
             </template>
             <template v-slot:cell(updatedAt)="row">
-              {{ new Date(row.item.updatedAt).toLocaleDateString() }}
+              <b-badge variant="neutral">
+                <!-- {{ new Date(row.item.updatedAt).toDateString() }} -->
+                {{ formatDate(row.item.updatedAt) }}
+              </b-badge>
             </template>
             <template v-slot:cell(locationNames)="row">
               <div v-if="row.item.locationNames.length >= 10">
@@ -239,14 +264,14 @@
               <div class="d-flex align-items-center">
                 <b-btn
                   :variant="row.detailsShowing ? 'primary' : 'transparent'"
-                  class="align-middle"
+                  class="align-middle edit-btn"
                   @click="onToggle(row)"
                 >
                   <b-icon-pencil scale="1.2" />
                 </b-btn>
                 <b-btn
                   variant="transparent"
-                  class="ml-2 align-middle text-tertiary"
+                  class="ml-2 align-middle drop-btn text-tertiary"
                   @click="onDrop(row)"
                 >
                   <b-icon-trash scale="1.2" />
@@ -353,7 +378,7 @@ export default {
         },
         {
           key: 'salesforceSync',
-          label: 'Synced',
+          label: 'SF Synced',
           sortable: true,
           class: 'align-middle text-center'
         },
@@ -396,6 +421,20 @@ export default {
     this.updateCsv()
   },
   methods: {
+    formatDate(date) {
+      const d = new Date(date)
+      let month = '' + (d.getMonth() + 1)
+      let day = '' + d.getDate()
+      const year = d.getFullYear()
+
+      if (month.length < 2) {
+        month = '0' + month
+      }
+      if (day.length < 2) {
+        day = '0' + day
+      }
+      return [year, month, day].join('-')
+    },
     rdm(min, max) {
       return Math.random() * (max - min) + min
     },
@@ -439,9 +478,7 @@ export default {
     onUpdate(evt) {
       const userEmail = evt.userEmail ? `email=${evt.userEmail}&` : ''
       const clientUrn = evt.clientUrn ? `clientUrn=${evt.clientUrn}&` : ''
-      const locationUrns = (evt.locationUrns.length > 0)
-        ? `locationUrns=${evt.locationUrns}&`
-        : ''
+      const locationUrns = (evt.locationUrns) ? `locationUrns=${evt.locationUrns}&` : ''
       const searchBy = `searchBy=${evt.searchBy}&`
       const fromDate = evt.from ? `from=${evt.from}&` : ''
       const toDate = evt.to ? `to=${evt.to}&` : ''
@@ -508,6 +545,26 @@ export default {
       pointer-events: none;
     }
   }
+}
+.edit-btn,
+.drop-btn {
+  position: relative;
+  &::after {
+    position: absolute;
+    opacity: 0;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    font-size: 0.9em;
+  }
+  &:hover::after {
+    opacity: 1;
+  }
+}
+.edit-btn:hover::after {
+  content: 'EDIT'
+}
+.drop-btn:hover::after {
+  content: 'DELETE'
 }
 .fixed-height {
   max-height: 75px;

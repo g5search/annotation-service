@@ -22,18 +22,19 @@ module.exports = {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
+  // loading: '~/components/loading.vue',
   loading: {
-    color: '#7898ad',
+    color: '#3606e9',
     failedColor: '#ff0033',
     continuous: true,
     throttle: 300,
     duration: 2000,
-    height: '4px'
+    height: '8px'
   },
   loadingIndicator: {
     name: 'three-bounce',
-    color: '#21222e',
-    background: '#f2f2f2'
+    color: '#2f38b0',
+    background: '#e8e8e8'
   },
   css: [
     '@/assets/theme.scss',
