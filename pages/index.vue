@@ -99,22 +99,6 @@
               class="my-0 mx-2"
             />
             <b-btn
-              id="filter-me-btn"
-              variant="transparent"
-              class="ml-2 align-middle"
-              @click="onFilterMe"
-            >
-              <b-icon-person-circle :variant="isFiltered ? 'success' : 'primary-1'" />
-            </b-btn>
-            <b-tooltip
-              target="filter-me-btn"
-              triggers="hover"
-              placement="bottom"
-              variant="primary-1"
-            >
-              Filter table to just my notes
-            </b-tooltip>
-            <b-btn
               id="download-csv-btn"
               :href="downloadCsv"
               download="notes.csv"
@@ -143,6 +127,22 @@
               variant="primary-1"
             >
               Download a CSV of the current table
+            </b-tooltip>
+            <b-btn
+              id="filter-me-btn"
+              variant="transparent"
+              class="ml-2 align-middle"
+              @click="onFilterMe"
+            >
+              <b-icon-person-circle :variant="isFiltered ? 'success' : 'primary-1'" />
+            </b-btn>
+            <b-tooltip
+              target="filter-me-btn"
+              triggers="hover"
+              placement="bottom"
+              variant="primary-1"
+            >
+              Filter table to just my notes
             </b-tooltip>
             <b-btn
               variant="transparent"
@@ -356,7 +356,7 @@ export default {
           key: 'annotationType',
           label: 'Action Type',
           sortable: true,
-          class: 'align-middle text-center'
+          class: 'align-middle text-center tbl-w200'
         },
         {
           key: 'annotationUser',
@@ -498,6 +498,7 @@ export default {
       const type = evt.annotationType ? `annotationType=${evt.annotationType}` : ''
       const endpoint = `api/v1/notes?${userEmail}${category}${clientUrn}${locationUrns}${searchBy}${fromDate}${toDate}${internal}${type}`
       this.isBusy = true
+      this.isFiltered = false
       this.$axios
         .$get(endpoint)
         .then((res) => {
