@@ -271,6 +271,7 @@
                   <b-icon-pencil scale="1.2" />
                 </b-btn>
                 <b-btn
+                  :disabled="true"
                   variant="transparent"
                   class="ml-2 align-middle drop-btn text-tertiary"
                   @click="onDrop(row)"
@@ -459,17 +460,18 @@ export default {
             this.totalRows = 0
             this.notes = []
           }
-          this.updateCsv()
           this.isBusy = false
         })
         .finally(() => {
           this.isFiltered = !this.isFiltered
+          this.updateCsv()
         })
     },
     updateCsv() {
       const columns = [
         'id',
         'internal',
+        'category',
         'annotationType',
         'annotationUser',
         'startDate',
@@ -480,7 +482,15 @@ export default {
         'clientName',
         'locationNames'
       ]
-      this.unparse(this.$refs.notesTable.filteredItems, columns)
+      const flattened = this.$refs.notesTable.filteredItems.map((row) => {
+        return {
+          category: row.annotationCategory.text,
+          ...row
+        }
+      })
+      // this.$emit('updating-csv', flattened.length)
+      // this.unparse(this.$refs.notesTable.filteredItems, columns)
+      this.unparse(flattened, columns)
     },
     onDrop(row) {},
     onToggle(row) {
