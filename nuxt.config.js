@@ -22,15 +22,15 @@ module.exports = {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
-  // loading: '~/components/loading.vue',
-  loading: {
-    color: '#3606e9',
-    failedColor: '#ff0033',
-    continuous: true,
-    throttle: 300,
-    duration: 2000,
-    height: '2px'
-  },
+  loading: '~/components/loading.vue',
+  // loading: {
+  //   color: '#3606e9',
+  //   failedColor: '#ff0033',
+  //   continuous: true,
+  //   throttle: 300,
+  //   duration: 2000,
+  //   height: '2px'
+  // },
   loadingIndicator: {
     name: 'three-bounce',
     color: '#2f38b0',

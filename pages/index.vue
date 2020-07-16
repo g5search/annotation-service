@@ -144,6 +144,12 @@
             >
               Filter table to just my notes
             </b-tooltip>
+            <!-- <b-btn
+              variant="transparent"
+              to="/loading"
+            >
+              <b-icon-arrow-right-square />
+            </b-btn> -->
             <b-btn
               variant="transparent"
               class="d-flex align-items-center"
@@ -494,6 +500,7 @@ export default {
     },
     onDrop(row) {},
     onToggle(row) {
+      // this.$emit('on-toggle', row)
       row.toggleDetails()
     },
     onSubmit(payload) {

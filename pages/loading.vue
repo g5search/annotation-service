@@ -22,7 +22,7 @@ export default {
       // eslint-disable-next-line
       setTimeout(function () {
         resolve({})
-      }, 1000)
+      }, 4000)
     })
   }
 }
