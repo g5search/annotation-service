@@ -80,22 +80,6 @@
                 </b-btn>
               </template>
             </b-input-group>
-            <b-btn
-              id="filter-me-btn"
-              @click="onFilterMe"
-              variant="transparent"
-              class="ml-2 align-middle"
-            >
-              <b-icon-person-circle />
-            </b-btn>
-            <b-tooltip
-              target="filter-me-btn"
-              triggers="hover"
-              placement="bottom"
-              variant="primary-1"
-            >
-              Filter table to just my notes
-            </b-tooltip>
             <b-input-group class="ml-2 w-50">
               <template v-slot:prepend>
                 <b-input-group-text class="bg-transparent border-0">
@@ -119,9 +103,22 @@
               :href="downloadCsv"
               download="notes.csv"
               variant="transparent"
-              class="d-flex align-items-center mr-2"
+              class="mr-2"
             >
-              <b-icon icon="file-spreadsheet" />
+              <b-iconstack>
+                <b-icon
+                  stacked
+                  icon="file-earmark-spreadsheet"
+                  scale="1.25"
+                />
+                <b-icon
+                  stacked
+                  icon="arrow-down-square-fill"
+                  shift-h="8"
+                  shift-v="8"
+                  scale="0.75"
+                />
+              </b-iconstack>
             </b-btn>
             <b-tooltip
               target="download-csv-btn"
@@ -131,6 +128,28 @@
             >
               Download a CSV of the current table
             </b-tooltip>
+            <b-btn
+              id="filter-me-btn"
+              variant="transparent"
+              class="ml-2 align-middle"
+              @click="onFilterMe"
+            >
+              <b-icon-person-circle :variant="isFiltered ? 'success' : 'primary-1'" />
+            </b-btn>
+            <b-tooltip
+              target="filter-me-btn"
+              triggers="hover"
+              placement="bottom"
+              variant="primary-1"
+            >
+              Filter table to just my notes
+            </b-tooltip>
+            <!-- <b-btn
+              variant="transparent"
+              to="/loading"
+            >
+              <b-icon-arrow-right-square />
+            </b-btn> -->
             <b-btn
               variant="transparent"
               class="d-flex align-items-center"
@@ -147,6 +166,8 @@
             :current-page="currentPage"
             :per-page="perPage"
             :busy="isBusy"
+            :sort-by.sync="sortBy"
+            :sort-desc.sync="sortDesc"
             :filter-included-fields="['note']"
             primary-key="id"
             show-empty
@@ -201,10 +222,16 @@
               </b-badge>
             </template>
             <template v-slot:cell(createdAt)="row">
-              {{ new Date(row.item.createdAt).toLocaleDateString() }}
+              <b-badge variant="neutral">
+                <!-- {{ new Date(row.item.createdAt).toDateString() }} -->
+                {{ formatDate(row.item.createdAt) }}
+              </b-badge>
             </template>
             <template v-slot:cell(updatedAt)="row">
-              {{ new Date(row.item.updatedAt).toLocaleDateString() }}
+              <b-badge variant="neutral">
+                <!-- {{ new Date(row.item.updatedAt).toDateString() }} -->
+                {{ formatDate(row.item.updatedAt) }}
+              </b-badge>
             </template>
             <template v-slot:cell(locationNames)="row">
               <div v-if="row.item.locationNames.length >= 10">
@@ -235,18 +262,24 @@
             <template v-slot:cell(note)="row">
               <span v-html="row.item.note" />
             </template>
+            <template v-slot:cell(clientName)="row">
+              <b-badge variant="neutral">
+                {{ row.item.clientName }}
+              </b-badge>
+            </template>
             <template v-slot:cell(edit)="row">
               <div class="d-flex align-items-center">
                 <b-btn
                   :variant="row.detailsShowing ? 'primary' : 'transparent'"
-                  class="align-middle"
+                  class="align-middle edit-btn"
                   @click="onToggle(row)"
                 >
                   <b-icon-pencil scale="1.2" />
                 </b-btn>
                 <b-btn
+                  :disabled="true"
                   variant="transparent"
-                  class="ml-2 align-middle text-tertiary"
+                  class="ml-2 align-middle drop-btn text-tertiary"
                   @click="onDrop(row)"
                 >
                   <b-icon-trash scale="1.2" />
@@ -310,6 +343,9 @@ export default {
       isOpen: false,
       isBusy: false,
       isError: false,
+      isFiltered: false,
+      sortBy: 'createdAt',
+      sortDesc: true,
       currentPage: 1,
       perPage: 20,
       pageOptions: [20, 50, 100, 200],
@@ -331,13 +367,13 @@ export default {
           key: 'annotationType',
           label: 'Action Type',
           sortable: true,
-          class: 'align-middle text-center'
+          class: 'align-middle text-center tbl-w200'
         },
         {
           key: 'annotationUser',
           label: 'User',
           sortable: true,
-          class: 'align-middle text-center'
+          class: 'align-middle text-center tbl-w200'
         },
         {
           key: 'createdAt',
@@ -353,7 +389,7 @@ export default {
         },
         {
           key: 'salesforceSync',
-          label: 'Synced',
+          label: 'SF Synced',
           sortable: true,
           class: 'align-middle text-center'
         },
@@ -361,17 +397,17 @@ export default {
           key: 'note',
           label: 'Note',
           sortable: true,
-          class: 'align-middle'
+          class: 'align-middle tbl-w350'
         },
         {
           key: 'clientName',
           label: 'Client',
           sortable: true,
-          class: 'align-middle'
+          class: 'align-middle tbl-w200'
         },
         {
           key: 'locationNames',
-          label: 'Locations',
+          label: 'Location Name(s)',
           sortable: true,
           class: 'align-middle'
         },
@@ -394,8 +430,23 @@ export default {
   },
   mounted() {
     this.updateCsv()
+    this.onFilterMe()
   },
   methods: {
+    formatDate(date) {
+      const d = new Date(date)
+      let month = '' + (d.getMonth() + 1)
+      let day = '' + d.getDate()
+      const year = d.getFullYear()
+
+      if (month.length < 2) {
+        month = '0' + month
+      }
+      if (day.length < 2) {
+        day = '0' + day
+      }
+      return [year, month, day].join('-')
+    },
     rdm(min, max) {
       return Math.random() * (max - min) + min
     },
@@ -404,18 +455,29 @@ export default {
     },
     onFilterMe() {
       this.isBusy = true
-      const endpoint = `api/v1/notes?email=${this.me.email}`
+      const endpoint = !this.isFiltered ? `api/v1/notes?email=${this.me.email}` : 'api/v1/notes'
       this.$axios
         .$get(endpoint)
-        .then(() => {
-          this.updateCsv()
+        .then((res) => {
+          if (res.length > 0) {
+            this.totalRows = res.length
+            this.notes = res
+          } else {
+            this.totalRows = 0
+            this.notes = []
+          }
           this.isBusy = false
+        })
+        .finally(() => {
+          this.isFiltered = !this.isFiltered
+          this.updateCsv()
         })
     },
     updateCsv() {
       const columns = [
         'id',
         'internal',
+        'category',
         'annotationType',
         'annotationUser',
         'startDate',
@@ -426,10 +488,19 @@ export default {
         'clientName',
         'locationNames'
       ]
-      this.unparse(this.$refs.notesTable.filteredItems, columns)
+      const flattened = this.$refs.notesTable.filteredItems.map((row) => {
+        return {
+          category: row.annotationCategory.text,
+          ...row
+        }
+      })
+      // this.$emit('updating-csv', flattened.length)
+      // this.unparse(this.$refs.notesTable.filteredItems, columns)
+      this.unparse(flattened, columns)
     },
     onDrop(row) {},
     onToggle(row) {
+      // this.$emit('on-toggle', row)
       row.toggleDetails()
     },
     onSubmit(payload) {
@@ -439,9 +510,7 @@ export default {
     onUpdate(evt) {
       const userEmail = evt.userEmail ? `email=${evt.userEmail}&` : ''
       const clientUrn = evt.clientUrn ? `clientUrn=${evt.clientUrn}&` : ''
-      const locationUrns = (evt.locationUrns.length > 0)
-        ? `locationUrns=${evt.locationUrns}&`
-        : ''
+      const locationUrns = evt.locationUrns ? `locationUrns=${evt.locationUrns}&` : ''
       const searchBy = `searchBy=${evt.searchBy}&`
       const fromDate = evt.from ? `from=${evt.from}&` : ''
       const toDate = evt.to ? `to=${evt.to}&` : ''
@@ -450,6 +519,7 @@ export default {
       const type = evt.annotationType ? `annotationType=${evt.annotationType}` : ''
       const endpoint = `api/v1/notes?${userEmail}${category}${clientUrn}${locationUrns}${searchBy}${fromDate}${toDate}${internal}${type}`
       this.isBusy = true
+      this.isFiltered = false
       this.$axios
         .$get(endpoint)
         .then((res) => {
@@ -459,6 +529,11 @@ export default {
           } else {
             this.totalRows = 0
             this.notes = []
+          }
+          if (evt.locationUrns) {
+            this.sortBy = 'locationNames'
+          } else {
+            this.sortBy = 'createdAt'
           }
         })
         .catch(() => {
@@ -508,6 +583,26 @@ export default {
       pointer-events: none;
     }
   }
+}
+.edit-btn,
+.drop-btn {
+  position: relative;
+  &::after {
+    position: absolute;
+    opacity: 0;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    font-size: 0.9em;
+  }
+  &:hover::after {
+    opacity: 1;
+  }
+}
+.edit-btn:hover::after {
+  content: 'EDIT'
+}
+.drop-btn:hover::after {
+  content: 'DELETE'
 }
 .fixed-height {
   max-height: 75px;

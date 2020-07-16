@@ -81,7 +81,7 @@
           <template v-slot:label>
             <b-icon icon="puzzle" scale="1.1" />
             <span class="ml-2">
-              Action
+              Action Type
             </span>
           </template>
           <b-form-select
@@ -283,7 +283,7 @@ export default {
         annotationName: this.category ? this.category : null,
         annotationType: this.actionType ? this.actionType : null,
         clientUrn: this.client ? this.client.urn : null,
-        locationUrns: this.location ? this.location.map(l => l.urn) : null,
+        locationUrns: this.location ? this.location.urn : null,
         isInternal: this.isInternal !== null ? this.isInternal : null,
         searchBy: this.isCreatedAt ? 'createdAt' : 'updatedAt',
         from: this.fromDate ? this.fromDate : null,
