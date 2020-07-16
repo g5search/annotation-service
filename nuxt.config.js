@@ -29,7 +29,7 @@ module.exports = {
     continuous: true,
     throttle: 300,
     duration: 2000,
-    height: '8px'
+    height: '2px'
   },
   loadingIndicator: {
     name: 'three-bounce',

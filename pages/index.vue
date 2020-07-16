@@ -80,28 +80,6 @@
                 </b-btn>
               </template>
             </b-input-group>
-            <!-- <b-btn
-              id="filter-me-btn"
-              variant="transparent"
-              class="ml-2 align-middle"
-              to="/loading"
-            > -->
-            <b-btn
-              id="filter-me-btn"
-              variant="transparent"
-              class="ml-2 align-middle"
-              @click="onFilterMe"
-            >
-              <b-icon-person-circle />
-            </b-btn>
-            <b-tooltip
-              target="filter-me-btn"
-              triggers="hover"
-              placement="bottom"
-              variant="primary-1"
-            >
-              Filter table to just my notes
-            </b-tooltip>
             <b-input-group class="ml-2 w-50">
               <template v-slot:prepend>
                 <b-input-group-text class="bg-transparent border-0">
@@ -120,6 +98,22 @@
               pills
               class="my-0 mx-2"
             />
+            <b-btn
+              id="filter-me-btn"
+              variant="transparent"
+              class="ml-2 align-middle"
+              @click="onFilterMe"
+            >
+              <b-icon-person-circle :variant="isFiltered ? 'success' : 'primary-1'" />
+            </b-btn>
+            <b-tooltip
+              target="filter-me-btn"
+              triggers="hover"
+              placement="bottom"
+              variant="primary-1"
+            >
+              Filter table to just my notes
+            </b-tooltip>
             <b-btn
               id="download-csv-btn"
               :href="downloadCsv"
@@ -260,6 +254,11 @@
             <template v-slot:cell(note)="row">
               <span v-html="row.item.note" />
             </template>
+            <template v-slot:cell(clientName)="row">
+              <b-badge variant="neutral">
+                {{ row.item.clientName }}
+              </b-badge>
+            </template>
             <template v-slot:cell(edit)="row">
               <div class="d-flex align-items-center">
                 <b-btn
@@ -335,6 +334,7 @@ export default {
       isOpen: false,
       isBusy: false,
       isError: false,
+      isFiltered: false,
       currentPage: 1,
       perPage: 20,
       pageOptions: [20, 50, 100, 200],
@@ -362,7 +362,7 @@ export default {
           key: 'annotationUser',
           label: 'User',
           sortable: true,
-          class: 'align-middle text-center'
+          class: 'align-middle text-center tbl-w200'
         },
         {
           key: 'createdAt',
@@ -386,13 +386,13 @@ export default {
           key: 'note',
           label: 'Note',
           sortable: true,
-          class: 'align-middle'
+          class: 'align-middle tbl-w350'
         },
         {
           key: 'clientName',
           label: 'Client',
           sortable: true,
-          class: 'align-middle'
+          class: 'align-middle tbl-w200'
         },
         {
           key: 'locationNames',
@@ -419,6 +419,7 @@ export default {
   },
   mounted() {
     this.updateCsv()
+    this.onFilterMe()
   },
   methods: {
     formatDate(date) {
@@ -443,12 +444,22 @@ export default {
     },
     onFilterMe() {
       this.isBusy = true
-      const endpoint = `api/v1/notes?email=${this.me.email}`
+      const endpoint = !this.isFiltered ? `api/v1/notes?email=${this.me.email}` : 'api/v1/notes'
       this.$axios
         .$get(endpoint)
-        .then(() => {
+        .then((res) => {
+          if (res.length > 0) {
+            this.totalRows = res.length
+            this.notes = res
+          } else {
+            this.totalRows = 0
+            this.notes = []
+          }
           this.updateCsv()
           this.isBusy = false
+        })
+        .finally(() => {
+          this.isFiltered = !this.isFiltered
         })
     },
     updateCsv() {
