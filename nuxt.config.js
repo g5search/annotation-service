@@ -32,7 +32,8 @@ module.exports = {
   //   height: '2px'
   // },
   loadingIndicator: {
-    name: 'three-bounce',
+    // name: 'three-bounce',
+    name: '~/static/custom.html',
     color: '#2f38b0',
     background: '#e8e8e8'
   },

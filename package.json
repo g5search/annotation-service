@@ -1,7 +1,7 @@
 {
   "name": "opex-template",
-  "version": "1.1.28",
-  "description": "A full stack app template for the G5 OpEx team.",
+  "version": "1.1.29",
+  "description": "A note taking service for the G5 Delivery teams.",
   "author": "David Miller & Tyler Hasenoehrl",
   "private": true,
   "scripts": {

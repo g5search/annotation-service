@@ -263,7 +263,7 @@
               <span v-html="row.item.note" />
             </template>
             <template v-slot:cell(clientName)="row">
-              <b-badge variant="neutral">
+              <b-badge variant="neutral" class="text-wrap">
                 {{ row.item.clientName }}
               </b-badge>
             </template>
@@ -403,7 +403,7 @@ export default {
           key: 'clientName',
           label: 'Client',
           sortable: true,
-          class: 'align-middle tbl-w200'
+          class: 'align-middle tbl-w350 text-center'
         },
         {
           key: 'locationNames',
