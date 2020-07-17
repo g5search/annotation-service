@@ -88,7 +88,6 @@ function groupBy(key, array) {
  * @returns
  */
 function groupByObjectKey(key, array) {
-  console.log()
   return array.reduce((objectsByKeyValue, obj) => {
     const value = obj[key]
     objectsByKeyValue[value] = { ...(objectsByKeyValue[value] || {}), ...obj }

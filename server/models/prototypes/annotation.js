@@ -59,8 +59,8 @@ module.exports = (models, Sequelize) => {
       }
       const note = await models.annotation.create(update, { transaction: t })
       await note.addG5_updatable_locations(locations, { transaction: t })
-      await note.setAnnotationType(actionType, { transaction: t })
-      await note.setAnnotationCategory(category, { transaction: t })
+      await note.setAnnotationType(actionType, { transaction: t, hooks: false })
+      await note.setAnnotationCategory(category, { transaction: t, hooks: false })
       return note
     })
 

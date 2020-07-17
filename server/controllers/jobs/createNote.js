@@ -34,10 +34,12 @@ module.exports = async function (job) {
   await sfApi.login(sfUsername, sfPassword, sfToken)
 
   const { Id: userId } = await sfApi.getUserId({ email: annotationUser.dataValues.email }, ['Id'])
-
+  console.log({ userId })
   if (locationUrns.length > 0) {
     for (let i = 0; i < locationUrns.length; i++) {
+      console.log(locationUrns[i])
       const { Id } = await sfApi.findLocation({ Location_URN__c: locationUrns[i] }, ['Id'])
+      console.log({ locationId: Id })
       const { id: noteId } = await sfApi.createNote(Id, userId, annotationCategory.dataValues.name, annotationType ? annotationType.dataValues.name : null, internal, html, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name, 'DA Task')
       await dbAnnotation.g5_updatable_locations[i].annotationLocation.update({ salesforce_id: noteId })
     }
