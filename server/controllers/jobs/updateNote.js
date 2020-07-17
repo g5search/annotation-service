@@ -25,9 +25,9 @@ module.exports = async function (job) {
   const { Id: OwnerId } = await sfApi.getUserId({ email: dbAnnotation.annotationUser.dataValues.email }, ['Id'])
   if (dbAnnotation.dataValues.g5_updatable_locations.length > 0) {
     for (let i = 0; i < dbAnnotation.dataValues.g5_updatable_locations.length; i++) {
-      const location = dbAnnotation.dataValues.g5_updatable_locations[i]
-      const dbAnnotationLocation = dbAnnotation.find(l => l.dataValues.urn === location.urn)
-      const { salesforce_id: noteId } = location.annotationLocation
+      const location = dbAnnotation.g5_updatable_locations[i]
+      const dbAnnotationLocation = location.annotationLocation
+      const { salesforce_id: noteId } = dbAnnotationLocation.dataValues
       const { Id: WhatId } = await sfApi.findLocation({ Location_URN__c: location.urn }, ['Id'])
       if (noteId) {
         const update = {
