@@ -64,7 +64,7 @@ module.exports = async function (job) {
       ActivityDate: moment().format('YYYY-MM-DD'),
       Subject: dbAnnotation.annotationCategory.dataValues.name
     }
-    await sfApi.updateNote(dbAnnotation.dataValues.external_id, update)
+    await sfApi.updateNote(dbAnnotation.dataValues.salesforce_id, update)
   }
   await sfApi.logout()
   // console.log(job.data)

@@ -1,15 +1,13 @@
 const models = require('../../models')
 module.exports = async (notes) => {
   try {
-    console.log(notes.length)
     const mappedNotes = notes.filter(n => n !== null)
-    console.log(mappedNotes.length)
+    const teamNameId = 2
+    const appId = 2
     for (let i = 0; i < mappedNotes.length; i++) {
       const note = mappedNotes[i]
-      const result = await models.sequelize.transaction(async (t) => {
-        console.log({ note })
+      await models.sequelize.transaction(async (t) => {
         if (note.user) {
-          console.log({ noteUser: note.user })
           const [user] = await models.annotationUser.findOrCreate({
             where: {
               email: note.user.email
@@ -54,7 +52,9 @@ module.exports = async (notes) => {
             internal: true,
             html: note.annotation,
             g5UpdatableClientId: client ? client.id : null,
-            annotationUserId: user ? user.id : null
+            annotationUserId: user ? user.id : null,
+            teamNameId,
+            appId
           }, { transaction: t })
           if (location && location.length > 0) {
             await annotation.addG5_updatable_locations([location], { transaction: t })

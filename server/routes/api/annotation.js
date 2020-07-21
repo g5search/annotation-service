@@ -110,6 +110,8 @@ module.exports = (app) => {
       clientWhere,
       noGroup: where,
       locationWhere,
+      appWhere,
+      teamWhere,
       dates,
       searchBy
     } = objectUtil.group({
@@ -119,7 +121,9 @@ module.exports = (app) => {
       clientWhere: [['clientUrn', 'urn']],
       locationWhere: [['locationUrns', 'urn']],
       searchBy: [['searchBy', 'column']],
-      dates: ['to', 'from']
+      dates: ['to', 'from'],
+      teamWhere: [['team', 'name']],
+      appWhere: [['app', 'name']]
     }, query)
 
     if (dates.to && dates.from) {
@@ -162,6 +166,16 @@ module.exports = (app) => {
             'display_name',
             'urn'
           ]
+        },
+        {
+          model: models.app,
+          where: appWhere
+          // required: false
+        },
+        {
+          model: models.team,
+          where: teamWhere
+          // required: false
         }
       ]
     })
@@ -172,7 +186,7 @@ module.exports = (app) => {
         annotationCategory,
         annotationType,
         annotationUser,
-        external_id,
+        salesforce_id,
         startDate,
         endDate,
         createdAt,
@@ -198,7 +212,7 @@ module.exports = (app) => {
             text: `${annotationUser.first_name} ${annotationUser.last_name}`,
             value: annotationUser.email
           },
-        external_id,
+        salesforce_id,
         startDate,
         endDate,
         createdAt,
