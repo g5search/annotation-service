@@ -36,7 +36,7 @@
             id="location-select"
             :value="location"
             :options="locations"
-            :custom-label="l => `${l.display_name ? l.display_name : l.name}`"
+            :custom-label="l => `${l.displayName ? l.displayName : l.name}`"
             @input="onUpdate({ key: 'location', value: $event })"
           />
         </b-form-group>

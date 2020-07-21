@@ -1,5 +1,6 @@
 <template>
   <b-container fluid class="px-0">
+    <!-- START BRANDED ICON -->
     <div class="ceph-container" @click="isOpen = !isOpen">
       <octopus
         :size="`6em`"
@@ -12,6 +13,8 @@
         />
       </div>
     </div>
+    <!-- END BRANDED ICON -->
+    <!-- START SIDEBAR -->
     <b-sidebar
       id="controls-container"
       v-model="isOpen"
@@ -47,6 +50,32 @@
         v.{{ version }}
       </small>
     </b-sidebar>
+    <!-- END SIDEBAR -->
+    <!-- START MODAL -->
+    <b-modal
+      v-model="modal.isOpen"
+      centered
+      title="Deletes Are Forever"
+      title-tag="h1"
+      title-class="text-tertiary mb-0"
+      header-class="border-0"
+      footer-class="border-0"
+    >
+      <strong>
+        Are you sure you want to send this note to the trash?
+      </strong>
+      <template v-slot:modal-footer="{ cancel }">
+        <b-btn variant="tertiary" @click="onConfirmDrop(modal.data)">
+          <b-spinner v-if="modal.isBusy" small />
+          <b-icon v-else icon="trash" />
+          Yes, destroy this note.
+        </b-btn>
+        <b-btn variant="outline-tertiary" @click="cancel()">
+          No, I didn't mean it!
+        </b-btn>
+      </template>
+    </b-modal>
+    <!-- END MODAL -->
     <b-row no-gutters>
       <b-col>
         <b-card
@@ -144,12 +173,6 @@
             >
               Filter table to just my notes
             </b-tooltip>
-            <!-- <b-btn
-              variant="transparent"
-              to="/loading"
-            >
-              <b-icon-arrow-right-square />
-            </b-btn> -->
             <b-btn
               variant="transparent"
               class="d-flex align-items-center"
@@ -223,13 +246,11 @@
             </template>
             <template v-slot:cell(createdAt)="row">
               <b-badge variant="neutral">
-                <!-- {{ new Date(row.item.createdAt).toDateString() }} -->
                 {{ formatDate(row.item.createdAt) }}
               </b-badge>
             </template>
             <template v-slot:cell(updatedAt)="row">
               <b-badge variant="neutral">
-                <!-- {{ new Date(row.item.updatedAt).toDateString() }} -->
                 {{ formatDate(row.item.updatedAt) }}
               </b-badge>
             </template>
@@ -277,10 +298,9 @@
                   <b-icon-pencil scale="1.2" />
                 </b-btn>
                 <b-btn
-                  :disabled="true"
                   variant="transparent"
                   class="ml-2 align-middle drop-btn text-tertiary"
-                  @click="onDrop(row)"
+                  @click="onOpen(row.item.id)"
                 >
                   <b-icon-trash scale="1.2" />
                 </b-btn>
@@ -344,6 +364,11 @@ export default {
       isBusy: false,
       isError: false,
       isFiltered: false,
+      modal: {
+        isOpen: false,
+        data: {},
+        isBusy: false
+      },
       sortBy: 'createdAt',
       sortDesc: true,
       currentPage: 1,
@@ -409,7 +434,7 @@ export default {
           key: 'locationNames',
           label: 'Location Name(s)',
           sortable: true,
-          class: 'align-middle'
+          class: 'align-middle tbl-w400'
         },
         {
           key: 'edit',
@@ -494,13 +519,26 @@ export default {
           ...row
         }
       })
-      // this.$emit('updating-csv', flattened.length)
-      // this.unparse(this.$refs.notesTable.filteredItems, columns)
       this.unparse(flattened, columns)
     },
-    onDrop(row) {},
+    onOpen(row) {
+      this.modal.data = row
+      this.modal.isOpen = true
+    },
+    onConfirmDrop(id) {
+      this.modal.isBusy = true
+      this.$axios
+        .$delete(`api/v1/notes/${id}`)
+        .then(() => {
+          this.modal.isOpen = false
+        })
+        .finally(() => {
+          this.modal.isBusy = false
+          this.modal.data = {}
+          this.onFilterMe()
+        })
+    },
     onToggle(row) {
-      // this.$emit('on-toggle', row)
       row.toggleDetails()
     },
     onSubmit(payload) {
