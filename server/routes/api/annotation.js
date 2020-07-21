@@ -217,6 +217,15 @@ module.exports = (app) => {
     res.json(mappedNotes)
   })
 
+  app.delete('/api/v1/notes/:id', async (req, res) => {
+    await models.annotation.destroy({
+      where: {
+        id: req.params.id
+      }
+    })
+    res.sendStatus(200)
+  })
+
   app.get('/api/v1/strategists', async (req, res) => {
     const strategists = await models.annotationUser.findAll({
       attributes: ['first_name', 'last_name', 'email']
