@@ -480,7 +480,7 @@ export default {
     },
     onFilterMe() {
       this.isBusy = true
-      const endpoint = !this.isFiltered ? `api/v1/notes?email=${this.me.email}` : 'api/v1/notes'
+      const endpoint = !this.isFiltered ? `api/v1/notes?app=notesService&email=${this.me.email}` : 'api/v1/notes?app=notesService'
       this.$axios
         .$get(endpoint)
         .then((res) => {
@@ -546,6 +546,7 @@ export default {
       this.onUpdate(payload)
     },
     onUpdate(evt) {
+      const app = 'app=notesService&'
       const userEmail = evt.userEmail ? `email=${evt.userEmail}&` : ''
       const clientUrn = evt.clientUrn ? `clientUrn=${evt.clientUrn}&` : ''
       const locationUrns = evt.locationUrns ? `locationUrns=${evt.locationUrns}&` : ''
@@ -555,7 +556,7 @@ export default {
       const category = evt.annotationName ? `annotationName=${evt.annotationName}&` : ''
       const internal = evt.isInternal !== null ? `internal=${evt.isInternal}&` : ''
       const type = evt.annotationType ? `annotationType=${evt.annotationType}` : ''
-      const endpoint = `api/v1/notes?${userEmail}${category}${clientUrn}${locationUrns}${searchBy}${fromDate}${toDate}${internal}${type}`
+      const endpoint = `api/v1/notes?${app}${userEmail}${category}${clientUrn}${locationUrns}${searchBy}${fromDate}${toDate}${internal}${type}`
       this.isBusy = true
       this.isFiltered = false
       this.$axios
