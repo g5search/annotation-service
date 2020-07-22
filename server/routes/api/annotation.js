@@ -133,51 +133,51 @@ module.exports = (app) => {
     } else if (dates.from) {
       where[searchBy.column] = { [Op.gte]: dates.from }
     }
+    const includeArray = [
+      {
+        model: models.annotationCategory,
+        where: categoryWhere
+      },
+      {
+        model: models.annotationType,
+        where: typeWhere,
+        required: false
+      },
+      {
+        model: models.annotationUser,
+        where: userWhere
+      },
+      {
+        model: models.g5_updatable_client,
+        where: clientWhere,
+        attributes: [
+          'name',
+          'urn'
+        ]
+      },
+      {
+        model: models.g5_updatable_location,
+        where: locationWhere,
+        required: false,
+        attributes: [
+          'name',
+          'display_name',
+          'urn'
+        ]
+      },
+      {
+        model: models.app,
+        where: appWhere
+      },
+      {
+        model: models.team,
+        where: teamWhere
+      }
+    ]
+    const include = whereCheck(includeArray)
     const notes = await models.annotation.findAll({
       where,
-      include: [
-        {
-          model: models.annotationCategory,
-          where: categoryWhere
-        },
-        {
-          model: models.annotationType,
-          where: typeWhere,
-          required: false
-        },
-        {
-          model: models.annotationUser,
-          where: userWhere
-        },
-        {
-          model: models.g5_updatable_client,
-          where: clientWhere,
-          attributes: [
-            'name',
-            'urn'
-          ]
-        },
-        {
-          model: models.g5_updatable_location,
-          where: locationWhere,
-          required: false,
-          attributes: [
-            'name',
-            'display_name',
-            'urn'
-          ]
-        },
-        {
-          model: models.app,
-          where: appWhere
-          // required: false
-        },
-        {
-          model: models.team,
-          where: teamWhere
-          // required: false
-        }
-      ]
+      include
     })
     const mappedNotes = notes.map((note) => {
       const {
@@ -251,5 +251,14 @@ module.exports = (app) => {
     const response = await axios.get('http://localhost:9541/api/annotation')
     crsSync(response.data)
     res.json(response.data)
+  })
+}
+
+function whereCheck(includesArray) {
+  return includesArray.map((mod) => {
+    if (Object.keys(mod.where).length === 0) {
+      delete mod.where
+    }
+    return mod
   })
 }

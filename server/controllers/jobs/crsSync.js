@@ -2,9 +2,11 @@ const models = require('../../models')
 module.exports = async (notes) => {
   try {
     const mappedNotes = notes.filter(n => n !== null)
-    const teamNameId = 2
+    const teamId = 2
     const appId = 2
+    console.log(mappedNotes.length)
     for (let i = 0; i < mappedNotes.length; i++) {
+      console.log([i])
       const note = mappedNotes[i]
       await models.sequelize.transaction(async (t) => {
         if (note.user) {
@@ -53,14 +55,14 @@ module.exports = async (notes) => {
             html: note.annotation,
             g5UpdatableClientId: client ? client.id : null,
             annotationUserId: user ? user.id : null,
-            teamNameId,
+            teamId,
             appId
-          }, { transaction: t })
+          }, { transaction: t, hooks: false })
           if (location && location.length > 0) {
-            await annotation.addG5_updatable_locations([location], { transaction: t })
+            await annotation.addG5_updatable_locations([location], { transaction: t, hooks: false })
           }
-          await annotation.setAnnotationType(type, { transaction: t })
-          await annotation.setAnnotationCategory(category, { transaction: t })
+          await annotation.setAnnotationType(type, { transaction: t, hooks: false })
+          await annotation.setAnnotationCategory(category, { transaction: t, hooks: false })
           return note
         }
       })
