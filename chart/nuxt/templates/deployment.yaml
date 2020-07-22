@@ -61,6 +61,8 @@ spec:
             value: https://auth.g5search.com/oauth/token
           - name: G5_AUTH_REDIRECT_URI
             value: https://notes.g5marketingcloud.com/g5_auth/users/auth/g5/callback
+          - name: DATABASE_LOGGING
+            value: "false"
           - name: G5_AUTH_ME_ENDPOINT
             value: https://auth.g5search.com/v1/me
           - name : G5_AUTH_CLIENT_ID

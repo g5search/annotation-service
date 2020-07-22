@@ -9,4 +9,4 @@ module.exports = sequelize => sequelize.define('team', {
   name: {
     type: STRING
   }
-})
+}, { freezeTableName: true })
