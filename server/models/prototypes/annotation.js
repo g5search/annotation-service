@@ -52,7 +52,9 @@ module.exports = (models, Sequelize) => {
         annotation,
         internal,
         annotationUserId,
-        g5UpdatableClientId: client.dataValues.id
+        g5UpdatableClientId: client.dataValues.id,
+        appId: 1,
+        teamId: 1
       }
       if (createdAt) {
         update.createdAt = createdAt
