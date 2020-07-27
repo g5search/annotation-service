@@ -84,6 +84,7 @@
           header-class="d-flex fixed-height"
           header-bg-variant="light"
         >
+          <!-- START HEADER -->
           <template v-slot:header>
             <b-input-group>
               <template v-slot:prepend>
@@ -109,17 +110,48 @@
                 </b-btn>
               </template>
             </b-input-group>
+            <b-dropdown id="client-location-select" variant="transparent" right class="ml-2">
+              <template v-slot:button-content>
+                <b-iconstack>
+                  <b-icon-circle stacked scale="1.2" />
+                  <b-icon-building stacked scale="0.75" />
+                </b-iconstack>
+              </template>
+              <b-tooltip
+                target="client-location-select"
+                triggers="hover"
+                placement="bottom"
+                variant="primary-1"
+              >
+               Filter Client and Locations
+              </b-tooltip>
+              <b-dropdown-form style="width: 400px;" class="p-0 mb-0">
+                <client-location @on-submit="onSubmit" />
+              </b-dropdown-form>
+            </b-dropdown>
             <b-input-group class="ml-2 w-50">
               <template v-slot:prepend>
-                <b-input-group-text class="bg-transparent border-0">
-                  Show Rows
+                <b-input-group-text id="show-rows-select" class="bg-white">
+                  <b-iconstack>
+                    <b-icon stacked icon="table" scale="0.5" />
+                    <b-icon stacked icon="textarea" rotate="90" scale="1.15" variant="darker" />
+                  </b-iconstack>
                 </b-input-group-text>
               </template>
               <b-form-select
                 v-model="perPage"
                 :options="pageOptions"
+                style="border-left: none;"
               />
             </b-input-group>
+            <b-tooltip
+              target="show-rows-select"
+              triggers="hover"
+              placement="bottom"
+              variant="primary-1"
+            >
+              Number of rows to display per page.
+            </b-tooltip>
             <b-pagination
               v-model="currentPage"
               :total-rows="totalRows"
@@ -181,6 +213,7 @@
               <b-icon-layout-sidebar-inset-reverse />
             </b-btn>
           </template>
+          <!-- END HEADER -->
           <b-table
             ref="notesTable"
             :fields="fields"
@@ -191,7 +224,7 @@
             :busy="isBusy"
             :sort-by.sync="sortBy"
             :sort-desc.sync="sortDesc"
-            :filter-included-fields="['note']"
+            :filter-included-fields="['note','locationNames']"
             primary-key="id"
             show-empty
             responsive
@@ -333,16 +366,19 @@ import Controls from '~/components/overflow-controls'
 import NoteEditor from '~/components/note-editor'
 import FeedbackForm from '~/components/feedback-form'
 import InlineEditor from '~/components/inline-editor'
+import ClientLocation from '~/components/client-location'
 import PapaMixin from '~/mixins/papaparse'
+import RequestTable from '~/mixins/api'
 export default {
   components: {
     Octopus,
     Controls,
     FeedbackForm,
     InlineEditor,
+    ClientLocation,
     NoteEditor
   },
-  mixins: [PapaMixin],
+  mixins: [PapaMixin, RequestTable],
   async fetch({ store }) {
     await store.dispatch('controls/fillUsers')
     store.dispatch('controls/fillClients')
@@ -481,6 +517,7 @@ export default {
     onFilterMe() {
       this.isBusy = true
       const endpoint = !this.isFiltered ? `api/v1/notes?app=notesService&email=${this.me.email}` : 'api/v1/notes?app=notesService'
+      // const endpoint = !this.isFiltered ? this.createQuery({ userEmail: this.me.email }) : this.createQuery()
       this.$axios
         .$get(endpoint)
         .then((res) => {
@@ -542,21 +579,12 @@ export default {
       row.toggleDetails()
     },
     onSubmit(payload) {
-      this.$emit('submitting', payload)
+      // this.$emit('submitting', payload)
+      // for pre-update tasks that might need to be done.
       this.onUpdate(payload)
     },
     onUpdate(evt) {
-      const app = 'app=notesService&'
-      const userEmail = evt.userEmail ? `email=${evt.userEmail}&` : ''
-      const clientUrn = evt.clientUrn ? `clientUrn=${evt.clientUrn}&` : ''
-      const locationUrns = evt.locationUrns ? `locationUrns=${evt.locationUrns}&` : ''
-      const searchBy = `searchBy=${evt.searchBy}&`
-      const fromDate = evt.from ? `from=${evt.from}&` : ''
-      const toDate = evt.to ? `to=${evt.to}&` : ''
-      const category = evt.annotationName ? `annotationName=${evt.annotationName}&` : ''
-      const internal = evt.isInternal !== null ? `internal=${evt.isInternal}&` : ''
-      const type = evt.annotationType ? `annotationType=${evt.annotationType}` : ''
-      const endpoint = `api/v1/notes?${app}${userEmail}${category}${clientUrn}${locationUrns}${searchBy}${fromDate}${toDate}${internal}${type}`
+      const endpoint = this.createQuery(evt)
       this.isBusy = true
       this.isFiltered = false
       this.$axios
@@ -622,6 +650,11 @@ export default {
       pointer-events: none;
     }
   }
+}
+#show-rows-select {
+  border-width: 2px;
+  border-color: #e8e8e8;
+  border-right: none;
 }
 .edit-btn,
 .drop-btn {
