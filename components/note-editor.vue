@@ -9,6 +9,7 @@
           footer-class="p-0 border-0"
           footer-bg-variant="white"
         >
+          <!-- <tri-checkbox :current="mode" /> -->
           <b-form-group
             label-class="pt-1 pb-0 text-primary-1 d-flex w-100 align-items-center justify-content-start"
             class="mb-1 mt-0"
@@ -45,7 +46,7 @@
               :options="clientLocations"
               :multiple="true"
               :close-on-select="false"
-              :clear-on-select="false"
+              :clear-on-select="true"
               :custom-label="l => `${l.displayName ? l.displayName : l.name}`"
               placeholder="Search"
               track-by="urn"
@@ -293,10 +294,12 @@ import {
   Underline,
   Placeholder
 } from 'tiptap-extensions'
+// import TriCheckbox from '~/components/tri-check'
 export default {
   components: {
     VueMultiselect,
     EditorContent,
+    // TriCheckbox,
     EditorMenuBar
   },
   data() {
@@ -307,6 +310,7 @@ export default {
       showDates: false,
       backdate: false,
       theme: 'primary-1',
+      mode: 0,
       client: null,
       clientLocations: [],
       detectedClient: false,
