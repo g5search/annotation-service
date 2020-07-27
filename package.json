@@ -33,7 +33,7 @@
     "jquery": "^3.5.1",
     "jsforce": "^2.0.0-alpha.12",
     "moment": "^2.26.0",
-    "nuxt": "^2.12.2",
+    "nuxt": "^2.13.3",
     "papaparse": "^5.2.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
