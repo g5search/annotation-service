@@ -1,10 +1,28 @@
-@import url('https://fonts.googleapis.com/css2?family=Sen&display=swap');$theme-colors: (
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Fira+Sans:wght@400;700&display=swap');
+$theme-colors: (
   'primary': #0b233f,
+  'primary-0': #314e88,
+  'primary-1': #0b233f,
+  'primary-2': #4c679d,
+  'primary-3': #2f38b0,
+  'primary-4': #5277c2,
+  'primary-5': #19356a,
+  'primary-6': #94abd7,
+  'primary-7': #3606e9,
   'secondary': #7898ad,
   'tertiary': #e8513e,
+  'tertiary-0': #e37f72,
+  'tertiary-1': #e00033,
+  'tertiary-2': #e34a68,
   'quaternary': #eee23e,
+  'quaternary-0': #f6f4d9,
+  'success': #69ca8a,
+  'neutral': #e1e5e9,
+  'darker': #9ba0a5,
+  'pale': #e8e8e8
 );
-$font-family-base: 'Sen', sans-serif;
+$font-family-base: 'Fira Sans', sans-serif;
+$headings-font-family: 'DM Serif Display', serif;
 $enable-rounded: true;
 $enable-shadows: false;
 $enable-gradients: false;
@@ -16,5 +34,56 @@ $body-bg: RGBA(242, 242, 242, 1.00);
 // BOOTSTRAP VARIABLES DECLARED ABOVE
 @import 'bootstrap/scss/bootstrap.scss';
 @import 'bootstrap-vue/src/index.scss';
+@import 'vue-multiselect/dist/vue-multiselect.min.css';
 
 // OVERRIDES BELOW
+.italic {
+  font-style: italic;
+}
+.b-table-sticky-header {
+  max-height: calc(100vh - 75px - 2px);
+  & > .table.b-table > thead > tr > th {
+    top: -1px !important;
+  }
+}
+.tbl-w350 {
+  // width: 350px;
+  max-width: 350px;
+}
+.tbl-w200 {
+  // width: 200px;
+  max-width: 200px;
+}
+.tbl-w400 {
+  max-width: 400px;
+}
+.custom-select,
+.form-control,
+.multiselect__tags,
+.page-link {
+  border: 2px solid #e8e8e8;
+}
+.align-middle {
+  vertical-align: text-bottom;
+}
+.multiselect__spinner:after,
+.multiselect__spinner:before {
+  border-top-color: #0b233f;
+}
+.multiselect__tag,
+.multiselect__option--highlight,
+.multiselect__option--highlight:after {
+  background: #0b233f;
+}
+.multiselect__tag-icon:hover {
+  background:#0b233f;
+}
+.multiselect__tag-icon:after {
+  color:#b1c4d2;
+}
+.multiselect__option--selected.multiselect__option--highlight,
+.multiselect__option--selected.multiselect__option--highlight:after,
+.multiselect__option--group-selected.multiselect__option--highlight,
+.multiselect__option--group-selected.multiselect__option--highlight:after {
+  background:#e94f3c;
+}

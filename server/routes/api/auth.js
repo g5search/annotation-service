@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const { JWT_SECRET } = process.env
-const models = require('../../models')
 const cors = require('cors')
+const models = require('../../models')
 const whitelist = [
   /chrome-extension:\/\/[a-z]*$/
 ]
@@ -18,20 +18,20 @@ const corsOpts = {
 }
 
 module.exports = (app, passport) => {
-  app.post('/api/v1/signup', passport.authenticate('signup', { session: false }), async (req, res) => {
+  app.post('/api/v1/signup', passport.authenticate('signup', { session: false }), (req, res) => {
     res.json({
       message: 'Signup successful',
       user: req.user
     })
   })
 
-  app.post('/api/v1/login', async (req, res, next) => {
-    passport.authenticate('login', async (err, user) => {
+  app.post('/api/v1/login', (req, res, next) => {
+    passport.authenticate('login', (err, user) => {
       try {
         if (err || !user) {
           return next(new Error('An Error Occurred'))
         }
-        req.login(user, { session: false }, async (error) => {
+        req.login(user, { session: false }, (error) => {
           if (error) { return next(error) }
           const body = { _id: user.id, username: user.username }
           const token = jwt.sign({ user: body }, JWT_SECRET, { expiresIn: '24h' })
@@ -55,12 +55,20 @@ module.exports = (app, passport) => {
         res.sendStatus(422)
       } else {
         const { hash, key } = await apiUser.generateKey()
-        console.log({ hash, key })
         await apiUser.update({ key: hash })
         res.json({ key })
       }
     } else {
       res.sendStatus(401)
+    }
+  })
+  // returns simplified user to client-side
+  app.get('/api/v1/me', (req, res) => {
+    if (req.user.email) {
+      const { email, firstName, lastName } = req.user
+      res.json({ email, firstName, lastName })
+    } else {
+      res.sendStatus(404)
     }
   })
 }

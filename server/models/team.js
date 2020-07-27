@@ -1,6 +1,6 @@
 const { INTEGER, STRING } = require('sequelize')
 
-module.exports = sequelize => sequelize.define('app', {
+module.exports = sequelize => sequelize.define('team', {
   id: {
     type: INTEGER,
     autoIncrement: false,
@@ -9,4 +9,4 @@ module.exports = sequelize => sequelize.define('app', {
   name: {
     type: STRING
   }
-})
+}, { freezeTableName: true })

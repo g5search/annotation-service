@@ -22,9 +22,9 @@ async function start() {
   app.use(nuxt.render)
   models.sequelize
     .sync()
-    .then(() => {
-      console.log('Models Sync\'d')
-    })
+    // .then(() => {
+    //   console.log('%c Models Sync\'d!', 'color: crimson;')
+    // })
     .catch((err) => {
       console.error(err)
     })

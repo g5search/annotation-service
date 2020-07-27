@@ -36,7 +36,7 @@ spec:
           - name: BROWSER_URL
             value: "notes.g5marketingcloud.com"
           - name: CRS_URL
-            value: "https://crs.g5marketingcloud.com"
+            value: "https://opex.g5marketingcloud.com"
           - name: GKE
             value: "true"
           - name: INCLUDE_G5_UPDATABLES
@@ -61,6 +61,8 @@ spec:
             value: https://auth.g5search.com/oauth/token
           - name: G5_AUTH_REDIRECT_URI
             value: https://notes.g5marketingcloud.com/g5_auth/users/auth/g5/callback
+          - name: DATABASE_LOGGING
+            value: "false"
           - name: G5_AUTH_ME_ENDPOINT
             value: https://auth.g5search.com/v1/me
           - name : G5_AUTH_CLIENT_ID
@@ -101,8 +103,33 @@ spec:
           - name: DATABASE_URL
             valueFrom:
               secretKeyRef:
+                name: annotation
+                key: DATABASE_URL
+          - name: SF_USERNAME
+            valueFrom:
+                secretKeyRef:
                   name: annotation
-                  key: DATABASE_URL
+                  key: SF_USERNAME
+          - name: SF_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: annotation
+                key: SF_PASSWORD
+          - name: SF_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: annotation
+                key: SF_TOKEN
+          - name: REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                name: annotation
+                key: REDIS_URL
+          - name: SLACK_FEEDBACK_URL
+            valueFrom: 
+              secretKeyRef:
+                name: annotation
+                key: SLACK_FEEDBACK_URL 
           - name: PORT
             value : "{{ .Values.service.servicePort }}"
         {{- if .Values.image.livenessProbe }}

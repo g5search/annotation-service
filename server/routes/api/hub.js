@@ -1,7 +1,5 @@
 const cors = require('cors')
 const sequelize = require('sequelize')
-const axios = require('axios')
-const { CRS_URL: crsUrl } = process.env
 const whitelist = [
   /chrome-extension:\/\/[a-z]*$/
 ]
@@ -18,16 +16,32 @@ const corsOpts = {
 }
 const { Op } = require('sequelize')
 const models = require('../../models')
+
 module.exports = (app) => {
-  // single route exception
   app.options('/api/hub/clients', cors(corsOpts))
   app.options('/api/hub/clients/:clientUrn/locations', cors(corsOpts))
+  app.options('/api/hub/location/:locationUrn', cors(corsOpts))
+
+  app.get('/api/hub/location/:locationUrn', cors(corsOpts), async (req, res) => {
+    const location = await models.g5_updatable_location.findOne({
+      where: {
+        urn: req.params.locationUrn
+      }
+    })
+    const client = await models.g5_updatable_client.findOne({
+      where: {
+        urn: location.dataValues.client_urn
+      }
+    })
+    res.json({ clientUrn: client.dataValues.urn, locationUrn: location.dataValues.urn })
+  })
 
   app.get('/api/hub/clients/:clientUrn/locations', cors(corsOpts), async (req, res) => {
     const { clientUrn } = req.params
     const locations = await models.g5_updatable_location.getByClientUrn(clientUrn)
     res.json(locations)
   })
+
   app.get('/api/hub/clients', cors(corsOpts), async (req, res) => {
     const { internal, activeDa } = req.query
     let clients
@@ -47,12 +61,7 @@ module.exports = (app) => {
         attributes: [
           'urn',
           'name',
-          // [sequelize.json('properties.core_id'), 'clientId'],
-          // [sequelize.json('properties.g5_internal'), 'g5Internal'],
           [sequelize.json('properties.branded_name'), 'brandedName']
-          // [sequelize.json('properties.domain_type'), 'domainType'],
-          // [sequelize.json('properties.vertical'), 'vertical'],
-          // [sequelize.json('properties.search_analyst.name'), 'strategist']
         ],
         order: [
           ['name', 'asc']

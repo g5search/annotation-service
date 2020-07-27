@@ -7,7 +7,7 @@ module.exports = (sequelize) => {
       autoIncrement: true,
       primaryKey: true
     },
-    external_id: {
+    salesforce_id: {
       type: STRING
     },
     annotation: {
@@ -23,7 +23,10 @@ module.exports = (sequelize) => {
       type: DATEONLY
     },
     html: {
-      type: STRING
+      type: STRING(1000)
+    },
+    salesforceSync: {
+      type: BOOLEAN
     }
   }, {
     paranoid: true
@@ -34,6 +37,7 @@ module.exports = (sequelize) => {
     models.annotation.belongsTo(models.annotationType)
     models.annotation.belongsTo(models.app)
     models.annotation.belongsTo(models.g5_updatable_client)
+    models.annotation.belongsTo(models.team)
     models.annotation.belongsToMany(models.g5_updatable_location, { through: 'annotationLocation' })
   }
   return annotation
