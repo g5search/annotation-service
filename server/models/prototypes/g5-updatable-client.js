@@ -1,5 +1,4 @@
-const sequelize = require('sequelize')
-module.exports = (models) => {
+module.exports = (models, Sequelize, sequelize) => {
   models.g5_updatable_client.getAllNonInternal = where => models.g5_updatable_client.findAll({
     where: {
       'properties.g5_internal': false,
@@ -10,7 +9,7 @@ module.exports = (models) => {
       'name',
       // [sequelize.json('properties.core_id'), 'clientId'],
       // [sequelize.json('properties.g5_internal'), 'g5Internal'],
-      [sequelize.json('properties.branded_name'), 'brandedName']
+      [Sequelize.json('properties.branded_name'), 'brandedName']
       // [sequelize.json('properties.domain_type'), 'domainType'],
       // [sequelize.json('properties.vertical'), 'vertical'],
       // [sequelize.json('properties.search_analyst.name'), 'strategist']

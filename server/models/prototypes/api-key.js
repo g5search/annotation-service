@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt')
 const Hashids = require('hashids/cjs')
 const hashids = new Hashids('', 15, 'abcdefghijklmnopqrstuvwxyz1234567890')
-module.exports = (models) => {
+module.exports = (models, Sequelize, sequelize) => {
   models.apiKey.prototype.isValidKey = function (key) {
     return bcrypt.compare(key, this.key)
   }
