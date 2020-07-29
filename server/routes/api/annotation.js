@@ -1,7 +1,7 @@
 const cors = require('cors')
 const axios = require('axios')
 const { Op } = require('sequelize')
-const models = require('../../models')
+const models = require('../../models/primary')
 const whitelist = [
   /chrome-extension:\/\/[a-z]*$/,
   /http:\/\/localhost:[\d]*/,

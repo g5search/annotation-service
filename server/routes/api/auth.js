@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const { JWT_SECRET } = process.env
 const cors = require('cors')
-const models = require('../../models')
+const models = require('../../models/primary')
 const whitelist = [
   /chrome-extension:\/\/[a-z]*$/
 ]

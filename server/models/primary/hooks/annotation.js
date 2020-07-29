@@ -1,6 +1,6 @@
-const { salesforce } = require('../../controllers/queue')
-const createNote = require('../../controllers/jobs/createNote')
-const { options } = require('../../controllers/express')
+const { salesforce } = require('../../../controllers/queue')
+const createNote = require('../../../controllers/jobs/createNote')
+const { options } = require('../../../controllers/express')
 module.exports = (models) => {
   models.annotation.addHook('afterCreate', (instance, options) => {
     if (options.transaction) {

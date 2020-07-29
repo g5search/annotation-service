@@ -1,6 +1,6 @@
 const sequelize = require('sequelize')
 const axios = require('axios')
-const models = require('../../models')
+const models = require('../../models/primary')
 const { CRS_URL: crsUrl } = process.env
 const cors = require('cors')
 const whitelist = [

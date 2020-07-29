@@ -15,7 +15,7 @@ const corsOpts = {
   methods: 'GET'
 }
 const { Op } = require('sequelize')
-const models = require('../../models')
+const models = require('../../models/primary')
 
 module.exports = (app) => {
   app.options('/api/hub/clients', cors(corsOpts))
