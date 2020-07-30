@@ -102,7 +102,6 @@ module.exports = (app) => {
 
   app.get('/api/v1/notes', async (req, res) => {
     const { query } = req
-
     const {
       categoryWhere,
       typeWhere,
@@ -123,7 +122,8 @@ module.exports = (app) => {
       searchBy: [['searchBy', 'column']],
       dates: ['to', 'from'],
       teamWhere: [['team', 'name']],
-      appWhere: [['app', 'name']]
+      appWhere: [['app', 'name']],
+      reject: ['access_token', 'key']
     }, query)
 
     if (dates.to && dates.from) {
