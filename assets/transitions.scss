@@ -17,7 +17,14 @@
   transform: translateX(-10px);
   opacity: 0;
 }
-
-.test {
-  color: red;
+.scale-in-ver-top-enter-active,
+.scale-in-ver-top-leave-active {
+  transition: 300ms cubic-bezier(0.250, 0.460, 0.550, 0.740);
+}
+.scale-in-ver-top-enter,
+.scale-in-ver-top-leave {
+  transform: translateZ(160px) translateY(-100px);
+}
+.scale-in-ver-top-leave-to {
+  transform: translateZ(0) translateY(0);
 }
