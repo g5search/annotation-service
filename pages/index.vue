@@ -241,16 +241,10 @@
               </div>
             </template>
             <template v-slot:emptyfiltered>
-              <div class="text-center py-5 h1">
-                <b-icon-emoji-frown scale="1.2" />
-                Your search did not return any results. Please adjust search string.
-              </div>
+              <error-slot slot-name="searchText" />
             </template>
             <template v-slot:empty>
-              <div class="text-center py-5 h1">
-                <b-icon-emoji-frown scale="1.7" class="pr-2 text-tertiary" />
-                {{ isEmpty }}
-              </div>
+              <error-slot slot-name="filteredText" />
             </template>
             <template v-slot:cell(internal)="row">
               <div class="hover-anchor">
@@ -340,7 +334,7 @@
               </div>
             </template>
             <template v-slot:row-details="row">
-              <transition name="scale-in-ver-top" appear leave>
+              <transition name="slide-fade" appear>
                 <inline-editor
                   :content="row.item"
                   :clients="clients"
@@ -367,6 +361,7 @@ import NoteEditor from '~/components/note-editor'
 import FeedbackForm from '~/components/feedback-form'
 import InlineEditor from '~/components/inline-editor'
 import ClientLocation from '~/components/client-location'
+import ErrorSlot from '~/components/errors-fallbacks'
 import PapaMixin from '~/mixins/papaparse'
 import RequestTable from '~/mixins/api'
 export default {
@@ -374,6 +369,7 @@ export default {
     Octopus,
     Controls,
     FeedbackForm,
+    ErrorSlot,
     InlineEditor,
     ClientLocation,
     NoteEditor
@@ -735,16 +731,5 @@ export default {
       opacity: 1;
     }
   }
-}
-.scale-in-ver-top-enter-active,
-.scale-in-ver-top-leave-active {
-  transition: 300ms cubic-bezier(0.250, 0.460, 0.550, 0.740);
-}
-.scale-in-ver-top-enter,
-.scale-in-ver-top-leave {
-  transform: translateZ(160px) translateY(-100px);
-}
-.scale-in-ver-top-leave-to {
-  transform: translateZ(0) translateY(0);
 }
 </style>
