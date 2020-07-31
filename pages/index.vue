@@ -1,5 +1,11 @@
 <template>
-  <b-container fluid class="px-0">
+  <b-container fluid class="px-0 alert-anchor">
+    <!-- START GLOBAL ALERT -->
+    <alert
+      :specs="specs"
+      class="m-2"
+    />
+    <!-- END GLOBAL ALERT -->
     <!-- START BRANDED ICON -->
     <div class="ceph-container" @click="isOpen = !isOpen">
       <octopus
@@ -123,7 +129,7 @@
                 placement="bottom"
                 variant="primary-1"
               >
-               Filter Client and Locations
+                Filter Client and Locations
               </b-tooltip>
               <b-dropdown-form style="width: 400px;" class="p-0 mb-0">
                 <client-location @on-submit="onSubmit" />
@@ -362,8 +368,10 @@ import FeedbackForm from '~/components/feedback-form'
 import InlineEditor from '~/components/inline-editor'
 import ClientLocation from '~/components/client-location'
 import ErrorSlot from '~/components/errors-fallbacks'
+import Alert from '~/components/alert'
 import PapaMixin from '~/mixins/papaparse'
 import RequestTable from '~/mixins/api'
+import AlertMixin from '~/mixins/alert-mixin'
 export default {
   components: {
     Octopus,
@@ -372,9 +380,10 @@ export default {
     ErrorSlot,
     InlineEditor,
     ClientLocation,
-    NoteEditor
+    NoteEditor,
+    Alert
   },
-  mixins: [PapaMixin, RequestTable],
+  mixins: [PapaMixin, RequestTable, AlertMixin],
   async fetch({ store }) {
     await store.dispatch('controls/fillUsers')
     store.dispatch('controls/fillClients')
@@ -390,6 +399,14 @@ export default {
   },
   data() {
     return {
+      specs: {
+        id: 'global-status',
+        width: 'w-25',
+        dismissCountDown: 'globalDismissCountDown',
+        alertVariant: 'globalAlertVariant',
+        alertMsg: 'globalAlertMsg',
+        dismissSecs: 'globalDismissSecs'
+      },
       version,
       isEmpty: 'Oh no! We couldn\'t find any notes that match your selected filters, please review and adjust them.',
       isOpen: false,
@@ -513,7 +530,6 @@ export default {
     onFilterMe() {
       this.isBusy = true
       const endpoint = !this.isFiltered ? `api/v1/notes?app=notesService&email=${this.me.email}` : 'api/v1/notes?app=notesService'
-      // const endpoint = !this.isFiltered ? this.createQuery({ userEmail: this.me.email }) : this.createQuery()
       this.$axios
         .$get(endpoint)
         .then((res) => {
@@ -526,6 +542,7 @@ export default {
           }
           this.isBusy = false
         })
+        .catch(() => this.showGlobalAlert('Network Error: Please try again', 'danger'))
         .finally(() => {
           this.isFiltered = !this.isFiltered
           this.updateCsv()
@@ -565,6 +582,10 @@ export default {
         .then(() => {
           this.modal.isOpen = false
         })
+        .catch(() => {
+          this.modal.isOpen = false
+          this.showGlobalAlert('Error: Please try again', 'danger')
+        })
         .finally(() => {
           this.modal.isBusy = false
           this.modal.data = {}
@@ -600,6 +621,7 @@ export default {
           }
         })
         .catch(() => {
+          this.showGlobalAlert('Error: Please try again', 'danger')
           this.isError = true
         })
         .finally(() => {
@@ -612,6 +634,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.alert-anchor {
+  position: relative;
+  & #global-status {
+    position: absolute;
+    top: 5%;
+    left: 20%;
+    transform: translate(-50%, -100%);
+    border-radius: 5px;
+    z-index: 5;
+  }
+}
+
 .ceph-container {
   position: fixed;
   bottom: 0%;

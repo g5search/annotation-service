@@ -4,7 +4,7 @@
       <b-icon icon="people" />
       Team
     </template>
-    <b-iconstack @click="rotate" class="triangle mx-2">
+    <b-iconstack class="triangle mx-2" @click="rotate">
       <b-icon :variant="pos[current].variant" stacked icon="triangle-fill" />
       <b-icon
         :shift-v="pos[current].v"
