@@ -31,23 +31,18 @@ module.exports = (app) => {
     }
   })
 
-  // Updates Note
-  app.put('/api/v1/note/:id', (req, res) => {
-    try {
-      annCntlr.updateNote(req, res)
-    } catch (e) {
-      res.status(500).send(e.message)
-    }
+  app.put('/api/v1/note/:id', async (req, res) => {
+    const { id } = req.params
+    const { body } = req
+    const update = await models.annotation.updateNote(id, body)
+    res.json(update)
   })
 
   // Gets Users Notes
   app.get('/api/v1/notes', async (req, res) => {
-    try {
-      const mappedNotes = await annCntlr.getNotes(req, res)
-      res.json(mappedNotes)
-    } catch (e) {
-      res.status(400).send(e.message)
-    }
+    const { query } = req
+    const notes = await models.annotation.findByQuery(query)
+    res.json(notes)
   })
 
   // Deletes Notes
