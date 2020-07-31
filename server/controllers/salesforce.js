@@ -13,10 +13,13 @@ module.exports = {
   logout,
   getUserId,
   findAccount,
-  findLocation
+  findLocation,
+  getCases,
+  getRecordTypes,
+  getAccounts
 }
 
-function createNote (WhatId, OwnerId, Task_Category__c, Task_Action_Type__c, Internal_Only__c, Description, ActivityDate, Status, Subject, Task_Types__c,) {
+function createNote (WhatId, OwnerId, Task_Category__c, Task_Action_Type__c, Internal_Only__c, Description, ActivityDate, Status, Subject, Task_Types__c) {
   return conn.sobject('Task').create({
     WhatId,
     OwnerId,
@@ -66,4 +69,19 @@ async function findAccount(where, attributes) {
 async function findLocation(where, attributes) {
   const accounts = await conn.sobject('Location__c').find(where, attributes)
   return util.pick(accounts[0], attributes)
+}
+
+function getCases(where, attributes) {
+  return conn.sobject('Case').find(where, attributes)
+    .then(tickets => tickets.map(ticket => util.pick(ticket, attributes)))
+}
+
+function getRecordTypes(ids, attributes) {
+  return conn.sobject('recordType').retrieve(ids)
+    .then(recordTypes => recordTypes.map(recordType => util.pick(recordType, attributes)))
+}
+
+function getAccounts(ids, attributes) {
+  return conn.sobject('Account').retrieve(ids)
+    .then(recordTypes => recordTypes.map(recordType => util.pick(recordType, attributes)))
 }
