@@ -3,7 +3,6 @@ const objectUtil = require('../../controllers/utilities/object')
 module.exports = (models, Sequelize, sequelize) => {
   const { Op } = Sequelize
   models.annotation.createAndAssociate = async (params) => {
-    // const t = await Sequelize.transaction()
     const { clientUrn, internal, locationUrns, category: noteCategory, actionType: type, annotation, html, startDate, endDate, user, createdAt } = params
     let { annotationUserId } = params
     let actionType = null
@@ -44,7 +43,7 @@ module.exports = (models, Sequelize, sequelize) => {
         urn: clientUrn
       }
     })
-    const result = await Sequelize.transaction(async (t) => {
+    const result = await sequelize.transaction(async (t) => {
       const update = {
         html,
         startDate,
