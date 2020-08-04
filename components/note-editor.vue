@@ -261,18 +261,9 @@
               </b-btn>
             </b-btn-group>
           </template>
-          <b-alert
-            id="submission-status"
-            :show="dismissCountDown"
-            variant="success"
-            dismissible
-            class="w-100"
-            @dismissed="dismissCountDown = 0"
-            @dismiss-count-down="countDownChanged"
-          >
-            <b-icon-check-circle scale="1.25" />
-            Note Saved!
-          </b-alert>
+          <alert
+            :specs="specs"
+          />
         </b-card>
       </b-col>
     </b-row>
@@ -294,14 +285,18 @@ import {
   Underline,
   Placeholder
 } from 'tiptap-extensions'
+import AlertMixin from '~/mixins/alert-mixin'
+import Alert from '~/components/alert'
 // import TriCheckbox from '~/components/tri-check'
 export default {
   components: {
     VueMultiselect,
     EditorContent,
     // TriCheckbox,
-    EditorMenuBar
+    EditorMenuBar,
+    Alert
   },
+  mixins: [AlertMixin],
   data() {
     return {
       editor: null,
@@ -326,12 +321,19 @@ export default {
       },
       category: null,
       actionType: null,
-      dismissSecs: 2,
-      dismissCountDown: 0
+      specs: {
+        id: 'submission-status',
+        width: 'w-100',
+        dismissCountDown: 'dismissCountDown',
+        alertVariant: 'alertVariant',
+        alertMsg: 'alertMsg',
+        dismissSecs: 'dismissSecs'
+      }
     }
   },
   computed: {
     ...mapState({
+      alertProps: state => state.alert,
       clients: state => state.controls.clients,
       categories: state => state.controls.categories,
       actionTypes: state => state.controls.actionTypes
@@ -398,14 +400,9 @@ export default {
       this.createdAt = null
       this.editor.clearContent()
     },
-    countDownChanged(dismissCountDown) {
-      this.dismissCountDown = dismissCountDown
-    },
-    showAlert() {
-      this.dismissCountDown = this.dismissSecs
-    },
     onError() {
       this.isError = true
+      this.showAlert('Network Error: Please try again', 'danger')
     },
     onSubmit() {
       const endpoint = 'api/v1/note'
@@ -423,8 +420,10 @@ export default {
           clientUrn: this.client.urn,
           locationUrns: this.locations.map(l => l.urn)
         })
-        .then(() => this.showAlert())
-        .catch(() => this.onError())
+        .then(() => this.showAlert('Note Saved!', 'success'))
+        .catch((err) => {
+          this.onError(err)
+        })
         .finally(() => this.onReset())
     },
     onClientSelect(evt) {
@@ -439,6 +438,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 .alert-anchor {
   position: relative;
   & #submission-status {
@@ -447,7 +447,6 @@ export default {
     left: 50%;
     transform: translate(-50%, -100%);
     border-radius: 5px;
-    border: 2px solid #69ca8a;
   }
 }
 .editor {

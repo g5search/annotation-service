@@ -148,13 +148,14 @@
 <script>
 import VueMultiselect from 'vue-multiselect'
 import Hub from '~/mixins/hub'
+import AlertMixin from '~/mixins/alert-mixin'
 import TextMenu from '~/components/text-with-menu'
 export default {
   components: {
     VueMultiselect,
     TextMenu
   },
-  mixins: [Hub],
+  mixins: [Hub, AlertMixin],
   props: {
     content: {
       type: Object,
@@ -247,7 +248,10 @@ export default {
           locationUrns: this.local.locations.map(l => l.urn)
         })
         .then(() => {
+          this.showGlobalAlert('Note Updated!', 'success')
           this.$emit('on-close')
+        }).catch(() => {
+          this.showGlobalAlert('Network Error: Please try again', 'danger')
         })
     },
     onCancel() {

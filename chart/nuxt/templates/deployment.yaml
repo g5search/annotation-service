@@ -39,10 +39,12 @@ spec:
             value: "https://opex.g5marketingcloud.com"
           - name: GKE
             value: "true"
+          - name: GA_PROPERTY
+            value: ""
           - name: INCLUDE_G5_UPDATABLES
             value: "true"
           - name : INCLUDE_G5_AUTH
-            value: ""
+            value: "UA-115892674-19"
           - name: DATABASE_MAX_CONNECTIONS
             value: "10"
           - name: DATABASE_MIN_CONNECTIONS
@@ -126,10 +128,10 @@ spec:
                 name: annotation
                 key: REDIS_URL
           - name: SLACK_FEEDBACK_URL
-            valueFrom: 
+            valueFrom:
               secretKeyRef:
                 name: annotation
-                key: SLACK_FEEDBACK_URL 
+                key: SLACK_FEEDBACK_URL
           - name: PORT
             value : "{{ .Values.service.servicePort }}"
         {{- if .Values.image.livenessProbe }}
