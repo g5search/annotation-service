@@ -18,17 +18,13 @@ module.exports = (sequelize) => {
     },
     createdDate: {
       type: DATE
-    },
-    recordType: {
-      type: STRING
-    },
-    requestType: {
-      type: STRING
     }
   })
 
   sfCase.associate = (models) => {
-    models.annotation.belongsTo(models.g5_updatable_client)
+    models.case.belongsTo(models.g5_updatable_client)
+    models.case.belongsTo(models.requestType)
+    models.case.belongsTo(models.recordType)
   }
   return sfCase
 }
