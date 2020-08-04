@@ -1,4 +1,5 @@
 const sfApi = require('../../controllers/salesforce')
+const { salesforce } = require('../../controllers/queue')
 const {
   SF_USERNAME: sfUsername,
   SF_PASSWORD: sfPassword,
@@ -33,5 +34,22 @@ module.exports = (app) => {
     })
     await sfApi.logout()
     res.json(cases)
+  })
+  app.post('/api/v1/xml/cases', async (req, res) => {
+    const { body } = req
+    await salesforce.add('createClosedCase', body)
+    res.set('Content-Type', 'text/xml')
+    res.send(`
+      <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        <soap:Body>
+          <notificationsResponse 
+            xmlns:ns2="urn:sobject.enterprise.soap.sforce.com" 
+            xmlns="http://soap.sforce.com/2005/09/outbound"
+          >
+            <Ack>true</Ack>
+          </notificationsResponse>
+        </soap:Body>
+      </soap:Envelope>
+    `)
   })
 }
