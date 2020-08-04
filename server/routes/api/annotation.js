@@ -123,7 +123,8 @@ module.exports = (app) => {
       searchBy: [['searchBy', 'column']],
       dates: ['to', 'from'],
       teamWhere: [['team', 'name']],
-      appWhere: [['app', 'name']]
+      appWhere: [['app', 'name']],
+      skip: ['access_token']
     }, query)
 
     if (dates.to && dates.from) {
