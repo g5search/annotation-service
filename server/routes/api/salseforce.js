@@ -25,15 +25,19 @@ module.exports = (app) => {
     const accountIds = cases.map(ticket => ticket.AccountId)
     const recordTypes = await sfApi.getRecordTypes(recordTypeIds, ['Id', 'Name'])
     const accounts = await sfApi.getAccounts(accountIds, ['Id', 'Client_URN__c'])
+    await sfApi.logout()
     cases.map((ticket) => {
       const client = accounts.find(account => account.Id === ticket.AccountId)
       const recordType = recordTypes.find(recordType => recordType.id === ticket.RecordTypeId)
       ticket.clientUrn = client ? client.Client_URN__c : null
       ticket.recordType = recordType ? recordType.name : null
-      return ticket
     })
-    await sfApi.logout()
-    res.json(cases)
+    if (Object.prototype.hasOwnProperty.call(req.query, 'clientUrn')) {
+      const filtered = cases.filter(ticket => ticket.clientUrn == req.query.clientUrn)
+      res.json(filtered)
+    } else {
+      res.json(cases)
+    }
   })
   app.post('/api/v1/xml/cases', async (req, res) => {
     const { body } = req

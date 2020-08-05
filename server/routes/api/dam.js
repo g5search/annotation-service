@@ -32,6 +32,7 @@ module.exports = (app) => {
     })
     const endtime = new Date()
     const seconds = Math.abs(startTime - endtime) / 1000
-    res.json({ seconds, clientItems })
+    console.log(seconds)
+    res.json(clientItems)
   })
 }
