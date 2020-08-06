@@ -27,6 +27,7 @@ module.exports = (app) => {
     // const accounts = await sfApi.getAccounts(accountIds, ['Id', 'Client_URN__c'])
     await sfApi.logout()
     console.log(cases.length)
+    // takes cases missing client urn and record type id
     res.json({ cases })
     // cases.map((ticket) => {
     //   const client = accounts.find(account => account.Id === ticket.AccountId)
@@ -38,10 +39,10 @@ module.exports = (app) => {
     //   const filtered = cases.filter(ticket => ticket.clientUrn == req.query.clientUrn)
     //   res.json(filtered)
     // } else {
-    //   res.json(cases)
+    res.json(cases)
     // }
   })
-  app.get('api/v1/cases/import', async (req, res) => {
+  app.get('/api/v1/cases/import', async (req, res) => {
     await salesforce.add('importClosedCases', null)
     res.sendStatus(201)
   })

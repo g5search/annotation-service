@@ -73,8 +73,19 @@ async function findLocation(where, attributes) {
 }
 
 function getCases(where, attributes) {
-  return conn.sobject('Case').find()
-  // .then(tickets => tickets.map(ticket => util.pick(ticket, attributes)))
+  return conn.query('SELECT AccountId, Account_Manager__c, CaseNumber, Case_Age__c, Case_Owner_Name__c, ClosedDate, CreatedDate, RecordTypeId, Request_Type__c, Subject FROM Case WHERE ClosedDate > 2020-01-01T00:00:00.000Z')
+    .then(async(cases) => {
+      const totalCases = [...cases.records]
+      let done = cases.done
+      let nextRecordsUrl = cases.nextRecordsUrl
+      while (!done) {
+        const query = await conn.queryMore(nextRecordsUrl)
+        totalCases.push(...query.records)
+        nextRecordsUrl = query.nextRecordsUrl
+        done = query.done
+      }
+      return totalCases
+    })
 }
 function getTotalCases(where) {
   return conn.query('SELECT count() FROM Case WHERE ClosedDate > 2020-01-01T00:00:00.000Z')
@@ -87,5 +98,7 @@ function getRecordTypes(ids, attributes) {
 
 function getAccounts(ids, attributes) {
   return conn.sobject('Account').retrieve(ids)
-    .then(recordTypes => recordTypes.map(recordType => util.pick(recordType, attributes)))
+    .then(accounts => accounts.map((account) => {
+      if (account) { return util.pick(account, attributes) }
+    }).filter(account => account))
 }
