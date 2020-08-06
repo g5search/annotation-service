@@ -16,10 +16,11 @@ module.exports = {
   findLocation,
   getCases,
   getRecordTypes,
-  getAccounts
+  getAccounts,
+  getTotalCases
 }
 
-function createNote (WhatId, OwnerId, Task_Category__c, Task_Action_Type__c, Internal_Only__c, Description, ActivityDate, Status, Subject, Task_Types__c) {
+function createNote(WhatId, OwnerId, Task_Category__c, Task_Action_Type__c, Internal_Only__c, Description, ActivityDate, Status, Subject, Task_Types__c) {
   return conn.sobject('Task').create({
     WhatId,
     OwnerId,
@@ -72,8 +73,11 @@ async function findLocation(where, attributes) {
 }
 
 function getCases(where, attributes) {
-  return conn.sobject('Case').find(where, attributes)
-    .then(tickets => tickets.map(ticket => util.pick(ticket, attributes)))
+  return conn.sobject('Case').find()
+  // .then(tickets => tickets.map(ticket => util.pick(ticket, attributes)))
+}
+function getTotalCases(where) {
+  return conn.query('SELECT count() FROM Case WHERE ClosedDate > 2020-01-01T00:00:00.000Z')
 }
 
 function getRecordTypes(ids, attributes) {
