@@ -2,13 +2,14 @@ const cors = require('cors')
 const axios = require('axios')
 const { Op } = require('sequelize')
 const models = require('../../models/primary')
+const objectUtil = require('../../controllers/utilities/object')
 const whitelist = [
   /chrome-extension:\/\/[a-z]*$/,
   /http:\/\/localhost:[\d]*/,
   /https:\/\/notes\.g5marketingcloud\.com/
 ]
-const objectUtil = require('../../controllers/utilities/object')
 const crsSync = require('../../controllers/jobs/crsSync')
+const annCntlr = require('../../controllers/annotation')
 const corsOpts = {
   origin: (origin, callback) => {
     if (whitelist.some(pattern => pattern.test(origin)) || !origin) {
@@ -21,85 +22,25 @@ const corsOpts = {
 
 module.exports = (app) => {
   app.options('/api/v1/note', cors(corsOpts))
+
+  // Creates Note
   app.post('/api/v1/note', cors(corsOpts), async (req, res) => {
-    let user = null
-    let annotationUserId = null
-    const { body } = req
-    if (req.user.email) {
-      user = await models.annotationUser.findOne({ where: { email: req.user.email } })
-      annotationUserId = user.dataValues.id
-    } else if (body.user) {
-      const [annotationUser] = await models.annotationUser.findOrCreate({
-        where: {
-          email: body.user.email
-        },
-        defaults: {
-          email: body.user.email,
-          first_name: body.user.firstName,
-          last_name: body.user.lastName
-        }
-      })
-      user = annotationUser
-      annotationUserId = annotationUser.dataValues.id
+    try {
+      const note = await annCntlr.createNote(req)
+      res.json(note)
+    } catch (e) {
+      res.status(500).send(e.message)
     }
-    const note = await models.annotation.createAndAssociate({ ...body, annotationUserId })
-    res.json(note)
   })
 
-  app.put('/api/v1/note/:id', (req, res) => {
+  app.put('/api/v1/note/:id', async (req, res) => {
     const { id } = req.params
     const { body } = req
-    console.log({ body })
-    models.sequelize.transaction(async (t) => {
-      t.afterCommit(async () => {
-        const reload = await note.reload()
-        console.log({ reload: reload.dataValues })
-        res.json(reload)
-      })
-      const note = await models.annotation.findOne(
-        {
-          where: { id },
-          include: [
-            {
-              model: models.g5_updatable_location
-            },
-            {
-              model: models.g5_updatable_client
-            },
-            {
-              model: models.annotationCategory
-            },
-            {
-              model: models.annotationType
-            }
-          ]
-        },
-        { transaction: t }
-      )
-      const [category] = await models.annotationCategory.findOrCreate({
-        defaults: { name: body.annotationCategory },
-        where: { name: body.annotationCategory }
-      })
-      const [actionType] = await models.annotationType.findOrCreate({
-        defaults: { name: body.annotationType },
-        where: { name: body.annotationType }
-      })
-      const locations = await models.g5_updatable_location.findAll({
-        where: {
-          urn: {
-            [Op.in]: body.locationUrns
-          }
-        }
-      }, { transaction: t })
-      await note.setG5_updatable_locations(locations, { transaction: t })
-      await note.setAnnotationType(actionType, { transaction: t })
-      await note.setAnnotationCategory(category, { transaction: t })
-      return note.update(body, { transaction: t })
-    })
-    // console.log('Sending Results', result)
-    // res.json(result)
+    const update = await models.annotation.updateNote(id, body)
+    res.json(update)
   })
 
+  // Gets Users Notes
   app.get('/api/v1/notes', async (req, res) => {
     const { query } = req
 
@@ -232,34 +173,33 @@ module.exports = (app) => {
     res.json(mappedNotes)
   })
 
+  // Deletes Notes
   app.delete('/api/v1/notes/:id', async (req, res) => {
-    await models.annotation.destroy({
-      where: {
-        id: req.params.id
-      }
-    })
-    res.sendStatus(200)
+    try {
+      await models.annotation.destroy({
+        where: {
+          id: req.params.id
+        }
+      })
+      res.sendStatus(200)
+    } catch (e) {
+      res.status(500).send(e.message)
+    }
   })
 
+  // Gets Strategists
   app.get('/api/v1/strategists', async (req, res) => {
-    const strategists = await models.annotationUser.findAll({
-      attributes: ['first_name', 'last_name', 'email']
-    })
-    res.json(strategists)
+    try {
+      const strategists = await annCntlr.getStrategists()
+      res.json(strategists)
+    } catch (e) {
+      res.status(400).send(e.message)
+    }
   })
 
   app.get('/api/v1/crs/sync', async (req, res) => {
     const response = await axios.get('http://localhost:9541/api/annotation')
     crsSync(response.data)
     res.json(response.data)
-  })
-}
-
-function whereCheck(includesArray) {
-  return includesArray.map((mod) => {
-    if (Object.keys(mod.where).length === 0) {
-      delete mod.where
-    }
-    return mod
   })
 }

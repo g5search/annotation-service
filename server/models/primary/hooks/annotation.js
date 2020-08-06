@@ -2,6 +2,7 @@ const { salesforce } = require('../../../controllers/queue')
 const createNote = require('../../../controllers/jobs/createNote')
 const { options } = require('../../../controllers/express')
 module.exports = (models) => {
+  models.annotation.addHook('beforeBulkDestroy', options => (options.individualHooks = true))
   models.annotation.addHook('afterCreate', (instance, options) => {
     if (options.transaction) {
       // Save done within a transaction, wait until transaction is committed to
@@ -29,6 +30,17 @@ module.exports = (models) => {
       } catch (error) {
         console.log({ error })
       }
+    }
+  })
+
+  models.annotation.addHook('afterDestroy', async (instance, options) => {
+    const annotationLocations = await instance.getG5_updatable_locations()
+    if (annotationLocations.length > 0) {
+      for (let i = 0; i < annotationLocations.length; i++) { 
+        await salesforce.add('remove', annotationLocations[i].dataValues.annotationLocation)
+      }
+    } else {
+      await salesforce.add('remove', instance.dataValues)
     }
   })
 }

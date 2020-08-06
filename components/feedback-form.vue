@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid>
+  <b-container fluid class="feedback-container">
     <b-form-group label="Category">
       <b-form-select
         v-model="type"
@@ -26,11 +26,20 @@
     >
       Submit
     </b-btn>
+    <alert
+      :specs="specs"
+    />
   </b-container>
 </template>
 
 <script>
+import Alert from '~/components/alert'
+import AlertMixin from '~/mixins/alert-mixin'
 export default {
+  components: {
+    Alert
+  },
+  mixins: [AlertMixin],
   data() {
     return {
       type: null,
@@ -40,7 +49,15 @@ export default {
         'Suggest a Better Way',
         'Pitch a New Feature'
       ],
-      comments: ''
+      comments: '',
+      specs: {
+        id: 'submission-status',
+        width: 'w-100',
+        dismissCountDown: 'dismissCountDown',
+        alertVariant: 'alertVariant',
+        alertMsg: 'alertMsg',
+        dismissSecs: 'dismissSecs'
+      }
     }
   },
   computed: {
@@ -61,6 +78,8 @@ export default {
           type: this.type,
           comments: this.comments
         })
+        .then(() => this.showAlert('Feedback Submitted!', 'success'))
+        .catch(() => this.showAlert('Error: Please try again', 'danger'))
         .finally(() => {
           this.type = null
           this.comments = ''
@@ -71,5 +90,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+.feedback-container {
+  position: relative;
+  & #submission-status {
+    position: absolute;
+    top: 0%;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    border-radius: 5px;
+  }
+}
 </style>
