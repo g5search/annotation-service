@@ -20,7 +20,8 @@ const noAuth = [
   '/api/v1/login',
   '/api/hub/clients',
   '/api/v1/signup',
-  '/api/v1/key'
+  '/api/v1/key',
+  '/api/test'
 ]
 const whitelistRegex = [
   /\/api\/hub\/clients\/\S*\/locations/

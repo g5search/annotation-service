@@ -63,4 +63,10 @@ module.exports = (app) => {
       </soap:Envelope>
     `)
   })
+  // test route for cases
+  app.post('/api/test', async (req, res) => {
+    const { body } = req
+    await salesforce.add('createClosedCase', body)
+    res.sendStatus(201)
+  })
 }
