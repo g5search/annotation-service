@@ -67,6 +67,23 @@ spec:
             value: "false"
           - name: G5_AUTH_ME_ENDPOINT
             value: https://auth.g5search.com/v1/me
+          - name: DAM_DATABASE_MAX_CONNECTIONS
+            value: "10"
+          - name: DAM_DATABASE_MIN_CONNECTIONS
+            value: "0"
+          - name: DAM_DATABASE_IDLE
+            value: "10000"
+          - name: DAM_DATABASE_AQUIRE
+            value: "30000"
+          - name: DAM_DATABASE_EVICT
+            value: "10000"
+          - name: DAM_DATABASE_LOGGING
+            value: "false"
+          - name : DAM_DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: annotation
+                key: DAM_DATABASE_URL
           - name : G5_AUTH_CLIENT_ID
             valueFrom:
               secretKeyRef:
