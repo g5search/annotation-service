@@ -1,4 +1,4 @@
-const models = require('../../models')
+const models = require('../../models/primary')
 module.exports = async (notes) => {
   try {
     const mappedNotes = notes.filter(n => n !== null)

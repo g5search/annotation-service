@@ -1,5 +1,4 @@
-const createNote = require('../../controllers/jobs/createNote')
-const objectUtil = require('../../controllers/utilities/object')
+const objectUtil = require('../../../controllers/utilities/object')
 module.exports = (models, Sequelize, sequelize) => {
   const { Op } = Sequelize
   models.annotation.createAndAssociate = async (params) => {

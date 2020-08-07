@@ -1,6 +1,6 @@
 const axios = require('axios')
 const { SLACK_FEEDBACK_URL } = process.env
-const models = require('../../models')
+const models = require('../../models/primary')
 
 module.exports = (app) => {
   app.post('/api/v1/feedback', async (req, res) => {

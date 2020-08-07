@@ -1,5 +1,5 @@
 const moment = require('moment')
-const models = require('../../models')
+const models = require('../../models/primary')
 const sfApi = require('../salesforce')
 const {
   SF_USERNAME: sfUsername,

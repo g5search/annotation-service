@@ -1,5 +1,5 @@
 const { Op } = require('sequelize')
-const models = require('../models')
+const models = require('../models/primary')
 const objectUtil = require('./utilities/object')
 
 module.exports = {

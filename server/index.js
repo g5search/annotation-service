@@ -3,7 +3,7 @@ const consola = require('consola')
 const { Nuxt, Builder } = require('nuxt')
 const config = require('../nuxt.config.js')
 const app = require('./controllers/express')
-const models = require('./models')
+const models = require('./models/primary')
 config.dev = process.env.NODE_ENV !== 'production'
 async function start() {
   const nuxt = new Nuxt(config)

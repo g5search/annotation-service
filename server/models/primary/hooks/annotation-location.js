@@ -1,4 +1,4 @@
-const { salesforce } = require('../../controllers/queue')
+const { salesforce } = require('../../../controllers/queue')
 module.exports = (models) => {
   models.annotationLocation.addHook('beforeBulkDestroy', (options) => {
     options.individualHooks = true
