@@ -1,3 +1,4 @@
+const xmlparser = require('express-xml-bodyparser')
 const sfApi = require('../../controllers/salesforce')
 const { salesforce } = require('../../controllers/queue')
 const {
@@ -46,6 +47,7 @@ module.exports = (app) => {
     await salesforce.add('importClosedCases', null)
     res.sendStatus(201)
   })
+  app.use('/api/v1/xml/cases', xmlparser())
   app.post('/api/v1/xml/cases', async (req, res) => {
     const { body } = req
     await salesforce.add('createClosedCase', body)

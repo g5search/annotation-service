@@ -29,6 +29,7 @@
     "cross-env": "^5.2.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-xml-bodyparser": "^0.3.0",
     "greenlock": "^4.0.4",
     "hashids": "^2.2.1",
     "jquery": "^3.5.1",
