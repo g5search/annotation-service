@@ -27,6 +27,10 @@ module.exports = (sequelize) => {
     },
     salesforceSync: {
       type: BOOLEAN
+    },
+    promoted: {
+      type: BOOLEAN,
+      defaultValue: false
     }
   }, {
     paranoid: true
