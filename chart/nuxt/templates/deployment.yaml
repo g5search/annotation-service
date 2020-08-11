@@ -22,6 +22,8 @@ spec:
         app: "{{  .Chart.Name }}-selector"
         version: "current"
     spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: pool-1
       containers:
       - name: "{{  .Chart.Name  }}"
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
