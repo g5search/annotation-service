@@ -1,7 +1,7 @@
 const jsforce = require('jsforce')
 const util = require('../controllers/util')
 const conn = new jsforce.Connection({
-  loginUrl: 'https://test.salesforce.com'
+  // loginUrl: 'https://test.salesforce.com'
 })
 // const conn = new jsforce.Connection()
 
