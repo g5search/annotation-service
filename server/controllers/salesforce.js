@@ -20,6 +20,7 @@ module.exports = {
   getTotalCases
 }
 
+// eslint-disable-next-line camelcase
 function createNote(WhatId, OwnerId, Task_Category__c, Task_Action_Type__c, Internal_Only__c, Description, ActivityDate, Status, Subject, Task_Types__c) {
   return conn.sobject('Task').create({
     WhatId,
