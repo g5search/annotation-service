@@ -76,7 +76,8 @@ module.exports = (models, Sequelize, sequelize) => {
       searchBy: [['searchBy', 'column']],
       dates: ['to', 'from'],
       teamWhere: [['team', 'name']],
-      appWhere: [['app', 'name']]
+      appWhere: [['app', 'name']],
+      skip: ['access_token']
     }, params)
     return models.annotation.getAllNotes(whereGroups)
   }
