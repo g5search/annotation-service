@@ -163,7 +163,8 @@ module.exports = (models, Sequelize, sequelize) => {
         html,
         annotation,
         g5_updatable_client,
-        g5_updatable_locations
+        g5_updatable_locations,
+        promoted
       } = note.dataValues
       // TODO remove reducing functions duplicate data in the return. We need to full objects on the front-end
       return {
@@ -188,6 +189,7 @@ module.exports = (models, Sequelize, sequelize) => {
         salesforceSync,
         note: html,
         annotation,
+        promoted,
         clientName: g5_updatable_client ? g5_updatable_client.name : null,
         locationNames: g5_updatable_locations.map((l) => {
           return l.display_name ? l.display_name : l.name
