@@ -54,7 +54,7 @@
             >
               <template
                 slot="selection"
-                slot-scope="{ values, search, isOpen }"
+                slot-scope="{ values, isOpen }"
               >
                 <span
                   v-if="values.length && !isOpen"
@@ -141,20 +141,41 @@
               class="my-1 text-primary-1"
             >
               <template v-slot:label>
-                <span>
-                  <b-icon-file-richtext />
-                  Note
-                </span>
-                <b-form-checkbox
-                  v-model="isInternal"
-                  switch
-                  size="sm"
-                  class="align-self-center pr-2"
-                >
-                  <b-icon-eye-fill v-if="!isInternal" />
-                  <b-icon-eye-slash v-else />
-                  {{ isInternal ? 'Internal-Only' : 'Ok to Share' }}
-                </b-form-checkbox>
+                <b-container fluid class="px-0">
+                  <b-row no-gutters align-v="center">
+                    <b-col cols="2">
+                      <b-icon-file-richtext />
+                      Note
+                    </b-col>
+                    <b-col cols="5">
+                      <b-form-checkbox
+                        v-model="isInternal"
+                        button
+                        button-variant="transparent"
+                        size="sm"
+                        class="pr-2"
+                      >
+                        <b-icon-eye-fill v-if="!isInternal" />
+                        <b-icon-eye-slash v-else />
+                        {{ isInternal ? 'Internal-Only' : 'Ok to Share' }}
+                      </b-form-checkbox>
+                    </b-col>
+                    <b-col cols="5">
+                      <b-form-checkbox
+                        v-if="showPromoted"
+                        v-model="isPromoted"
+                        button
+                        button-variant="transparent"
+                        size="sm"
+                        class="align-self-center"
+                      >
+                        <b-icon-star-fill v-if="isPromoted" />
+                        <b-icon-star v-else />
+                        {{ isPromoted ? 'Promoted' : 'Not Promoted' }}
+                      </b-form-checkbox>
+                    </b-col>
+                  </b-row>
+                </b-container>
               </template>
               <div class="editor">
                 <editor-menu-bar
@@ -315,6 +336,7 @@ export default {
       endDate: null,
       locations: [],
       isInternal: true,
+      isPromoted: false,
       annotation: {
         html: '',
         json: ''
@@ -338,6 +360,9 @@ export default {
       categories: state => state.controls.categories,
       actionTypes: state => state.controls.actionTypes
     }),
+    showPromoted() {
+      return !this.isInternal
+    },
     isValid() {
       return this.category !== null && this.client !== null
     }
@@ -390,6 +415,7 @@ export default {
       this.isBusy = false
       this.locations = []
       this.isInternal = true
+      this.isPromoted = false
       this.showDates = false
       this.category = null
       this.actionType = null
@@ -411,6 +437,7 @@ export default {
         .$post(endpoint, {
           annotation: this.annotation.json,
           internal: this.isInternal,
+          promoted: this.isPromoted,
           startDate: this.startDate,
           endDate: this.endDate,
           html: this.annotation.html,

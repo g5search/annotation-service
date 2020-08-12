@@ -10,6 +10,7 @@
           v-model="local.client"
           :options="clients"
           :custom-label="c => c.name"
+          @change="getLocations"
         />
       </b-form-group>
       <b-form-group label-class="pl-2">
@@ -25,11 +26,10 @@
           :custom-label="l => `${l.display_name ? l.display_name : l.name}`"
           track-by="urn"
           label="name"
-          @open="$emit('FETCH CLIENT LOCATIONS HERE')"
         >
           <template
             slot="selection"
-            slot-scope="{ values, search, isOpen }"
+            slot-scope="{ values, isOpen }"
           >
             <span
               v-if="values.length && !isOpen"
@@ -71,8 +71,17 @@
             {{ local.internal ? 'Internal-Only' : 'Ok to Share' }}
           </span>
         </b-form-checkbox>
+        <b-form-checkbox
+          v-if="showPromoted"
+          v-model="local.promoted"
+          switch
+          size="md"
+          class="align-self-center pr-2"
+        >
+          Promoted
+        </b-form-checkbox>
       </b-form-group>
-      <b-form-group label-class="pl-2">
+      <b-form-group>
         <template v-slot:label>
           <b-icon-collection scale="1.2" />
           Category
@@ -195,6 +204,7 @@ export default {
       includedLocations: [],
       locations: [],
       internal: null,
+      promoted: null,
       createdAt: null,
       category: null,
       actionType: null,
@@ -203,6 +213,9 @@ export default {
     }
   },
   computed: {
+    showPromoted() {
+      return this.content.internal === false
+    },
     id() {
       return this.content.id
     },
@@ -224,6 +237,7 @@ export default {
     this.note = this.content.note
     this.user = this.content.user
     this.internal = this.content.internal
+    this.promoted = this.content.promoted
     this.createdAt = this.content.createdAt
     this.category = this.content.annotationCategory
     this.actionType = this.content.actionType
@@ -239,6 +253,7 @@ export default {
           createdAt: this.local.createdAt,
           updatedAt: new Date().toISOString(),
           internal: this.local.internal,
+          promoted: this.local.promoted,
           annotationCategory: this.local.annotationCategory.value,
           annotation: this.content.annotation.json,
           html: this.content.note,
@@ -256,6 +271,9 @@ export default {
     },
     onCancel() {
       this.$emit('on-close')
+    },
+    async getLocations(client) {
+      this.locations = await this.getClientLocations(client.urn)
     },
     updateText(data) {
       this.content.note = data.html
