@@ -1,6 +1,6 @@
 {
   "name": "opex-template",
-  "version": "1.2.38",
+  "version": "1.2.41",
   "description": "A note taking service for the G5 Delivery teams.",
   "author": "David Miller & Tyler Hasenoehrl",
   "private": true,
