@@ -31,17 +31,19 @@ module.exports = async function (job, sfApi) {
 
   const { Id: userId } = await sfApi.getUserId({ email: annotationUser.dataValues.email }, ['Id'])
   console.log({ userId })
-  // strip html here
+  const text = html.replace(/<\/p>|<\/li>/g, '\n')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s{2,}/g, ' ').trim()
   if (locationUrns.length > 0) {
     for (let i = 0; i < locationUrns.length; i++) {
       console.log(locationUrns[i])
       const { Id } = await sfApi.findLocation({ Location_URN__c: locationUrns[i] }, ['Id'])
-      const { id: noteId } = await sfApi.createNote(Id, userId, annotationCategory.dataValues.name, annotationType ? annotationType.dataValues.name : null, internal, html, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name, 'DA Task')
+      const { id: noteId } = await sfApi.createNote(Id, userId, annotationCategory.dataValues.name, annotationType ? annotationType.dataValues.name : null, internal, text, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name, 'DA Task')
       await dbAnnotation.g5_updatable_locations[i].annotationLocation.update({ salesforce_id: noteId })
     }
   } else {
     const { Id } = await sfApi.findAccount({ Client_URN__c: g5_updatable_client.dataValues.urn }, ['Id'])
-    const { id: noteId } = await sfApi.createNote(Id, userId, annotationCategory.dataValues.name, annotationType ? annotationType.dataValues.name : null, internal, html, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name, 'DA Task')
+    const { id: noteId } = await sfApi.createNote(Id, userId, annotationCategory.dataValues.name, annotationType ? annotationType.dataValues.name : null, internal, text, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name, 'DA Task')
     await dbAnnotation.update({ salesforce_id: noteId })
   }
   await dbAnnotation.update({ salesforceSync: true })

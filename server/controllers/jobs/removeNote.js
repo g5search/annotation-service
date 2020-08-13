@@ -4,9 +4,11 @@ const {
   SF_PASSWORD: sfPassword,
   SF_TOKEN: sfToken
 } = process.env
-module.exports = async function (job) {
+module.exports = async function (job, sfApi) {
   const { salesforce_id: sfId } = job.data
-  await sfApi.login(sfUsername, sfPassword, sfToken)
+  if (!sfApi.isLoggedIn) {
+    console.log('Signing In')
+    await sfApi.signIn()
+  }
   await sfApi.deleteNote(sfId)
-  await sfApi.logout()
 }

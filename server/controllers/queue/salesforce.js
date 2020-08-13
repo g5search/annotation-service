@@ -4,10 +4,6 @@ const sfRemoveNote = path.resolve('./server/controllers/jobs/removeNote')
 const sfUpdateNote = path.resolve('./server/controllers/jobs/updateNote')
 const sfCreateClosedCase = path.resolve('./server/controllers/jobs/createClosedCase')
 const sfImportClosedCases = path.resolve('./server/controllers/jobs/importClosedCases')
-// const sfCreateNote = require('../jobs/createNote')
-// const sfRemoveNote = require('../jobs/removeNote')
-// const sfUpdateNote = require('../jobs/updateNote')
-// const sfCreateClosedCase = require('../jobs/createClosedCase')
 
 const { REDIS_URL } = process.env
 const sfApi = require('../salesforce')

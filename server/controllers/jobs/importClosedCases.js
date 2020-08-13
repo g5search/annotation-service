@@ -7,11 +7,12 @@ const {
   SF_TOKEN: sfToken
 } = process.env
 
-module.exports = async (job) => {
-  await sfApi.login(sfUsername, sfPassword, sfToken)
+module.exports = async (job, sfApi) => {
+  if (!sfApi.isLoggedIn) {
+    await sfApi.signIn()
+  }
   const cases = await sfApi.getCases()
   await addCaseProperties(cases)
-  await sfApi.logout()
   await models.case.saveAndAssociate(cases)
 }
 
