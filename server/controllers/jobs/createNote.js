@@ -31,7 +31,8 @@ module.exports = async function (job, sfApi) {
 
   const { Id: userId } = await sfApi.getUserId({ email: annotationUser.dataValues.email }, ['Id'])
   console.log({ userId })
-  const text = html.replace(/<\/p>|<\/li>/g, '\n')
+  const text = html.replace(/<\/p>/gm, '\n')
+    .replace(/<li><p>/g, '-')
     .replace(/<[^>]*>/g, ' ')
     .replace(/[\r\t\f\v ]{2,}/g, '').trim()
   if (locationUrns.length > 0) {
