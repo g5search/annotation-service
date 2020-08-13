@@ -4,6 +4,6 @@ module.exports = (models) => {
     options.individualHooks = true
   })
   models.annotationLocation.addHook('afterDestroy', async (instance, options) => {
-    await salesforce.add('remove', instance.dataValues)
+    await salesforce.add({ type: 'remove', ...instance.dataValues })
   })
 }

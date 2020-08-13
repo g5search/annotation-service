@@ -21,7 +21,7 @@ module.exports = (models) => {
         options.transaction.afterCommit(async () => {
           const reload = await instance.reload()
           await reload
-          salesforce.add('update', reload)
+          salesforce.add({ type: 'update', ...reload })
           return instance
         })
       } catch (error) {
@@ -34,10 +34,10 @@ module.exports = (models) => {
     const annotationLocations = await instance.getG5_updatable_locations()
     if (annotationLocations.length > 0) {
       for (let i = 0; i < annotationLocations.length; i++) {
-        await salesforce.add('remove', annotationLocations[i].dataValues.annotationLocation)
+        await salesforce.add({ type: 'remove', ...annotationLocations[i].dataValues.annotationLocation })
       }
     } else {
-      await salesforce.add('remove', instance.dataValues)
+      await salesforce.add({ type: 'remove', ...instance.dataValues })
     }
   })
 }
