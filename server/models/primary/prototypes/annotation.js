@@ -2,7 +2,7 @@ const objectUtil = require('../../../controllers/utilities/object')
 module.exports = (models, Sequelize, sequelize) => {
   const { Op } = Sequelize
   models.annotation.createAndAssociate = async (params) => {
-    const { clientUrn, internal, locationUrns, category: noteCategory, actionType: type, annotation, html, startDate, endDate, user, createdAt } = params
+    const { clientUrn, internal, promoted, locationUrns, category: noteCategory, actionType: type, annotation, html, startDate, endDate, user, createdAt } = params
     let { annotationUserId } = params
     let actionType = null
     if (type) {
@@ -49,6 +49,7 @@ module.exports = (models, Sequelize, sequelize) => {
         endDate,
         annotation,
         internal,
+        promoted,
         annotationUserId,
         g5UpdatableClientId: client.dataValues.id,
         appId: 1,
