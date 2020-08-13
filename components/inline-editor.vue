@@ -10,6 +10,8 @@
           v-model="local.client"
           :options="clients"
           :custom-label="c => c.name"
+          track-by="urn"
+          @input="onClientChange"
         />
       </b-form-group>
       <b-form-group label-class="pl-2">
@@ -22,14 +24,13 @@
           :options="locations"
           :multiple="true"
           :close-on-select="false"
-          :custom-label="l => `${l.display_name ? l.display_name : l.name}`"
+          :custom-label="l => `${l.displayName ? l.displayName : l.name}`"
           track-by="urn"
           label="name"
-          @open="$emit('FETCH CLIENT LOCATIONS HERE')"
         >
           <template
             slot="selection"
-            slot-scope="{ values, search, isOpen }"
+            slot-scope="{ values, isOpen }"
           >
             <span
               v-if="values.length && !isOpen"
@@ -111,6 +112,19 @@
         :content="note"
         @on-update="updateText"
       />
+      <div v-if="!local.internal" class="my-2 px-2">
+        <b-form-checkbox
+          id="toggle-promoted"
+          v-model="promoted"
+          :class="promoted ? 'text-success' : 'text-primary'"
+          switch
+          size="md"
+        >
+          <b-icon-star-fill v-if="promoted" />
+          <b-icon-star v-else />
+          {{ promoted ? 'Promoted!' : 'Promote' }}
+        </b-form-checkbox>
+      </div>
     </b-card>
     <b-card bg-variant="transparent" footer-class="d-flex justify-content-between">
       <b-form-group label-class="pl-2">
@@ -195,6 +209,7 @@ export default {
       includedLocations: [],
       locations: [],
       internal: null,
+      promoted: false,
       createdAt: null,
       category: null,
       actionType: null,
@@ -224,6 +239,7 @@ export default {
     this.note = this.content.note
     this.user = this.content.user
     this.internal = this.content.internal
+    this.promoted = this.content.promoted
     this.createdAt = this.content.createdAt
     this.category = this.content.annotationCategory
     this.actionType = this.content.actionType
@@ -232,6 +248,12 @@ export default {
     this.locations = await this.getClientLocations(this.content.client.urn)
   },
   methods: {
+    async onClientChange(evt) {
+      if (evt) {
+        this.locations = await this.getClientLocations(evt.urn)
+        this.local.locations = []
+      }
+    },
     onSave() {
       const endpoint = `api/v1/note/${this.id}`
       this.$axios
@@ -239,6 +261,7 @@ export default {
           createdAt: this.local.createdAt,
           updatedAt: new Date().toISOString(),
           internal: this.local.internal,
+          promoted: this.promoted,
           annotationCategory: this.local.annotationCategory.value,
           annotation: this.content.annotation.json,
           html: this.content.note,

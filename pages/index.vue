@@ -10,7 +10,7 @@
     <div class="ceph-container" @click="isOpen = !isOpen">
       <octopus
         :size="`6em`"
-        :color="`#19356a`"
+        :color="`#0c233f`"
         :class="[{ 'is-open': isOpen }, 'ceph-container__svg', 'shadowed']"
       />
       <div class="ceph-container__title text-primary">
@@ -104,6 +104,7 @@
                 debounce="500"
                 placeholder="Search Notes..."
                 class="inset-padding"
+                @focus="$ga.event('Search', 'Focus', 'Notes Header', 0)"
               />
               <template v-slot:append>
                 <b-btn
@@ -171,6 +172,7 @@
               download="notes.csv"
               variant="transparent"
               class="mr-2"
+              @click="$ga.event('Download', 'Click', 'Note Header', 0)"
             >
               <b-iconstack>
                 <b-icon
@@ -254,8 +256,11 @@
             </template>
             <template v-slot:cell(internal)="row">
               <div class="hover-anchor">
-                <b-icon-emoji-neutral v-if="row.item.internal" font-scale="2" />
-                <b-icon-emoji-sunglasses v-else font-scale="2" />
+                <b-icon-emoji-neutral v-if="row.item.internal" scale="2" />
+                <b-iconstack v-else>
+                  <b-icon-star-fill v-if="row.item.promoted" scale="3" variant="success" />
+                  <b-icon-emoji-sunglasses scale="2"/>
+                </b-iconstack>
                 <div class="hovered-icon">
                   {{ row.item.internal ? 'Internal Only' : 'Customer-Facing' }}
                 </div>
@@ -593,6 +598,7 @@ export default {
         })
     },
     onToggle(row) {
+      this.$ga.event('Edit', 'Click', row.id, 0)
       row.toggleDetails()
     },
     onSubmit(payload) {

@@ -54,7 +54,7 @@
             >
               <template
                 slot="selection"
-                slot-scope="{ values, search, isOpen }"
+                slot-scope="{ values, isOpen }"
               >
                 <span
                   v-if="values.length && !isOpen"
@@ -210,6 +210,19 @@
                 <editor-content :editor="editor" class="editor__content" />
               </div>
             </b-form-group>
+            <div v-if="!isInternal" class="px-2">
+              <b-form-checkbox
+                id="toggle-promoted"
+                v-model="promoted"
+                :class="promoted ? 'text-success' : 'text-primary'"
+                switch
+                size="sm"
+              >
+                <b-icon-star-fill v-if="promoted" />
+                <b-icon-star v-else />
+                {{ promoted ? 'Promoted!' : 'Promote' }}
+              </b-form-checkbox>
+            </div>
           </b-card>
           <b-card no-body class="mb-1 p-2">
             <b-form-checkbox
@@ -261,9 +274,7 @@
               </b-btn>
             </b-btn-group>
           </template>
-          <alert
-            :specs="specs"
-          />
+          <alert :specs="specs" />
         </b-card>
       </b-col>
     </b-row>
@@ -315,6 +326,7 @@ export default {
       endDate: null,
       locations: [],
       isInternal: true,
+      promoted: false,
       annotation: {
         html: '',
         json: ''
@@ -390,6 +402,7 @@ export default {
       this.isBusy = false
       this.locations = []
       this.isInternal = true
+      this.promoted = false
       this.showDates = false
       this.category = null
       this.actionType = null
@@ -411,6 +424,7 @@ export default {
         .$post(endpoint, {
           annotation: this.annotation.json,
           internal: this.isInternal,
+          promoted: this.promoted,
           startDate: this.startDate,
           endDate: this.endDate,
           html: this.annotation.html,
@@ -421,9 +435,8 @@ export default {
           locationUrns: this.locations.map(l => l.urn)
         })
         .then(() => this.showAlert('Note Saved!', 'success'))
-        .catch((err) => {
-          this.onError(err)
-        })
+        .then(() => this.$ga.event('Note Saved', 'Submit', 'New Note', 0))
+        .catch(err => this.onError(err))
         .finally(() => this.onReset())
     },
     onClientSelect(evt) {
@@ -432,6 +445,7 @@ export default {
         .then((res) => {
           this.clientLocations = res
         })
+        .catch(err => this.onError(err))
     }
   }
 }

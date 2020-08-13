@@ -46,7 +46,8 @@ module.exports = {
   plugins: [
   ],
   buildModules: [
-    '@nuxtjs/eslint-module'
+    '@nuxtjs/eslint-module',
+    '@nuxtjs/google-analytics'
   ],
   modules: [
     'bootstrap-vue/nuxt',
@@ -65,7 +66,7 @@ module.exports = {
   googleAnalytics: {
     id: process.env.GA_PROPERTY,
     debug: {
-      enabled: false,
+      enabled: true,
       sendHitTask: true
     }
   },

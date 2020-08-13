@@ -37,7 +37,7 @@ export const state = () => ({
     ],
     'General Note': [
       { text: 'Select Option', value: null },
-      'NA'
+      'None'
     ],
     'Customer Contact': [
       { text: 'Select Option', value: null },
@@ -54,8 +54,7 @@ export const state = () => ({
       'Enabled Campaign',
       'Refreshed Ad Copy',
       'Testing',
-      // eslint-disable-next-line
-      'T \& O Added',
+      'T&O Added',
       'Manual Spend Adjustments',
       'Manual Bid Adjustments'
     ],
