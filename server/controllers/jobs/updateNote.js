@@ -1,15 +1,11 @@
 const moment = require('moment')
-const models = require('../../models')
-const sfApi = require('../salesforce')
-const createNote = require('./createNote')
-const {
-  SF_USERNAME: sfUsername,
-  SF_PASSWORD: sfPassword,
-  SF_TOKEN: sfToken
-} = process.env
-module.exports = async function (job) {
+const models = require('../../models/primary')
+module.exports = async function (job, sfApi) {
   const { data } = job
-  await sfApi.login(sfUsername, sfPassword, sfToken)
+  if (!sfApi.isLoggedIn) {
+    console.log('Signing In')
+    await sfApi.signIn()
+  }
   const dbAnnotation = await models.annotation.findOne({
     where: {
       id: data.id
@@ -66,7 +62,4 @@ module.exports = async function (job) {
     }
     await sfApi.updateNote(dbAnnotation.dataValues.salesforce_id, update)
   }
-  await sfApi.logout()
-  // console.log(job.data)
-  throw new Error('no code for updating note yet')
 }

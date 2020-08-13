@@ -44,13 +44,13 @@ module.exports = (app) => {
     // }
   })
   app.get('/api/v1/cases/import', async (req, res) => {
-    await salesforce.add('importClosedCases', null)
+    await salesforce.add({ type: 'importClosedCases' })
     res.sendStatus(201)
   })
   app.use('/api/v1/xml/cases', xmlparser())
   app.post('/api/v1/xml/cases', async (req, res) => {
     const { body } = req
-    await salesforce.add('createClosedCase', body)
+    await salesforce.add({ type: 'createClosedCase', body })
     res.set('Content-Type', 'text/xml')
     res.send(`
       <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
@@ -68,7 +68,7 @@ module.exports = (app) => {
   // test route for cases
   app.post('/api/test', async (req, res) => {
     const { body } = req
-    await salesforce.add('createClosedCase', body)
+    await salesforce.add({ type: 'createClosedCase', body })
     res.sendStatus(201)
   })
 }
