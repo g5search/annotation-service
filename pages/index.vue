@@ -258,8 +258,8 @@
               <div class="hover-anchor">
                 <b-icon-emoji-neutral v-if="row.item.internal" scale="2" />
                 <b-iconstack v-else>
-                  <b-icon-star-fill v-if="row.item.promoted" scale="3" variant="success" />
-                  <b-icon-emoji-sunglasses scale="2"/>
+                  <b-icon-star-fill v-if="row.item.promoted" scale="3.5" variant="success" />
+                  <b-icon-emoji-sunglasses scale="2" />
                 </b-iconstack>
                 <div class="hovered-icon">
                   {{ row.item.internal ? 'Internal Only' : 'Customer-Facing' }}
