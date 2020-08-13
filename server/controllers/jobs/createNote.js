@@ -33,7 +33,7 @@ module.exports = async function (job, sfApi) {
   console.log({ userId })
   const text = html.replace(/<\/p>|<\/li>/g, '\n')
     .replace(/<[^>]*>/g, ' ')
-    .replace(/\s{2,}/g, ' ').trim()
+    .replace(/[\r\t\f\v ]{2,}/g, '').trim()
   if (locationUrns.length > 0) {
     for (let i = 0; i < locationUrns.length; i++) {
       console.log(locationUrns[i])
