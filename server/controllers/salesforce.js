@@ -111,4 +111,5 @@ class SfApi extends jsforce.Connection {
   }
 }
 
-module.exports = new SfApi({ username, password, token, loginUrl: 'https://test.salesforce.com' })
+// module.exports = new SfApi({ username, password, token, loginUrl: 'https://test.salesforce.com' })
+module.exports = new SfApi({ username, password, token })
