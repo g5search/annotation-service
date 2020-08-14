@@ -42,7 +42,7 @@ spec:
           - name: GKE
             value: "true"
           - name: GA_PROPERTY
-            value: ""
+            value: "UA-115892674-18"
           - name: INCLUDE_G5_UPDATABLES
             value: "true"
           - name : INCLUDE_G5_AUTH
