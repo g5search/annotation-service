@@ -26,6 +26,15 @@ function bullConfig (Bull) {
     const { type } = job.data
     return require(jobType[type])(job, sfApi)
   })
+  salesforce.process('sync', (job) => {
+    return require(sfCreateNote)(job, sfApi)
+  })
+  salesforce.process('remove', (job) => {
+    return require(sfRemoveNote)(job, sfApi)
+  })
+  salesforce.process('update', (job) => {
+    return require(sfUpdateNote)(job, sfApi)
+  })
   salesforce.on('completed', checkForSignout)
   salesforce.on('failed', checkForSignout)
 
