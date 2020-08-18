@@ -70,7 +70,7 @@ spec:
           - name: G5_AUTH_ME_ENDPOINT
             value: https://auth.g5search.com/v1/me
           - name: DAM_DATABASE_MAX_CONNECTIONS
-            value: "10"
+            value: "5"
           - name: DAM_DATABASE_MIN_CONNECTIONS
             value: "0"
           - name: DAM_DATABASE_IDLE
