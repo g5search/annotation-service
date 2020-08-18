@@ -21,7 +21,7 @@ class SfApi extends jsforce.Connection {
    *  @param { string } params.loginUrl
    * @memberof SfApi
    */
-  constructor (params) {
+  constructor(params) {
     if (SfApi._instance) {
       throw new Error('SfApi already has an instance!!!')
     }
@@ -85,7 +85,6 @@ class SfApi extends jsforce.Connection {
    * @memberof SfApi
    */
   createNote(WhatId, OwnerId, Task_Category__c, Task_Action_Type__c, Internal_Only__c, Description, ActivityDate, Status, Subject, Task_Types__c) {
-    console.log('created note')
     return this.sobject('Task').create(
       {
         WhatId,
@@ -99,7 +98,10 @@ class SfApi extends jsforce.Connection {
         Subject,
         Task_Types__c
       }
-    )
+    ).catch((err) => {
+      console.log(err)
+      throw new Error(err)
+    })
   }
 
   /**
@@ -110,6 +112,10 @@ class SfApi extends jsforce.Connection {
    */
   getTotalCases(where) {
     return this.query('SELECT count() FROM Case WHERE ClosedDate > 2020-01-01T00:00:00.000Z')
+      .catch((err) => {
+        console.log(err)
+        throw new Error(err)
+      })
   }
 
   /**
@@ -119,9 +125,13 @@ class SfApi extends jsforce.Connection {
    * @returns { Object } Has property ID
    * @memberof SfApi
    */
-  getUserId (where, attributes) {
+  getUserId(where, attributes) {
     return this.sobject('User').find(where, attributes)
       .then(accounts => util.pick(accounts[0], attributes))
+      .catch((err) => {
+        console.log(err)
+        throw new Error(err)
+      })
   }
 
   /**
@@ -132,6 +142,10 @@ class SfApi extends jsforce.Connection {
    */
   deleteNote(id) {
     return this.sobject('Task').destroy(id)
+      .catch((err) => {
+        console.log(err)
+        throw new Error(err)
+      })
   }
 
   /**
@@ -148,6 +162,10 @@ class SfApi extends jsforce.Connection {
       Id,
       ...update
     })
+      .catch((err) => {
+        console.log(err)
+        throw new Error(err)
+      })
   }
 
   /**
@@ -157,9 +175,13 @@ class SfApi extends jsforce.Connection {
    * @returns { Object }
    * @memberof SfApi
    */
-  async findAccount(where, attributes) {
-    const accounts = await this.sobject('Account').find(where, attributes)
-    return util.pick(accounts[0], attributes)
+  findAccount(where, attributes) {
+    return this.sobject('Account').find(where, attributes)
+      .then(accounts => util.pick(accounts[0], attributes))
+      .catch((err) => {
+        console.log(err)
+        throw new Error(err)
+      })
   }
 
   /**
@@ -169,9 +191,13 @@ class SfApi extends jsforce.Connection {
    * @returns { Object }
    * @memberof SfApi
    */
-  async findLocation(where, attributes) {
-    const accounts = await this.sobject('Location__c').find(where, attributes)
-    return util.pick(accounts[0], attributes)
+  findLocation(where, attributes) {
+    return this.sobject('Location__c').find(where, attributes)
+      .then(accounts => util.pick(accounts[0], attributes))
+      .catch((err) => {
+        console.log(err)
+        throw new Error(err)
+      })
   }
 
   /**
@@ -181,7 +207,7 @@ class SfApi extends jsforce.Connection {
    */
   getCases(where, attributes) {
     return this.query('SELECT AccountId, Account_Manager__c, CaseNumber, Case_Age__c, Case_Owner_Name__c, ClosedDate, CreatedDate, RecordTypeId, Request_Type__c, Subject FROM Case WHERE ClosedDate > 2020-01-01T00:00:00.000Z')
-      .then(async(cases) => {
+      .then(async (cases) => {
         const totalCases = [...cases.records]
         let done = cases.done
         let nextRecordsUrl = cases.nextRecordsUrl
@@ -192,6 +218,10 @@ class SfApi extends jsforce.Connection {
           done = query.done
         }
         return totalCases
+      })
+      .catch((err) => {
+        console.log(err)
+        throw new Error(err)
       })
   }
 
@@ -205,6 +235,10 @@ class SfApi extends jsforce.Connection {
   getRecordTypes(ids, attributes) {
     return this.sobject('recordType').retrieve(ids)
       .then(recordTypes => recordTypes.map(recordType => util.pick(recordType, attributes)))
+      .catch((err) => {
+        console.log(err)
+        throw new Error(err)
+      })
   }
 
   /**
@@ -219,6 +253,10 @@ class SfApi extends jsforce.Connection {
       .then(accounts => accounts.map((account) => {
         if (account) { return util.pick(account, attributes) }
       }).filter(account => account))
+      .catch((err) => {
+        console.log(err)
+        throw new Error(err)
+      })
   }
 }
 
