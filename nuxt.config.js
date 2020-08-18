@@ -64,7 +64,7 @@ module.exports = {
     browserBaseURL: `//${process.env.BROWSER_URL}`
   },
   googleAnalytics: {
-    id: process.env.GA_PROPERTY,
+    id: 'UA-115892674-18',
     debug: {
       enabled: true,
       sendHitTask: true
