@@ -100,6 +100,7 @@ class SfApi extends jsforce.Connection {
       }
     ).catch((err) => {
       console.log(err)
+      console.log(this.isLoggedIn)
       throw new Error(err)
     })
   }
@@ -114,6 +115,7 @@ class SfApi extends jsforce.Connection {
     return this.query('SELECT count() FROM Case WHERE ClosedDate > 2020-01-01T00:00:00.000Z')
       .catch((err) => {
         console.log(err)
+        console.log(this.isLoggedIn)
         throw new Error(err)
       })
   }
@@ -130,6 +132,7 @@ class SfApi extends jsforce.Connection {
       .then(accounts => util.pick(accounts[0], attributes))
       .catch((err) => {
         console.log(err)
+        console.log(this.isLoggedIn)
         throw new Error(err)
       })
   }
@@ -144,6 +147,7 @@ class SfApi extends jsforce.Connection {
     return this.sobject('Task').destroy(id)
       .catch((err) => {
         console.log(err)
+        console.log(this.isLoggedIn)
         throw new Error(err)
       })
   }
@@ -164,6 +168,7 @@ class SfApi extends jsforce.Connection {
     })
       .catch((err) => {
         console.log(err)
+        console.log(this.isLoggedIn)
         throw new Error(err)
       })
   }
@@ -180,6 +185,7 @@ class SfApi extends jsforce.Connection {
       .then(accounts => util.pick(accounts[0], attributes))
       .catch((err) => {
         console.log(err)
+        console.log(this.isLoggedIn)
         throw new Error(err)
       })
   }
@@ -193,9 +199,16 @@ class SfApi extends jsforce.Connection {
    */
   findLocation(where, attributes) {
     return this.sobject('Location__c').find(where, attributes)
-      .then(accounts => util.pick(accounts[0], attributes))
+      .then((accounts) => {
+        if (accounts) {
+          return util.pick(accounts[0], attributes)
+        } else {
+          throw new Error(`Cant find location with ${where}`)
+        }
+      })
       .catch((err) => {
         console.log(err)
+        console.log(this.isLoggedIn)
         throw new Error(err)
       })
   }
@@ -221,6 +234,7 @@ class SfApi extends jsforce.Connection {
       })
       .catch((err) => {
         console.log(err)
+        console.log(this.isLoggedIn)
         throw new Error(err)
       })
   }
@@ -237,6 +251,7 @@ class SfApi extends jsforce.Connection {
       .then(recordTypes => recordTypes.map(recordType => util.pick(recordType, attributes)))
       .catch((err) => {
         console.log(err)
+        console.log(this.isLoggedIn)
         throw new Error(err)
       })
   }
@@ -255,6 +270,7 @@ class SfApi extends jsforce.Connection {
       }).filter(account => account))
       .catch((err) => {
         console.log(err)
+        console.log(this.isLoggedIn)
         throw new Error(err)
       })
   }
