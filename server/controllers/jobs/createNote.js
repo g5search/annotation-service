@@ -30,7 +30,6 @@ module.exports = async function (job, sfApi) {
   } = dbAnnotation.dataValues
 
   const { Id: userId } = await sfApi.getUserId({ email: annotationUser.dataValues.email }, ['Id'])
-  console.log({ userId })
   const text = html.replace(/<\/p>/gm, '\n')
     .replace(/<li><p>/g, '-')
     .replace(/<[^>]*>/g, ' ')

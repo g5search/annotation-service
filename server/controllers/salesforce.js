@@ -200,7 +200,7 @@ class SfApi extends jsforce.Connection {
   findLocation(where, attributes) {
     return this.sobject('Location__c').find(where, attributes)
       .then((accounts) => {
-        if (accounts) {
+        if (accounts.length > 0) {
           return util.pick(accounts[0], attributes)
         } else {
           throw new Error(`Cant find location with ${where}`)

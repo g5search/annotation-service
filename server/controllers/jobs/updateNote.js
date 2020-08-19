@@ -18,7 +18,7 @@ module.exports = async function (job, sfApi) {
       { model: models.g5_updatable_location }
     ]
   })
-  const { Id: OwnerId } = await sfApi.getUserId({ email: dbAnnotation.annotationUser.dataValues.email }, ['Id'])
+  const { Id: OwnerId } = await sfApi.getUserId({ email: dbAnnotation.dataValues.annotationUser.email }, ['Id'])
   if (dbAnnotation.dataValues.g5_updatable_locations.length > 0) {
     for (let i = 0; i < dbAnnotation.dataValues.g5_updatable_locations.length; i++) {
       const location = dbAnnotation.g5_updatable_locations[i]

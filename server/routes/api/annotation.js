@@ -73,6 +73,7 @@ module.exports = (app) => {
 
   app.get('/api/v1/crs/sync', async (req, res) => {
     const response = await axios.get('http://localhost:9541/api/annotation')
+    console.log(response)
     crsSync(response.data)
     res.json(response.data)
   })
