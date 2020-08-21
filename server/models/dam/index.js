@@ -58,7 +58,7 @@ Object.keys(db)
       db[modelName].associate(db)
     }
   })
-// require('./prototypes')(db, sequelize)
+require('./prototypes')(db, Sequelize, sequelize)
 // require('./hooks')(db)
 module.exports = {
   ...db,

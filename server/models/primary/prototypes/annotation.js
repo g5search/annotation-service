@@ -165,7 +165,8 @@ module.exports = (models, Sequelize, sequelize) => {
         annotation,
         g5_updatable_client,
         g5_updatable_locations,
-        promoted
+        promoted,
+        team
       } = note.dataValues
       // TODO remove reducing functions duplicate data in the return. We need to full objects on the front-end
       return {
@@ -191,6 +192,7 @@ module.exports = (models, Sequelize, sequelize) => {
         note: html,
         annotation,
         promoted,
+        team,
         clientName: g5_updatable_client ? g5_updatable_client.name : null,
         locationNames: g5_updatable_locations.map((l) => {
           return l.display_name ? l.display_name : l.name

@@ -4,6 +4,7 @@ const sfRemoveNote = path.resolve('./server/controllers/jobs/removeNote')
 const sfUpdateNote = path.resolve('./server/controllers/jobs/updateNote')
 const sfCreateClosedCase = path.resolve('./server/controllers/jobs/createClosedCase')
 const sfImportClosedCases = path.resolve('./server/controllers/jobs/importClosedCases')
+const sfFindMissingSyncs = path.resolve('./server/controllers/jobs/findMissedSync')
 
 const { REDIS_URL } = process.env
 const sfApi = require('../salesforce')
@@ -17,7 +18,8 @@ const jobType = {
   remove: sfRemoveNote,
   update: sfUpdateNote,
   createClosedCase: sfCreateClosedCase,
-  importClosedCases: sfImportClosedCases
+  importClosedCases: sfImportClosedCases,
+  findMissingSyncs: sfFindMissingSyncs
 }
 
 function bullConfig (Bull) {

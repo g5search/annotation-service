@@ -27,6 +27,7 @@ module.exports = (app, passport) => {
 
   app.post('/api/v1/login', (req, res, next) => {
     passport.authenticate('login', (err, user) => {
+      console.log(user)
       try {
         if (err || !user) {
           return next(new Error('An Error Occurred'))

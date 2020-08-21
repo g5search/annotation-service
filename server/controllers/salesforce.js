@@ -203,6 +203,9 @@ class SfApi extends jsforce.Connection {
         if (accounts.length > 0) {
           return util.pick(accounts[0], attributes)
         } else {
+          if (where.Location_URN__c) {
+            throw new Error(`Cant find location with ${where.Location_URN__c}`)
+          }
           throw new Error(`Cant find location with ${where}`)
         }
       })
