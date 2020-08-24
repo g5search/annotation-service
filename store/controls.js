@@ -50,6 +50,7 @@ export const state = () => ({
       'Added Negative Keywords',
       'Added Keywords',
       'Changed Location Strategy',
+      'Updated Geographic Targeting',
       'Paused Campaign',
       'Enabled Campaign',
       'Refreshed Ad Copy',
