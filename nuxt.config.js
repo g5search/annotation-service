@@ -66,7 +66,7 @@ module.exports = {
   googleAnalytics: {
     id: 'UA-115892674-18',
     debug: {
-      enabled: true,
+      enabled: false,
       sendHitTask: true
     }
   },
