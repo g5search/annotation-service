@@ -21,10 +21,10 @@ export const state = () => ({
   category: null,
   categories: {
     null: [
-      { text: 'Select a Team First', value: null }
+      { text: 'Select a Team First', value: 'None' }
     ],
     da: [
-      { text: 'Select Option', value: null },
+      { text: 'Select Option', value: 'None' },
       { text: 'Account Changes', value: 'Account Changes' },
       { text: 'Customer Contact', value: 'Customer Contact' },
       { text: 'General Note', value: 'General Note' },
@@ -33,7 +33,7 @@ export const state = () => ({
       { text: 'Technical Issue', value: 'Technical Issue' }
     ],
     seo: [
-      { text: 'Select Option', value: null },
+      { text: 'Select Option', value: 'None' },
       { text: 'Account Changes', value: 'Account Changes' },
       { text: 'Account Audit', value: 'Account Audit' },
       { text: 'Customer Contact', value: 'Customer Contact' },
@@ -48,24 +48,24 @@ export const state = () => ({
   actionTypes: {
     null: {
       da: [
-        { text: 'Select a Category First', value: null }
+        { text: 'Select a Category First', value: 'None' }
       ],
       seo: [
-        { text: 'Select a Category First', value: null }
+        { text: 'Select a Category First', value: 'None' }
       ],
       cc: [
-        { text: 'Select a Category First', value: null }
+        { text: 'Select a Category First', value: 'None' }
       ]
     },
     None: {
       da: [
-        { text: 'Select a Category First', value: null }
+        { text: 'Select a Category First', value: 'None' }
       ],
       seo: [
-        { text: 'Select a Category First', value: null }
+        { text: 'Select a Category First', value: 'None' }
       ],
       cc: [
-        { text: 'Select a Category First', value: null }
+        { text: 'Select a Category First', value: 'None' }
       ]
     },
     'Account Audit': {
@@ -195,7 +195,7 @@ export const actions = {
   },
   async fillClients({ commit }) {
     await this.$axios
-      .$get('api/hub/clients')
+      .$get('api/hub/clients?activeDa=false&internal=false')
       .then(clients => commit('FILL_CLIENTS', clients))
   },
   async fillUsers({ commit }) {
@@ -236,8 +236,9 @@ export const mutations = {
     state.client = null
     state.location = []
     state.locations = []
-    state.category = null
-    state.actionType = null
+    state.category = 'None'
+    state.actionType = 'None'
+    state.team = 'da'
     state.user = null
     state.isInternal = null
     state.startDate = null

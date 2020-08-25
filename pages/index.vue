@@ -42,7 +42,7 @@
             <b-icon-card-text scale="0.8" style="vertical-align: -0.15em;" />
             New Note
           </template>
-          <note-editor />
+          <note-editor @refresh-table="onFilterMe" />
         </b-tab>
         <b-tab>
           <template v-slot:title>
@@ -554,7 +554,7 @@ export default {
     },
     updateCsv() {
       const columns = [
-        // 'id',
+        'id',
         'internal',
         'category',
         'annotationType',

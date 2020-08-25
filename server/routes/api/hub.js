@@ -45,15 +45,19 @@ module.exports = (app) => {
   app.get('/api/hub/clients', cors(corsOpts), async (req, res) => {
     const { internal, activeDa } = req.query
     let clients
-    let where = {}
-    if (activeDa) {
-      where = {
-        properties: {
-          search_analyst: {
-            [Op.not]: null
-          }
-        }
+    let where = {
+      properties: {
+        status: { [Op.not]: 'Deleted' }
       }
+    }
+    if (activeDa) {
+      where.properties.search_analyst = { [Op.not]: null }
+      // where = {
+      //   properties: {
+      //     search_analyst: { [Op.not]: null },
+      //     status: { [Op.not]: 'Deleted' }
+      //   }
+      // }
     }
     if (internal) {
       clients = await models.g5_updatable_client.findAll({

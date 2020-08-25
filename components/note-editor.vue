@@ -30,7 +30,19 @@
               track-by="urn"
               label="name"
               @input="onClientSelect"
-            />
+            >
+              <template v-slot:option="{ option }">
+                <b>
+                  {{ option.name }}
+                </b>
+                <p class="text-muted small mb-0">
+                  {{ option.brandedName }}
+                </p>
+                <p class="text-muted small mb-0">
+                  {{ option.urn }}
+                </p>
+              </template>
+            </vue-multiselect>
           </b-form-group>
           <b-form-group
             v-show="clientLocations"
@@ -52,16 +64,36 @@
               track-by="urn"
               label="name"
             >
-              <template
-                slot="selection"
-                slot-scope="{ values, isOpen }"
-              >
+              <template v-slot:selection="{ values, isOpen }">
                 <span
                   v-if="values.length && !isOpen"
                   class="multiselect__single"
                 >
                   {{ values.length }} location(s) selected
                 </span>
+              </template>
+              <template v-slot:option="{ option }">
+                <div class="d-flex">
+                  <div class="mr-2">
+                    <p class="mb-0 text-muted small">
+                      {{ option.offPlatform !== 'false' ? 'Self-Hosted' : '' }}
+                    </p>
+                    <b :class="option.status === 'Live' ? 'text-success' : 'text-warning'">
+                      {{ option.status }}
+                    </b>
+                  </div>
+                  <div>
+                    <b>
+                      {{ option.name }}
+                    </b>
+                    <p class="text-muted small mb-0">
+                      {{ option.displayName }}
+                    </p>
+                    <i class="text-muted small mb-0">
+                      {{ option.urn }}
+                    </i>
+                  </div>
+                </div>
               </template>
             </vue-multiselect>
           </b-form-group>
@@ -421,15 +453,16 @@ export default {
       this.isInternal = true
       this.promoted = false
       this.showDates = false
-      this.category = null
+      this.category = 'None'
       this.team = 'da'
-      this.actionType = null
+      this.actionType = 'None'
       this.autoDetect = false
       this.startDate = null
       this.endDate = null
       this.backdate = false
       this.createdAt = null
       this.editor.clearContent()
+      this.$emit('refresh-table')
     },
     onError() {
       this.isError = true
