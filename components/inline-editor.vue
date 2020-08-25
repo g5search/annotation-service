@@ -80,7 +80,7 @@
         </template>
         <vue-multiselect
           v-model="local.annotationCategory"
-          :options="categories"
+          :options="categories[team]"
           :custom-label="c => c.text"
           track-by="value"
         />
@@ -93,7 +93,7 @@
         <vue-multiselect
           v-if="actionTypes[`${local.annotationCategory.value}`]"
           v-model="local.annotationType"
-          :options="actionTypes[`${local.annotationCategory.value}`]"
+          :options="actionTypes[`${local.annotationCategory.value}`][team]"
         />
       </b-form-group>
       <div v-show="showDates">
@@ -206,6 +206,7 @@ export default {
     return {
       local: this.content,
       client: null,
+      team: 'da',
       includedLocations: [],
       locations: [],
       internal: null,
@@ -220,6 +221,9 @@ export default {
   computed: {
     id() {
       return this.content.id
+    },
+    teams() {
+      return this.$store.state.controls.teams
     },
     showDates() {
       const matches = [
