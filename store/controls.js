@@ -12,77 +12,162 @@ export const state = () => ({
   ],
   user: null,
   users: [],
-  category: null,
-  categories: [
-    { text: 'Select Option', value: null },
-    { text: 'Account Changes', value: 'Account Changes' },
-    { text: 'Customer Contact', value: 'Customer Contact' },
-    { text: 'General Note', value: 'General Note' },
-    { text: 'Optimizations', value: 'Optimizations' },
-    { text: 'Other', value: 'Other' },
-    { text: 'Technical Issue', value: 'Technical Issue' }
+  team: 'da',
+  teams: [
+    { text: 'Digital Advertising', value: 'da' },
+    { text: 'SEO', value: 'seo' },
+    { text: 'Customer Care', value: 'cc', disabled: true }
   ],
+  category: null,
+  categories: {
+    null: [
+      { text: 'Select a Team First', value: null }
+    ],
+    da: [
+      { text: 'Select Option', value: null },
+      { text: 'Account Changes', value: 'Account Changes' },
+      { text: 'Customer Contact', value: 'Customer Contact' },
+      { text: 'General Note', value: 'General Note' },
+      { text: 'Optimizations', value: 'Optimizations' },
+      { text: 'Other', value: 'Other' },
+      { text: 'Technical Issue', value: 'Technical Issue' }
+    ],
+    seo: [
+      { text: 'Select Option', value: null },
+      { text: 'Account Changes', value: 'Account Changes' },
+      { text: 'Account Audit', value: 'Account Audit' },
+      { text: 'Customer Contact', value: 'Customer Contact' },
+      { text: 'General Note', value: 'General Note' },
+      { text: 'Optimizations', value: 'Optimizations' },
+      { text: 'Other', value: 'Other' },
+      { text: 'Technical Issue', value: 'Technical Issue' }
+    ],
+    cc: []
+  },
   actionType: null,
   actionTypes: {
-    null: [
-      { text: 'Select a Category First', value: null }
-    ],
-    'Account Changes': [
-      { text: 'Select Option', value: 'None' },
-      'Smart Bidding Strategy Change',
-      'Specials/Promotions',
-      'Spend Optimizer Version Change',
-      'URL Change',
-      'Whitelisting Events Change'
-    ],
-    'General Note': [
-      { text: 'Select Option', value: 'None' },
-      'None'
-    ],
-    'Customer Contact': [
-      { text: 'Select Option', value: 'None' },
-      'Action Items',
-      'Analysis/Notes'
-    ],
-    // eslint-disable-next-line
-    'Optimizations': [
-      { text: 'Select Option', value: 'None' },
-      'Added Negative Keywords',
-      'Added Keywords',
-      'Changed Location Strategy',
-      'Updated Geographic Targeting',
-      'Paused Campaign',
-      'Enabled Campaign',
-      'Refreshed Ad Copy',
-      'Testing',
-      'T&O Added',
-      'Manual Spend Adjustments',
-      'Manual Bid Adjustments'
-    ],
-    Other: [
-      { text: 'Select Option', value: 'None' },
-      'Uncontrollable Circumstances'
-    ],
-    'Technical Issue': [
-      { text: 'Select Option', value: 'None' },
-      'DA WoW',
-      'Dynamic Pricing',
-      'Dynamic Availability',
-      'Reporting Issue'
-    ],
-    'Implementation Dates': [
-      { text: 'Select Option', value: 'None' },
-      'Dynamic Pricing Start',
-      'Dynamic Pricing End',
-      'Dynamic Availability Start',
-      'Dynamic Availability End',
-      'Spend Optimizer Start',
-      'Spend Optimizer End',
-      'Call Scoring Start',
-      'Call Scoring End',
-      'First Impressions',
-      'First Spend'
-    ]
+    null: {
+      da: [
+        { text: 'Select a Category First', value: null }
+      ],
+      seo: [
+        { text: 'Select a Category First', value: null }
+      ],
+      cc: [
+        { text: 'Select a Category First', value: null }
+      ]
+    },
+    None: {
+      da: [
+        { text: 'Select a Category First', value: null }
+      ],
+      seo: [
+        { text: 'Select a Category First', value: null }
+      ],
+      cc: [
+        { text: 'Select a Category First', value: null }
+      ]
+    },
+    'Account Audit': {
+      da: [],
+      seo: [
+        { text: 'Select Option', value: 'None' },
+        'Site Health Check',
+        'SEO Audit',
+        'Performance Analysis',
+        'Client Recommendation'
+      ],
+      cc: []
+    },
+    'Account Changes': {
+      da: [
+        { text: 'Select Option', value: 'None' },
+        'Smart Bidding Strategy Change',
+        'Specials/Promotions',
+        'Spend Optimizer Version Change',
+        'URL Change',
+        'Whitelisting Events Change'
+      ],
+      seo: [
+        { text: 'Select Option', value: 'None' },
+        'Service Upgrade',
+        'Service Downgrade',
+        'Business Information'
+      ],
+      cc: [
+        { text: 'Select Option', value: 'None' }
+      ]
+    },
+    'General Note': {
+      da: [{ text: 'None', value: 'None' }],
+      seo: [{ text: 'None', value: 'None' }],
+      cc: [{ text: 'None', value: 'None' }]
+    },
+    'Customer Contact': {
+      da: [
+        { text: 'Select Option', value: 'None' },
+        'Action Items',
+        'Analysis/Notes'
+      ],
+      seo: [
+        { text: 'Select Option', value: 'None' },
+        'Action Items',
+        'Analysis/Notes',
+        'User Access'
+      ],
+      cc: [
+        { text: 'Select Option', value: 'None' }
+      ]
+    },
+    Optimizations: {
+      da: [
+        { text: 'Select Option', value: 'None' },
+        'Added Negative Keywords',
+        'Added Keywords',
+        'Changed Location Strategy',
+        'Updated Geographic Targeting',
+        'Paused Campaign',
+        'Enabled Campaign',
+        'Refreshed Ad Copy',
+        'Testing',
+        'T&O Added',
+        'Manual Spend Adjustments',
+        'Manual Bid Adjustments'
+      ],
+      seo: [
+        { text: 'Select Option', value: 'None' },
+        'Keyword Strategy Update',
+        'Website - Content',
+        'Website - Technical',
+        'GMB'
+      ],
+      cc: [{ text: 'Select Option', value: 'None' }]
+    },
+    Other: {
+      da: [
+        { text: 'Select Option', value: 'None' },
+        'Uncontrollable Circumstances'
+      ],
+      seo: [{ text: '-', value: 'None' }],
+      cc: [{ text: '-', value: 'None' }]
+    },
+    'Technical Issue': {
+      da: [
+        { text: 'Select Option', value: 'None' },
+        'DA WoW',
+        'Dynamic Pricing',
+        'Dynamic Availability',
+        'Reporting Issue'
+      ],
+      seo: [
+        { text: 'Select Option', value: 'None' },
+        'Website',
+        'GMB',
+        'Business Listings',
+        'Reporting Issue'
+      ],
+      cc: [{ text: 'Select Option', value: 'None' }]
+    }
   },
   isInternal: null,
   isInternals: [

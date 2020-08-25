@@ -58,6 +58,19 @@
           />
         </b-form-group>
         <b-form-group
+          label-cols="4"
+          label-class="text-primary-1 py-1"
+        >
+          <template v-slot:label>
+            <b-icon-people-fill />
+            Team
+          </template>
+          <b-form-select
+            v-model="team"
+            :options="teams"
+          />
+        </b-form-group>
+        <b-form-group
           :label-class="labelClass"
           label-cols="4"
         >
@@ -70,7 +83,7 @@
           <b-form-select
             id="category-select"
             :value="category"
-            :options="categories"
+            :options="categories[team]"
             @input="onUpdate({ key: 'category', value: $event })"
           />
         </b-form-group>
@@ -87,7 +100,7 @@
           <b-form-select
             id="action-type-select"
             :value="actionType"
-            :options="actionTypes[category]"
+            :options="actionTypes[category][team]"
             @input="onUpdate({ key: 'actionType', value: $event })"
           />
         </b-form-group>
@@ -224,6 +237,7 @@ export default {
   },
   data() {
     return {
+      team: 'da',
       labelClass: [
         'd-flex',
         'align-items-center',
@@ -240,6 +254,7 @@ export default {
       locations: state => state.controls.locations,
       user: state => state.controls.user,
       users: state => state.controls.users,
+      teams: state => state.controls.teams,
       category: state => state.controls.category,
       categories: state => state.controls.categories,
       actionType: state => state.controls.actionType,

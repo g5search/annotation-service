@@ -72,6 +72,23 @@
               class="my-1"
             >
               <template v-slot:label>
+                <b-icon-people-fill />
+                Team
+                <span class="smaller text-tertiary">
+                  *
+                </span>
+              </template>
+              <b-form-select
+                v-model="team"
+                :options="teams"
+              />
+            </b-form-group>
+            <b-form-group
+              label-cols="4"
+              label-class="text-primary-1 py-1"
+              class="my-1"
+            >
+              <template v-slot:label>
                 <b-icon-collection />
                 Category
                 <span class="smaller text-tertiary">
@@ -80,7 +97,7 @@
               </template>
               <b-form-select
                 v-model="category"
-                :options="categories"
+                :options="categories[team]"
               />
             </b-form-group>
             <b-form-group
@@ -94,7 +111,7 @@
               </template>
               <b-form-select
                 v-model="actionType"
-                :options="actionTypes[category]"
+                :options="actionTypes[category][team]"
                 required
                 @change="toggleDates"
               />
@@ -298,12 +315,10 @@ import {
 } from 'tiptap-extensions'
 import AlertMixin from '~/mixins/alert-mixin'
 import Alert from '~/components/alert'
-// import TriCheckbox from '~/components/tri-check'
 export default {
   components: {
     VueMultiselect,
     EditorContent,
-    // TriCheckbox,
     EditorMenuBar,
     Alert
   },
@@ -331,8 +346,9 @@ export default {
         html: '',
         json: ''
       },
-      category: null,
-      actionType: null,
+      category: 'None',
+      actionType: 'None',
+      team: 'da',
       specs: {
         id: 'submission-status',
         width: 'w-100',
@@ -348,7 +364,8 @@ export default {
       alertProps: state => state.alert,
       clients: state => state.controls.clients,
       categories: state => state.controls.categories,
-      actionTypes: state => state.controls.actionTypes
+      actionTypes: state => state.controls.actionTypes,
+      teams: state => state.controls.teams
     }),
     isValid() {
       return this.category !== null && this.client !== null
@@ -405,6 +422,7 @@ export default {
       this.promoted = false
       this.showDates = false
       this.category = null
+      this.team = 'da'
       this.actionType = null
       this.autoDetect = false
       this.startDate = null
