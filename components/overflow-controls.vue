@@ -58,19 +58,6 @@
           />
         </b-form-group>
         <b-form-group
-          label-cols="4"
-          label-class="text-primary-1 py-1"
-        >
-          <template v-slot:label>
-            <b-icon-people-fill />
-            Team
-          </template>
-          <b-form-select
-            v-model="team"
-            :options="teams"
-          />
-        </b-form-group>
-        <b-form-group
           :label-class="labelClass"
           label-cols="4"
         >
@@ -83,7 +70,7 @@
           <b-form-select
             id="category-select"
             :value="category"
-            :options="categories[team]"
+            :options="categories"
             @input="onUpdate({ key: 'category', value: $event })"
           />
         </b-form-group>
@@ -100,7 +87,7 @@
           <b-form-select
             id="action-type-select"
             :value="actionType"
-            :options="actionTypes[category][team]"
+            :options="actionTypes[category]"
             @input="onUpdate({ key: 'actionType', value: $event })"
           />
         </b-form-group>
@@ -254,11 +241,10 @@ export default {
       locations: state => state.controls.locations,
       user: state => state.controls.user,
       users: state => state.controls.users,
-      teams: state => state.controls.teams,
       category: state => state.controls.category,
-      categories: state => state.controls.categories,
+      categories: state => state.filters.categories,
       actionType: state => state.controls.actionType,
-      actionTypes: state => state.controls.actionTypes,
+      actionTypes: state => state.filters.actionTypes,
       isInternal: state => state.controls.isInternal,
       isInternals: state => state.controls.isInternals,
       startDate: state => state.controls.startDate,
@@ -275,7 +261,6 @@ export default {
   methods: {
     ...mapActions({
       onUpdate: 'controls/onUpdate',
-      // onRemove: 'controls/onRemove',
       reset: 'controls/onReset'
     }),
     onReset() {
@@ -295,8 +280,8 @@ export default {
     onSubmit() {
       this.$emit('on-submit', {
         userEmail: this.user ? this.user : null,
-        annotationName: this.category ? this.category : null,
-        annotationType: this.actionType ? this.actionType : null,
+        annotationName: this.category !== 'None' ? this.category : null,
+        annotationType: this.actionType !== 'None' ? this.actionType : null,
         clientUrn: this.client ? this.client.urn : null,
         locationUrns: this.location ? this.location.urn : null,
         isInternal: this.isInternal !== null ? this.isInternal : null,

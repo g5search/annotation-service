@@ -18,7 +18,7 @@ export const state = () => ({
     { text: 'SEO', value: 'seo' },
     { text: 'Customer Care', value: 'cc', disabled: true }
   ],
-  category: null,
+  category: 'None',
   categories: {
     null: [
       { text: 'Select a Team First', value: 'None' }
@@ -44,7 +44,7 @@ export const state = () => ({
     ],
     cc: []
   },
-  actionType: null,
+  actionType: 'None',
   actionTypes: {
     null: {
       da: [

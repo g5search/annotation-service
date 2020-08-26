@@ -394,12 +394,12 @@ export default {
     store.dispatch('controls/fillClients')
   },
   async asyncData({ $axios }) {
-    const notes = await $axios.$get('api/v1/notes')
+    // const notes = await $axios.$get('api/v1/notes')
     const me = await $axios.$get('api/v1/me')
     return {
       me,
-      notes,
-      totalRows: notes.length
+      notes: [],
+      totalRows: 0
     }
   },
   data() {
