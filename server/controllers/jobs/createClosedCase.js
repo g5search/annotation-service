@@ -11,7 +11,7 @@ module.exports = async (job, sfApi) => {
     console.log('Signing In')
     await sfApi.signIn()
   }
-  const ticketData = job.data['soapenv:envelope']['soapenv:body'][0].notifications[0].notification[0].sobject[0]
+  const ticketData = job.data.body['soapenv:envelope']['soapenv:body'][0].notifications[0].notification[0].sobject[0]
   const ticket = {
     AccountId: ticketData['sf:accountid'][0],
     CaseNumber: ticketData['sf:casenumber'][0],
