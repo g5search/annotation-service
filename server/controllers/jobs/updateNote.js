@@ -42,9 +42,10 @@ module.exports = async function (job, sfApi) {
           html,
           internal,
           annotationCategory,
-          annotationType
+          annotationType,
+          createdAt
         } = dbAnnotation
-        const { id: noteId } = await sfApi.createNote(WhatId, OwnerId, annotationCategory.dataValues.name, annotationType ? annotationType.dataValues.name : null, internal, html, moment().format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name, 'DA Task')
+        const { id: noteId } = await sfApi.createNote(WhatId, OwnerId, annotationCategory.dataValues.name, annotationType ? annotationType.dataValues.name : null, internal, html, moment(createdAt).format('YYYY-MM-DD'), 'Completed', annotationCategory.dataValues.name, 'DA Task')
         await dbAnnotationLocation.update({ salesforce_id: noteId })
       }
     }
