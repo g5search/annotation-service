@@ -126,6 +126,7 @@ export const state = () => ({
         'Added Keywords',
         'Changed Location Strategy',
         'Updated Geographic Targeting',
+        'Updated Audiences',
         'Paused Campaign',
         'Enabled Campaign',
         'Refreshed Ad Copy',
