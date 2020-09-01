@@ -21,19 +21,19 @@ module.exports = async (notes) => {
               last_name: note.user.lastName
             }
           })
-          const [category] = await models.annotationCategory.findOrCreate({
-            where: {
-              name: note.auditName
-            },
-            defaults: {
-              name: note.auditName
-            },
-            transaction: t
-          })
+          // const [category] = await models.annotationCategory.findOrCreate({
+          //   where: {
+          //     name: note.auditName
+          //   },
+          //   defaults: {
+          //     name: note.auditName
+          //   },
+          //   transaction: t
+          // })
           const typeName = convertName(note.fixReason)
           const [type] = await models.annotationType.findOrCreate({
             where: {
-              name: typeName
+              name: note.auditName
             },
             defaults: {
               name: note.auditName
@@ -55,14 +55,16 @@ module.exports = async (notes) => {
             html: note.annotation,
             g5UpdatableClientId: client ? client.id : null,
             annotationUserId: user ? user.id : null,
+            annotationCategoryId: 8,
             teamId,
-            appId
+            appId,
+            createdAt: note.createdAt
           }, { transaction: t, hooks: false })
           if (location && location.length > 0) {
             await annotation.addG5_updatable_locations([location], { transaction: t, hooks: false })
           }
           await annotation.setAnnotationType(type, { transaction: t, hooks: false })
-          await annotation.setAnnotationCategory(category, { transaction: t, hooks: false })
+          // await annotation.setAnnotationCategory(category, { transaction: t, hooks: false })
           return note
         }
       })
