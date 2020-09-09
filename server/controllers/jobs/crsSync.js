@@ -30,13 +30,13 @@ module.exports = async (notes) => {
           //   },
           //   transaction: t
           // })
-          const typeName = convertName(note.fixReason)
+          const typeName = convertName(note.fixReason, note.auditName)
           const [type] = await models.annotationType.findOrCreate({
             where: {
-              name: note.auditName
+              name: typeName
             },
             defaults: {
-              name: note.auditName
+              name: typeName
             },
             transaction: t
           })
@@ -74,7 +74,7 @@ module.exports = async (notes) => {
   }
 }
 
-function convertName(name) {
+function convertName(name, audit) {
   let newName = null
   switch (name) {
     case 'Missing':
@@ -116,5 +116,5 @@ function convertName(name) {
     default:
     // code block
   }
-  return newName
+  return ` ${newName} ${audit}`
 }
