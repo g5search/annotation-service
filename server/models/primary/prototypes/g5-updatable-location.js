@@ -7,7 +7,8 @@ module.exports = (models, Sequelize, sequelize) => {
       'name',
       [Sequelize.json('properties.home_page_url'), 'domain'],
       [Sequelize.json('properties.status'), 'status'],
-      [Sequelize.json('properties.off_platform'), 'offPlatform']
+      [Sequelize.json('properties.off_platform'), 'offPlatform'],
+      [Sequelize.json('properties.corporate'), 'corporate']
     ],
     order: [
       ['display_name', 'asc']
