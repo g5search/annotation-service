@@ -67,7 +67,10 @@ export const state = () => ({
       'DA WoW',
       'Dynamic Pricing',
       'Dynamic Availability',
-      'Reporting Issue'
+      'Reporting Issue',
+      'DAM - Account Selection',
+      'DAM - Sitelink Selection',
+      'DAM - Campaign/Ad Group Selection'
     ],
     'Implementation Dates': [
       { text: 'Select Option', value: 'None' },
