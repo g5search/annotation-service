@@ -77,11 +77,15 @@
         <template v-slot:label>
           <b-icon-collection scale="1.2" />
           Category
+          <span class="smaller text-tertiary">
+            *
+          </span>
         </template>
         <vue-multiselect
           v-model="local.annotationCategory"
           :options="categories[team]"
           :custom-label="c => c.text"
+          :allow-empty="false"
           track-by="value"
         />
       </b-form-group>
@@ -140,16 +144,27 @@
         </small>
       </b-form-group>
       <template v-slot:footer>
-        <b-btn
-          variant="primary"
-          class="align-middle w-50"
-          @click="onSave"
-        >
-          Save
-        </b-btn>
+        <span :id="!isValid ? 'category-tip' : 'save-btn'" class="w-100 d-flex">
+          <b-btn
+            :disabled="!isValid"
+            :variant="isValid ? 'primary-1' : 'outline-primary-1'"
+            class="align-middle w-100"
+            @click="onSave"
+          >
+            Save
+          </b-btn>
+          <b-tooltip
+            target="category-tip"
+            triggers="hover"
+            placement="bottom"
+            variant="primary-1"
+          >
+            Select a Category to Save
+          </b-tooltip>
+        </span>
         <b-btn
           variant="outline-tertiary"
-          class="align-middle w-50 ml-3"
+          class="align-middle w-100 ml-3"
           @click="onCancel"
         >
           Cancel
@@ -190,7 +205,7 @@ export default {
       }
     },
     categories: {
-      type: Array,
+      type: Object,
       default() {
         return this.$store.state.controls.categories
       }
@@ -219,6 +234,10 @@ export default {
     }
   },
   computed: {
+    isValid() {
+      const category = this.local.annotationCategory.value
+      return category !== 'None'
+    },
     id() {
       return this.content.id
     },
@@ -272,7 +291,8 @@ export default {
           annotationType: this.local.annotationType,
           annotationUser: this.local.user.value,
           clientUrn: this.local.client.urn,
-          locationUrns: this.local.locations.map(l => l.urn)
+          locationUrns: this.local.locations.map(l => l.urn),
+          teamId: this.team === 'da' ? 1 : 2
         })
         .then(() => {
           this.showGlobalAlert('Note Updated!', 'success')
