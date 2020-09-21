@@ -128,6 +128,7 @@
                 </span>
               </template>
               <b-form-select
+                id="team-select"
                 v-model="category"
                 :options="categories[team]"
               />
@@ -303,16 +304,26 @@
           </b-card>
           <template v-slot:footer>
             <b-btn-group class="w-100 d-flex mt-3">
-              <b-btn
-                :disabled="!isValid"
-                :variant="isValid ? 'primary-1' : 'outline-primary-1'"
-                class="h1 flex-grow-1 btn-rad"
-                @click="onSubmit"
-              >
-                <b-spinner v-if="isBusy" small style="vertical-align: -0.15em;" />
-                <b-icon-bookmark-plus v-else style="vertical-align: -0.15em;" />
-                Save Note
-              </b-btn>
+              <span :id="!isValid ? 'incomplete-fields' : 'save-btn'" class="w-100 d-flex">
+                <b-btn
+                  :disabled="!isValid"
+                  :variant="isValid ? 'primary-1' : 'outline-primary-1'"
+                  class="h1 flex-grow-1 btn-rad"
+                  @click="onSubmit"
+                >
+                  <b-spinner v-if="isBusy" small style="vertical-align: -0.15em;" />
+                  <b-icon-bookmark-plus v-else style="vertical-align: -0.15em;" />
+                  Save Note
+                </b-btn>
+                <b-tooltip
+                  target="incomplete-fields"
+                  triggers="hover"
+                  placement="bottom"
+                  variant="primary-1"
+                >
+                  Complete Required Fields
+                </b-tooltip>
+              </span>
               <b-btn
                 id="reset"
                 variant="tertiary-2"
@@ -400,7 +411,7 @@ export default {
       teams: state => state.controls.teams
     }),
     isValid() {
-      return this.category !== null && this.client !== null
+      return this.category !== null && this.category !== 'None' && this.client !== null
     }
   },
   mounted() {
@@ -483,7 +494,8 @@ export default {
           category: this.category,
           actionType: this.actionType,
           clientUrn: this.client.urn,
-          locationUrns: this.locations.map(l => l.urn)
+          locationUrns: this.locations.map(l => l.urn),
+          teamId: this.team === 'da' ? 1 : 2
         })
         .then(() => this.showAlert('Note Saved!', 'success'))
         .then(() => this.$ga.event('Note Saved', 'Submit', 'New Note', 0))
