@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:12
 ARG NPM_TOKEN
 RUN mkdir -p /usr/src/opex
 WORKDIR /usr/src/opex
