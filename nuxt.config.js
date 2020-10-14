@@ -2,7 +2,7 @@ require('dotenv').config()
 
 module.exports = {
   telemetry: false,
-  mode: 'spa',
+  ssr: false,
   server: {
     host: process.env.BASE_URL || '0.0.0.0',
     port: process.env.PORT || 5000
@@ -24,16 +24,7 @@ module.exports = {
     ]
   },
   loading: '~/components/loading.vue',
-  // loading: {
-  //   color: '#3606e9',
-  //   failedColor: '#ff0033',
-  //   continuous: true,
-  //   throttle: 300,
-  //   duration: 2000,
-  //   height: '2px'
-  // },
   loadingIndicator: {
-    // name: 'three-bounce',
     name: '~/static/custom.html',
     color: '#2f38b0',
     background: '#e8e8e8'
@@ -42,7 +33,6 @@ module.exports = {
     '@/assets/theme.scss',
     '@/assets/transitions.scss'
   ],
-  // TODO could this be set to a function that returns an array of paths to each file in the plugins directory?
   plugins: [
   ],
   buildModules: [
