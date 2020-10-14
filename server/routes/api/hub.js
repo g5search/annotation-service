@@ -14,7 +14,7 @@ const corsOpts = {
   preflightContinue: true,
   methods: 'GET'
 }
-const { Op } = require('sequelize')
+const { Op } = sequelize
 const models = require('../../models/primary')
 
 module.exports = (app) => {
@@ -45,24 +45,17 @@ module.exports = (app) => {
   app.get('/api/hub/clients', cors(corsOpts), async (req, res) => {
     const { internal, activeDa } = req.query
     let clients
-    // TODO NOT WORKING
-    let where = {
+    const where = {
       properties: {
         status: { [Op.not]: 'Deleted' }
       }
     }
-    if (activeDa) {
+    if (activeDa !== 'false') {
       where.properties.search_analyst = { [Op.not]: null }
     }
-    // END NOT WORKING
-    if (internal === 'false') {
+    if (internal !== 'false') {
       clients = await models.g5_updatable_client.findAll({
-        where: {
-          properties: {
-            g5_internal: false,
-            status: { [Op.not]: 'Deleted' }
-          }
-        },
+        where,
         attributes: [
           'urn',
           'name',

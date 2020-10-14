@@ -14,17 +14,11 @@ async function start() {
   if (config.dev) {
     const builder = new Builder(nuxt)
     await builder.build()
-  } else {
-    // require('appmetrics-zipkin')()
-    // require('appmetrics-prometheus').attach()
   }
 
   app.use(nuxt.render)
   models.sequelize
     .sync()
-    // .then(() => {
-    //   console.log('%c Models Sync\'d!', 'color: crimson;')
-    // })
     .catch((err) => {
       console.error(err)
     })

@@ -8,7 +8,6 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server",
     "docker:build": "docker build -t annotation . --build-arg NPM_TOKEN=$NPM_TOKEN",
-    "docker:tag": "docker tag annotation tylrhas/annotation:$version",
     "build": "nuxt build",
     "start": "cross-env NODE_ENV=production node server/index.js",
     "generate": "nuxt generate",
@@ -21,8 +20,6 @@
     "@getg5/g5-updatable": "^2.2.3",
     "@nuxtjs/axios": "^5.10.3",
     "@nuxtjs/google-analytics": "^2.3.0",
-    "appmetrics-prometheus": "^3.1.0",
-    "appmetrics-zipkin": "^1.1.1",
     "bcrypt": "^5.0.0",
     "bootstrap": "^4.5.0",
     "bootstrap-vue": "^2.15.0",
