@@ -23,7 +23,7 @@ const jobType = {
 }
 
 function bullConfig (Bull) {
-  const salesforce = new Bull('salesforce', REDIS_URL)
+  const salesforce = new Bull('salesforce', REDIS_URL, { prefix: 'notes' })
   salesforce.process(1, (job) => {
     const { type } = job.data
     return require(jobType[type])(job, sfApi)
@@ -54,6 +54,7 @@ function arenaConfig () {
   return {
     name: 'salesforce',
     hostId: 'notes',
+    prefix: 'notes',
     url: REDIS_URL
   }
 }
