@@ -6,7 +6,6 @@ module.exports = async function (job, sfApi) {
     console.log('Signing In')
     await sfApi.signIn()
   }
-  const whatId = null
   const { id } = job.data
   const dbAnnotation = await models.annotation.findOne({
     where: { id },
@@ -18,6 +17,8 @@ module.exports = async function (job, sfApi) {
       { model: models.g5_updatable_location }
     ]
   })
+  console.log(dbAnnotation)
+  await job.log(dbAnnotation)
   const locationUrns = dbAnnotation.dataValues.g5_updatable_locations.map(location => location.dataValues.urn)
   const {
     html,
