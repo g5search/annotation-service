@@ -1,6 +1,6 @@
 {
   "name": "opex-template",
-  "version": "1.3.64",
+  "version": "1.3.65",
   "description": "A note taking service for the G5 Delivery teams.",
   "author": "David Miller & Tyler Hasenoehrl",
   "docker-repo": "tylrhas/annotation",
@@ -16,10 +16,10 @@
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "test": "jest",
-    "docker:build": "docker build -t crs . --build-arg NPM_TOKEN=$NPM_TOKEN",
+    "docker:build": "docker build -t $npm_package_config_imageName . --build-arg NPM_TOKEN=$NPM_TOKEN",
     "docker:tag": "cross-env docker tag $npm_package_config_imageName $npm_package_config_imageRepo:$npm_package_version",
     "docker:push": "cross-env docker push $npm_package_config_imageRepo:$npm_package_version",
-    "helm:upgrade": "helm upgrade crs ./chart/nuxt && kubectl get pods"
+    "helm:upgrade": "helm upgrade annotation ./chart/nuxt && kubectl get pods"
   },
   "dependencies": {
     "@cloudnative/health-connect": "^2.1.0",
