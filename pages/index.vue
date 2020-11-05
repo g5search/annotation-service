@@ -350,6 +350,7 @@
                   :content="row.item"
                   :clients="clients"
                   :users="users"
+                  :teamId="row.item.team.id"
                   :categories="categories"
                   :action-types="actionTypes"
                   @on-close="row.toggleDetails()"

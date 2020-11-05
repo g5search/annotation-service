@@ -198,6 +198,12 @@ export default {
         return []
       }
     },
+    teamId: {
+      type: Number,
+      default() {
+        return 1
+      }
+    },
     clients: {
       type: Array,
       default() {
@@ -221,7 +227,6 @@ export default {
     return {
       local: this.content,
       client: null,
-      team: 'da',
       includedLocations: [],
       locations: [],
       internal: null,
@@ -234,6 +239,13 @@ export default {
     }
   },
   computed: {
+    team() {
+      const map = {
+        1: 'da',
+        2: 'seo'
+      }
+      return map[this.teamId]
+    },
     isValid() {
       const category = this.local.annotationCategory.value
       return category !== 'None'
@@ -292,7 +304,7 @@ export default {
           annotationUser: this.local.user.value,
           clientUrn: this.local.client.urn,
           locationUrns: this.local.locations.map(l => l.urn),
-          teamId: this.team === 'da' ? 1 : 2
+          teamId: this.teamId
         })
         .then(() => {
           this.showGlobalAlert('Note Updated!', 'success')
