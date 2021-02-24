@@ -26,6 +26,7 @@ export const state = () => ({
     da: [
       { text: 'Select Option', value: 'None' },
       { text: 'Account Changes', value: 'Account Changes' },
+      { text: 'Content Pilot', value: 'Content Pilot' },
       { text: 'Customer Contact', value: 'Customer Contact' },
       { text: 'General Note', value: 'General Note' },
       { text: 'Optimizations', value: 'Optimizations' },
@@ -37,6 +38,7 @@ export const state = () => ({
       { text: 'Account Changes', value: 'Account Changes' },
       { text: 'Account Audit', value: 'Account Audit' },
       { text: 'Customer Contact', value: 'Customer Contact' },
+      { text: 'Content Pilot', value: 'Content Pilot' },
       { text: 'General Note', value: 'General Note' },
       { text: 'Optimizations', value: 'Optimizations' },
       { text: 'Other', value: 'Other' },
@@ -102,6 +104,27 @@ export const state = () => ({
       da: [{ text: 'None', value: 'None' }],
       seo: [{ text: 'None', value: 'None' }],
       cc: [{ text: 'None', value: 'None' }]
+    },
+    'Content Pilot': {
+      da: [
+        { text: 'Select Option', value: 'None' },
+        'Ad Copy',
+        'Descriptions',
+        'H1',
+        'Onpage Content',
+        'Title Tags'
+      ],
+      seo: [
+        { text: 'Select Option', value: 'None' },
+        'Ad Copy',
+        'Descriptions',
+        'H1',
+        'Onpage Content',
+        'Title Tags'
+      ],
+      cc: [
+        { text: 'Select Option', value: 'None' }
+      ]
     },
     'Customer Contact': {
       da: [
