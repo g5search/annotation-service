@@ -277,6 +277,16 @@ class SfApi extends jsforce.Connection {
         throw new Error(err)
       })
   }
+
+  getAccountByUrn(urn) {
+    const attributes = ['Level_of_Service__c', 'DA_Level_of_Service__c']
+    return this.sobject('Account').find(
+      { Client_URN__c: urn }
+      , attributes)
+      .then(services => services.map((service) => {
+        if (service) { return util.pick(service, attributes) }
+      }).filter(service => service))
+  }
 }
 
 // module.exports = new SfApi({ username, password, token, loginUrl: 'https://test.salesforce.com' })

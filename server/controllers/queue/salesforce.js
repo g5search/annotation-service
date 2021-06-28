@@ -5,6 +5,8 @@ const sfUpdateNote = path.resolve('./server/controllers/jobs/updateNote')
 const sfCreateClosedCase = path.resolve('./server/controllers/jobs/createClosedCase')
 const sfImportClosedCases = path.resolve('./server/controllers/jobs/importClosedCases')
 const sfFindMissingSyncs = path.resolve('./server/controllers/jobs/findMissedSync')
+const sfRunQuarterlyMSR = path.resolve('./server/controllers/jobs/runQuarterlyMSR')
+const sfRunClientMSR = path.resolve('./server/controllers/jobs/runClientMSR')
 
 const { REDIS_URL } = process.env
 const sfApi = require('../salesforce')
@@ -19,15 +21,24 @@ const jobType = {
   update: sfUpdateNote,
   createClosedCase: sfCreateClosedCase,
   importClosedCases: sfImportClosedCases,
-  findMissingSyncs: sfFindMissingSyncs
+  findMissingSyncs: sfFindMissingSyncs,
+  runQuarterlyMSR: sfRunQuarterlyMSR,
+  runClientMSR: sfRunClientMSR
 }
 
 function bullConfig (Bull) {
   const salesforce = new Bull('salesforce', REDIS_URL, { prefix: 'notes' })
   salesforce.process(1, (job) => {
     const { type } = job.data
-    return require(jobType[type])(job, sfApi)
+    try {
+      return require(jobType[type])(job, sfApi, salesforce)
+    } catch (e) {
+      console.log(e)
+    }
   })
+  // if (process.env.WHICH_ENV !== 'development') {
+  //   salesforce.add({ type: 'runClientMSR' }, { repeat: { cron: '00 00 01 */3 *' } })
+  // }
   salesforce.on('completed', checkForSignout)
   salesforce.on('failed', checkForSignout)
 

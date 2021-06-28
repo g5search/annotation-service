@@ -34,8 +34,14 @@ module.exports = (app) => {
       </soap:Envelope>
     `)
   })
+  // test route for msr
+  app.get('/api/msr', async (req, res) => {
+    await salesforce.add({ type: 'runQuarterlyMSR' })
+    res.sendStatus(201)
+  })
+
   // test route for cases
-  app.post('/api/test', async (req, res) => {
+  app.get('/api/test', async (req, res) => {
     const { body } = req
     await salesforce.add({ type: 'createClosedCase', body })
     res.sendStatus(201)
