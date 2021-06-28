@@ -1,12 +1,14 @@
 const models = require('../../models/primary')
-module.exports = async (notes) => {
+
+module.exports = async (job, done) => {
   try {
+    const { notes } = job.data
     const mappedNotes = notes.filter(n => n !== null)
     const teamId = 2
     const appId = 2
-    console.log(mappedNotes.length)
+    const added = []
+    const duplicates = []
     for (let i = 0; i < mappedNotes.length; i++) {
-      console.log([i])
       const note = mappedNotes[i]
       await models.sequelize.transaction(async (t) => {
         if (note.user) {
@@ -21,100 +23,97 @@ module.exports = async (notes) => {
               last_name: note.user.lastName
             }
           })
-          // const [category] = await models.annotationCategory.findOrCreate({
-          //   where: {
-          //     name: note.auditName
-          //   },
-          //   defaults: {
-          //     name: note.auditName
-          //   },
-          //   transaction: t
-          // })
+
           const typeName = convertName(note.fixReason, note.auditName)
           const [type] = await models.annotationType.findOrCreate({
-            where: {
-              name: typeName
-            },
-            defaults: {
-              name: typeName
-            },
+            where: { name: typeName },
+            defaults: { name: typeName },
             transaction: t
           })
+
           const client = await models.g5_updatable_client.findOne({
-            where: {
-              urn: note.clientUrn
-            }
+            where: { urn: note.clientUrn }
           })
+
           const location = await models.g5_updatable_location.findOne({
-            where: {
-              urn: note.locationUrn
-            }
+            where: { urn: note.locationUrn }
           })
-          const annotation = await models.annotation.create({
-            internal: true,
-            html: note.annotation,
-            g5UpdatableClientId: client ? client.id : null,
-            annotationUserId: user ? user.id : null,
-            annotationCategoryId: 8,
-            teamId,
-            appId,
-            createdAt: note.createdAt
-          }, { transaction: t, hooks: false })
-          if (location && location.length > 0) {
-            await annotation.addG5_updatable_locations([location], { transaction: t, hooks: false })
+
+          const [annotation, isCreated] = await models.annotation.findOrCreate({
+            where: { check_id: note.checkId },
+            defaults: {
+              check_id: note.checkId,
+              internal: true,
+              html: note.annotation,
+              g5UpdatableClientId: client ? client.id : null,
+              annotationUserId: user ? user.id : null,
+              annotationCategoryId: 8,
+              teamId,
+              appId,
+              createdAt: note.createdAt
+            },
+            transaction: t,
+            hooks: false
+          })
+
+          if (isCreated) {
+            if (location && location.length > 0) {
+              await annotation.addG5_updatable_locations([location], {
+                transaction: t,
+                hooks: false
+              })
+            }
+            await annotation.setAnnotationType(type, { transaction: t, hooks: false })
+            added.push(annotation.dataValues)
+          } else {
+            duplicates.push(annotation.dataValues)
           }
-          await annotation.setAnnotationType(type, { transaction: t, hooks: false })
-          // await annotation.setAnnotationCategory(category, { transaction: t, hooks: false })
-          return note
         }
       })
     }
+    done(null, { added, duplicates })
   } catch (error) {
-    console.log(error)
+    done(error)
   }
 }
 
-function convertName(name, audit) {
+function convertName (name, audit) {
+  console.log({ name, audit })
   let newName = null
   switch (name) {
     case 'Missing':
-      // code block
       newName = 'Added'
       break
+    case 'Missing Alt Text':
+      newName = 'Missing'
+      break
     case 'Excessive Characters':
-      // code block
       newName = 'Updated'
       break
     case 'Insufficient Characters':
-      // code block
       newName = 'Updated'
       break
     case 'Multiple':
-      // code block
       newName = 'Updated'
       break
     case 'Duplicate':
-      // code block
       newName = 'Updated'
       break
     case 'Internal Redirect':
-      // code block
       newName = 'Internal Redirect Updated'
       break
     case 'Broken Off-Page Link':
-      // code block
       newName = 'Broken Off-Page Link Updated'
       break
     case 'Broken Link':
-      // code block
-      newName = 'Broken Link Updated'
+      newName = 'Updated'
       break
     case 'Off-Page Link Redirect':
-      // code block
       newName = 'Off-Page Link Redirect Updated'
       break
     default:
-    // code block
+      newName = ''
   }
-  return ` ${newName} ${audit}`
+  console.log(`${newName} ${audit}`)
+  return `${newName} ${audit}`
 }
