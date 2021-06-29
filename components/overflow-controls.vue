@@ -37,7 +37,7 @@
             :value="location"
             :options="locations"
             :custom-label="l => `${l.displayName ? l.displayName : l.name}`"
-            @input="onUpdate({ key: 'location', value: $event })"
+            @input="onUpdate({ location: $event })"
           />
         </b-form-group>
         <b-form-group
@@ -54,7 +54,7 @@
             id="user-select"
             :value="user"
             :options="users"
-            @input="onUpdate({ key: 'user', value: $event })"
+            @input="onUpdate({ user: $event })"
           />
         </b-form-group>
         <b-form-group
@@ -71,7 +71,7 @@
             id="category-select"
             :value="category"
             :options="categories"
-            @input="onUpdate({ key: 'category', value: $event })"
+            @input="onUpdate({ category: $event })"
           />
         </b-form-group>
         <b-form-group
@@ -88,7 +88,7 @@
             id="action-type-select"
             :value="actionType"
             :options="actionTypes[category]"
-            @input="onUpdate({ key: 'actionType', value: $event })"
+            @input="onUpdate({ actionType: $event })"
           />
         </b-form-group>
         <div v-show="showDates">
@@ -104,7 +104,7 @@
             </template>
             <b-form-datepicker
               :value="startDate"
-              @input="onUpdate({ key: 'startDate', value: $event })"
+              @input="onUpdate({ startDate: $event })"
             />
           </b-form-group>
           <b-form-group
@@ -119,7 +119,7 @@
             </template>
             <b-form-datepicker
               :value="endDate"
-              @input="onUpdate({ key: 'endDate', value: $event })"
+              @input="onUpdate({ endDate: $event })"
             />
           </b-form-group>
         </div>
@@ -137,7 +137,7 @@
             id="is-internal-select"
             :value="isInternal"
             :options="isInternals"
-            @input="onUpdate({ key: 'isInternal', value: $event })"
+            @input="onUpdate({ isInternal: $event })"
           />
         </b-form-group>
       </b-col>
@@ -149,7 +149,7 @@
             :checked="isCreatedAt"
             switch
             size="sm"
-            @change="onUpdate({ key: 'isCreatedAt', value: $event })"
+            @change="onUpdate({ isCreatedAt: $event })"
           >
             Filter by {{ isCreatedAt ? 'Created' : 'Updated' }} Date Range
           </b-form-checkbox>
@@ -164,7 +164,7 @@
           >
             <b-form-datepicker
               :value="fromDate"
-              @input="onUpdate({ key: 'fromDate', value: $event })"
+              @input="onChange({ key: 'fromDate', value: $event })"
             />
           </b-form-group>
         </b-col>
@@ -177,7 +177,7 @@
             <b-form-datepicker
               :value="toDate"
               :min="fromDate"
-              @input="onUpdate({ key: 'toDate', value: $event })"
+              @input="onChange({ key: 'toDate', value: $event })"
             />
           </b-form-group>
         </b-col>
@@ -212,10 +212,12 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
 import VueMultiselect from 'vue-multiselect'
+import QueryParams from '~/mixins/query-params'
 export default {
   components: {
     VueMultiselect
   },
+  mixins: [QueryParams],
   props: {
     isBusy: {
       type: Boolean,
@@ -263,19 +265,24 @@ export default {
       onUpdate: 'controls/onUpdate',
       reset: 'controls/onReset'
     }),
+    onChange({ key, value }) {
+      this.updateQueryParams({ [key]: value })
+      this.onUpdate({ [key]: value })
+    },
     onReset() {
       this.reset()
       this.onSubmit()
     },
-    async getLocations(evt) {
-      if (!evt) {
-        return
+    getLocations(evt) {
+      // updates selected client and locations
+      this.onUpdate({ client: evt, location: null })
+      // fetches locations if client was selected
+      this.updateQueryParams({ client: evt ? evt.urn : null, location: null })
+      if (evt) {
+        this.$axios
+          .$get(`api/hub/clients/${this.client.urn}/locations`)
+          .then(l => this.onUpdate({ locations: l }))
       }
-      this.onUpdate({ key: 'client', value: evt })
-      this.onUpdate({ key: 'location', value: [] })
-      await this.$axios
-        .$get(`api/hub/clients/${this.client.urn}/locations`)
-        .then(l => this.onUpdate({ key: 'locations', value: l }))
     },
     onSubmit() {
       this.$emit('on-submit', {

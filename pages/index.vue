@@ -24,6 +24,7 @@
     <b-sidebar
       id="controls-container"
       v-model="isOpen"
+      no-close-on-route-change="true"
       right
       width="450px"
       shadow
@@ -35,7 +36,7 @@
             <b-icon-filter scale="0.8" style="vertical-align: -0.15em;" />
             Filters
           </template>
-          <controls :is-busy="isBusy" @on-submit="onSubmit" />
+          <controls :is-busy="isBusy" @on-submit="onUpdate" />
         </b-tab>
         <b-tab no-body>
           <template v-slot:title>
@@ -133,7 +134,7 @@
                 Filter Client and Locations
               </b-tooltip>
               <b-dropdown-form style="width: 400px;" class="p-0 mb-0">
-                <client-location @on-submit="onSubmit" />
+                <client-location @on-submit="onUpdate" />
               </b-dropdown-form>
             </b-dropdown>
             <b-input-group class="ml-2 w-50">
@@ -211,7 +212,7 @@
               placement="bottom"
               variant="primary-1"
             >
-              Filter table to just my notes
+              {{ isFiltered ? 'Filter table to all notes' : 'Filter table to just my notes' }}
             </b-tooltip>
             <b-btn
               variant="transparent"
@@ -299,7 +300,7 @@
               <b-badge
                 v-for="(loc, i) in row.item.locationNames"
                 v-else
-                :key="`${loc}-${row.item.id}`"
+                :key="`${loc}-${row.item.id}-${i}`"
                 :variant="`primary-${i}`"
                 class="mr-1"
               >
@@ -365,7 +366,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import { version } from '~/package.json'
 import Octopus from '~/components/icons/octopus'
 import Controls from '~/components/overflow-controls'
@@ -378,6 +379,7 @@ import Alert from '~/components/alert'
 import PapaMixin from '~/mixins/papaparse'
 import RequestTable from '~/mixins/api'
 import AlertMixin from '~/mixins/alert-mixin'
+import QueryParams from '~/mixins/query-params'
 export default {
   components: {
     Octopus,
@@ -389,18 +391,39 @@ export default {
     NoteEditor,
     Alert
   },
-  mixins: [PapaMixin, RequestTable, AlertMixin],
-  async fetch({ store }) {
-    await store.dispatch('controls/fillUsers')
-    store.dispatch('controls/fillClients')
-  },
-  async asyncData({ $axios }) {
-    // const notes = await $axios.$get('api/v1/notes')
-    const me = await $axios.$get('api/v1/me')
-    return {
-      me,
-      notes: [],
-      totalRows: 0
+  mixins: [PapaMixin, RequestTable, AlertMixin, QueryParams],
+  // fills vuex store users
+  // if query params builds gets all notes and applies filters
+  // otherwise just gets current users notes
+  // returns local data props me, notes, totalRows
+  async asyncData({ $axios, store, route }) {
+    try {
+      const { client: urn = null, fromDate = null, toDate = null } = route.query
+      const hasQueryParams = urn || fromDate || toDate
+      await store.dispatch('controls/fillUsers')
+      const clients = await store.dispatch('controls/fillClients')
+      const me = await $axios.$get('api/v1/me')
+      let endpoint = `api/v1/notes?app=notesService&email=${me.email}`
+      let isFiltered = true
+      if (hasQueryParams) {
+        const client = urn ? clients.find(client => client.urn === urn) : null
+        await store.dispatch('controls/onUpdate', { client: client || null, fromDate, toDate })
+        const searchBy = fromDate || toDate ? 'createdAt' : ''
+        endpoint = Object.entries({ clientUrn: urn, searchBy, from: fromDate, to: toDate }).reduce((acc, curr) => {
+          return curr[1] ? `${acc}&${curr[0]}=${curr[1]}` : acc
+        }, 'api/v1/notes?app=notesService')
+        isFiltered = false
+      }
+      const notes = await $axios.$get(endpoint)
+      return {
+        me,
+        notes,
+        isFiltered,
+        totalRows: notes.length,
+        isOpen: hasQueryParams
+      }
+    } catch (e) {
+
     }
   },
   data() {
@@ -506,13 +529,19 @@ export default {
       users: state => state.controls.users,
       categories: state => state.controls.categories,
       actionTypes: state => state.controls.actionTypes
-    })
+    }),
+    hasQueryParams() {
+      const { client, fromDate, toDate } = this.$route.query
+      return !!(client || fromDate || toDate)
+    }
   },
   mounted() {
     this.updateCsv()
-    this.onFilterMe()
   },
   methods: {
+    ...mapActions({
+      reset: 'controls/onReset'
+    }),
     formatDate(date) {
       const d = new Date(date)
       let month = '' + (d.getMonth() + 1)
@@ -534,22 +563,22 @@ export default {
     },
     onFilterMe() {
       this.isBusy = true
-      const endpoint = !this.isFiltered ? `api/v1/notes?app=notesService&email=${this.me.email}` : 'api/v1/notes?app=notesService'
+      let endpoint = 'api/v1/notes?app=notesService'
+      if (!this.isFiltered) {
+        endpoint = `api/v1/notes?app=notesService&email=${this.me.email}`
+        this.updateQueryParams({ client: null, fromDate: null, toDate: null })
+        this.reset()
+      }
       this.$axios
         .$get(endpoint)
         .then((res) => {
-          if (res.length > 0) {
-            this.totalRows = res.length
-            this.notes = res
-          } else {
-            this.totalRows = 0
-            this.notes = []
-          }
-          this.isBusy = false
+          this.totalRows = res.length
+          this.notes = res
+          this.isFiltered = !this.isFiltered
         })
         .catch(() => this.showGlobalAlert('Network Error: Please try again', 'danger'))
         .finally(() => {
-          this.isFiltered = !this.isFiltered
+          this.isBusy = false
           this.updateCsv()
         })
     },
@@ -581,30 +610,25 @@ export default {
       this.modal.isOpen = true
     },
     onConfirmDrop(id) {
+      const index = this.notes.findIndex(note => note.id === id)
       this.modal.isBusy = true
       this.$axios
         .$delete(`api/v1/notes/${id}`)
-        .then(() => {
-          this.modal.isOpen = false
-        })
         .catch(() => {
-          this.modal.isOpen = false
           this.showGlobalAlert('Error: Please try again', 'danger')
         })
         .finally(() => {
+          this.modal.isOpen = false
           this.modal.isBusy = false
           this.modal.data = {}
-          this.onFilterMe()
+          if (index !== -1) {
+            this.notes.splice(index, 1)
+          }
         })
     },
     onToggle(row) {
       this.$ga.event('Edit', 'Click', row.id, 0)
       row.toggleDetails()
-    },
-    onSubmit(payload) {
-      // this.$emit('submitting', payload)
-      // for pre-update tasks that might need to be done.
-      this.onUpdate(payload)
     },
     onUpdate(evt) {
       const endpoint = this.createQuery(evt)
@@ -613,18 +637,9 @@ export default {
       this.$axios
         .$get(endpoint)
         .then((res) => {
-          if (res.length > 0) {
-            this.totalRows = res.length
-            this.notes = res
-          } else {
-            this.totalRows = 0
-            this.notes = []
-          }
-          if (evt.locationUrns) {
-            this.sortBy = 'locationNames'
-          } else {
-            this.sortBy = 'createdAt'
-          }
+          this.totalRows = res.length
+          this.notes = res
+          this.sortBy = evt.locationUrns ? 'locationNames' : 'createdAt'
         })
         .catch(() => {
           this.showGlobalAlert('Error: Please try again', 'danger')
