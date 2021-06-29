@@ -1,0 +1,6 @@
+dependencies:
+- name: cloud-helper
+  repository: gs://g5-multiverse-helm3-repositories
+  version: 1.0.1
+digest: sha256:bf759bc4f6ed9d433353e2233c32b88f982393686dd1ea75207589c9f9738b6a
+generated: "2021-06-15T11:57:23.918720859-07:00"

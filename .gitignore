@@ -95,3 +95,4 @@ client-cert
 server-ca
 .npmrc
 secret-annotation.yaml
+.buildenv

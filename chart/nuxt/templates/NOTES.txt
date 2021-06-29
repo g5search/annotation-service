@@ -1,1 +1,0 @@
-Congratulations, you have deployed your Node.js Application to Kubernetes using Helm!
