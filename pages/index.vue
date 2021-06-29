@@ -24,7 +24,7 @@
     <b-sidebar
       id="controls-container"
       v-model="isOpen"
-      no-close-on-route-change="true"
+      no-close-on-route-change
       right
       width="450px"
       shadow
@@ -399,15 +399,17 @@ export default {
   async asyncData({ $axios, store, route }) {
     try {
       const { client: urn = null, fromDate = null, toDate = null } = route.query
-      const hasQueryParams = urn || fromDate || toDate
+      const hasQueryParams = !!(urn || fromDate || toDate)
       await store.dispatch('controls/fillUsers')
       const clients = await store.dispatch('controls/fillClients')
       const me = await $axios.$get('api/v1/me')
       let endpoint = `api/v1/notes?app=notesService&email=${me.email}`
       let isFiltered = true
+      console.log(hasQueryParams)
       if (hasQueryParams) {
         const client = urn ? clients.find(client => client.urn === urn) : null
-        await store.dispatch('controls/onUpdate', { client: client || null, fromDate, toDate })
+        const locations = client ? await $axios.$get(`api/hub/clients/${client.urn}/locations`) : []
+        await store.dispatch('controls/onUpdate', { client: client || null, fromDate, toDate, locations })
         const searchBy = fromDate || toDate ? 'createdAt' : ''
         endpoint = Object.entries({ clientUrn: urn, searchBy, from: fromDate, to: toDate }).reduce((acc, curr) => {
           return curr[1] ? `${acc}&${curr[0]}=${curr[1]}` : acc
@@ -441,6 +443,7 @@ export default {
       isOpen: false,
       isBusy: false,
       isError: false,
+      noCloseOnRouteChange: true,
       isFiltered: false,
       modal: {
         isOpen: false,
