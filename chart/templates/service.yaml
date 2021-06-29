@@ -3,11 +3,11 @@ kind: Service
 metadata:
   name: {{ .Release.Name | quote }}
   labels:
-    {{ include "annotation.labels" . | nindent 4 }}
+    {{ include "notes.labels" . | nindent 4 }}
 spec:
   ports:
   - name: http
     port: 80
     targetPort: http
   selector:
-    {{ include "annotation.selectorLabels" . | nindent 4 }}
+    {{ include "notes.selectorLabels" . | nindent 4 }}

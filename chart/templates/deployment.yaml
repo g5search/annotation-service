@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: {{ .Release.Name | quote }}
   labels:
-    {{ include "annotation.labels" . | nindent 4 }}
+    {{ include "notes.labels" . | nindent 4 }}
   annotations:
     reloader.stakater.com/search: "true"
 spec:
@@ -16,16 +16,16 @@ spec:
       maxSurge: 1
   selector:
     matchLabels:
-      {{ include "annotation.selectorLabels" . | nindent 6 }}
+      {{ include "notes.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       name: node
       labels:
-        {{ include "annotation.labels" . | nindent 8 }}
+        {{ include "notes.labels" . | nindent 8 }}
       annotations:
         kubectl.kubernetes.io/default-logs-container: node
     spec:
-      serviceAccountName: {{ include "annotation.serviceAccountName" . }}
+      serviceAccountName: {{ include "notes.serviceAccountName" . }}
       containers:
         - name: node
           ports:

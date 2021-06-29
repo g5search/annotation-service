@@ -23,9 +23,9 @@
     "docker:push:prod": "docker push $npm_package_config_imageRepo:$npm_package_version",
     "docker:push:staging": "branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD); sha=$(git rev-parse $branch); docker push $npm_package_config_imageRepo:$branch-$sha",
     "docker:push:prime": "branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD); sha=$(git rev-parse $branch); docker push $npm_package_config_imageRepo:$branch-$sha-prime",
-    "helm:upgrade:prod": "helm upgrade annotation ./chart/ -f ./chart/opex-prod-values.yaml  --set=image.tag=$npm_package_version",
-    "helm:upgrade:staging": " branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD); sha=$(git rev-parse $branch); helm upgrade annotation ./chart/ -f ./chart/opex-staging.yaml --set=image.tag=$branch-$sha",
-    "helm:upgrade:prime": " branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD); sha=$(git rev-parse $branch); helm upgrade annotation ./chart/ -f ./chart/opex-prime-values.yaml --set=image.tag=$branch-$sha-prime"
+    "helm:upgrade:prod": "helm upgrade notes ./chart/ -f ./chart/opex-prod-values.yaml  --set=image.tag=$npm_package_version",
+    "helm:upgrade:staging": " branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD); sha=$(git rev-parse $branch); helm upgrade notes ./chart/ -f ./chart/opex-staging.yaml --set=image.tag=$branch-$sha",
+    "helm:upgrade:prime": " branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD); sha=$(git rev-parse $branch); helm upgrade notes ./chart/ -f ./chart/opex-prime-values.yaml --set=image.tag=$branch-$sha-prime"
   },
   "dependencies": {
     "@cloudnative/health-connect": "^2.1.0",

@@ -3,7 +3,7 @@ kind: VirtualService
 metadata:
   name: {{ .Release.Name | quote }}
   labels:
-    {{ include "annotation.labels" . | nindent 4 }}
+    {{ include "notes.labels" . | nindent 4 }}
 spec:
   hosts:
     # Match on in-cluster traffic with short hostname

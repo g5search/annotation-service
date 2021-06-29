@@ -6,6 +6,6 @@ configuration: staging
 environment: opex-staging
 databaseConnectionName: "operational-excellence-239518:us-central1:opex-postgres"
 cloud-sql: 
-  instanceSuffix: a
+  instanceSuffix: b
 memorystore: 
   instanceSuffix: a
