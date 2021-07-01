@@ -24,12 +24,12 @@ configurations:
       G5_AUTH_ME_ENDPOINT: https://auth.g5search.com/v1/me
   production:
     configMapData:
-      BROWSER_URL: 'https://notes-opex-staging.g5devops.com'
+      BROWSER_URL: 'https://notes.g5marketingcloud.com'
       GA_PROPERTY: ''
       CRS_URL: ''
       G5_AUTH_ENDPOINT: https://auth.g5search.com/oauth/authorize
       G5_TOKEN_ENDPOINT: https://auth.g5search.com/oauth/token
-      G5_AUTH_REDIRECT_URI: https://notes-opex-staging.g5devops.com/g5_auth/users/auth/g5/callback
+      G5_AUTH_REDIRECT_URI: https://notes.g5marketingcloud.com/g5_auth/users/auth/g5/callback
       G5_AUTH_ME_ENDPOINT: https://auth.g5search.com/v1/me
 activeCloudSQLSubchart: "cloud-sql"
 activeBullSubchart: "memorystore"
