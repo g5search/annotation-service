@@ -78,7 +78,6 @@ module.exports = async (job, done) => {
 }
 
 function convertName (name, audit) {
-  console.log({ name, audit })
   let newName = null
   switch (name) {
     case 'Missing':
@@ -114,6 +113,5 @@ function convertName (name, audit) {
     default:
       newName = ''
   }
-  console.log(`${newName} ${audit}`)
   return `${newName} ${audit}`
 }
