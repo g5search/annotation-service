@@ -1,12 +1,11 @@
 {
-  "name": "opex-template",
-  "version": "1.3.65",
+  "name": "notes",
+  "version": "2.0.0",
   "description": "A note taking service for the G5 Delivery teams.",
   "author": "David Miller & Tyler Hasenoehrl",
-  "docker-repo": "tylrhas/annotation",
   "private": true,
   "config": {
-    "imageRepo": "tylrhas/annotation",
+    "imageRepo": "gcr.io/g5-images/annotation",
     "imageName": "annotation"
   },
   "scripts": {
@@ -16,10 +15,17 @@
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "test": "jest",
-    "docker:build": "docker build -t $npm_package_config_imageName . --build-arg NPM_TOKEN=$NPM_TOKEN",
-    "docker:tag": "cross-env docker tag $npm_package_config_imageName $npm_package_config_imageRepo:$npm_package_version",
-    "docker:push": "cross-env docker push $npm_package_config_imageRepo:$npm_package_version",
-    "helm:upgrade": "helm upgrade annotation ./chart/nuxt && kubectl get pods"
+    "docker:build": "source .buildenv && docker build -t $npm_package_config_imageName . --build-arg NPM_TOKEN=$NPM_TOKEN --build-arg BROWSER_URL=$BROWSER_URL --build-arg GA_PROPERTY=$GA_PROPERTY",
+    "docker:run": "docker run -p 8085:8085 $npm_package_config_imageName",
+    "docker:tag:prime": "branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD); sha=$(git rev-parse $branch); docker tag $npm_package_config_imageName $npm_package_config_imageRepo:$branch-$sha-prime",
+    "docker:tag:staging": "branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD); sha=$(git rev-parse $branch); docker tag $npm_package_config_imageName $npm_package_config_imageRepo:$branch-$sha",
+    "docker:tag:prod": " docker tag $npm_package_config_imageName $npm_package_config_imageRepo:$npm_package_version",
+    "docker:push:prod": "docker push $npm_package_config_imageRepo:$npm_package_version",
+    "docker:push:staging": "branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD); sha=$(git rev-parse $branch); docker push $npm_package_config_imageRepo:$branch-$sha",
+    "docker:push:prime": "branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD); sha=$(git rev-parse $branch); docker push $npm_package_config_imageRepo:$branch-$sha-prime",
+    "helm:upgrade:prod": "helm upgrade notes ./chart/ -f ./chart/opex-prod-values.yaml  --set=image.tag=$npm_package_version",
+    "helm:upgrade:staging": " branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD); sha=$(git rev-parse $branch); helm upgrade notes ./chart/ -f ./chart/opex-staging.yaml --set=image.tag=$branch-$sha",
+    "helm:upgrade:prime": " branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD); sha=$(git rev-parse $branch); helm upgrade notes ./chart/ -f ./chart/opex-prime-values.yaml --set=image.tag=$branch-$sha-prime"
   },
   "dependencies": {
     "@cloudnative/health-connect": "^2.1.0",

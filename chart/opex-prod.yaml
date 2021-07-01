@@ -1,0 +1,11 @@
+global:
+  projectID: opex-prod-ebbd
+  isProduction: true
+  computeNetworkSelfLink: https://www.googleapis.com/compute/v1/projects/opex-prod-ebbd/global/networks/gke-cluster
+configuration: production
+environment: opex-prod
+databaseConnectionName: "operational-excellence-239518:us-central1:opex-postgres"
+cloud-sql: 
+  instanceSuffix: a
+memorystore: 
+  instanceSuffix: a

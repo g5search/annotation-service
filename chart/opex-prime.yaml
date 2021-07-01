@@ -1,0 +1,11 @@
+global:
+  projectID: opex-prime-25d3
+  isProduction: false
+  computeNetworkSelfLink: https://www.googleapis.com/compute/v1/projects/opex-prime-25d3/global/networks/gke-cluster
+configuration: prime
+environment: opex-prime
+databaseConnectionName: "operational-excellence-239518:us-central1:opex-postgres"
+cloud-sql: 
+  instanceSuffix: a
+memorystore: 
+  instanceSuffix: a

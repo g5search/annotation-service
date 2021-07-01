@@ -5,7 +5,7 @@ module.exports = {
   ssr: false,
   server: {
     host: process.env.BASE_URL || '0.0.0.0',
-    port: process.env.PORT || 5000
+    port: process.env.PORT || 8085
   },
   serverMiddleware: [],
   head: {
