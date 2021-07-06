@@ -33,7 +33,7 @@ const sequelize = new Sequelize(dbUrl, {
   dialectOptions: {
     ssl: (ssl === 'true') ? { ca, cert, key } : false
   },
-  logging: (logging === 'true')
+  logging: logging === 'true' ? console.log : false
 })
 
 const updatableModels = require('@getg5/g5-updatable').models(sequelize)
@@ -58,8 +58,7 @@ fs.readdirSync(__dirname)
     db[name] = model
   })
 
-Object
-  .keys(db)
+Object.keys(db)
   .forEach((modelName) => {
     if ('associate' in db[modelName]) {
       db[modelName].associate(db)
