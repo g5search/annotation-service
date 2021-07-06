@@ -54,6 +54,7 @@ typings/
 
 # Output of 'npm pack'
 *.tgz
+!/chart/charts/*.tgz
 
 # Yarn Integrity file
 .yarn-integrity
