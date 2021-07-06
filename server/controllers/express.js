@@ -1,22 +1,25 @@
 const express = require('express')
-const bodyParser = require('body-parser')
-const queue = require('./queue')
-const app = express()
-app.use(bodyParser.json({ limit: '1000kb' }))
-queue.init(app)
 const models = require('../models/primary')
+const queue = require('./queue')
+
+const app = express()
+
+app.use(express.json({ limit: '1000kb' }))
+queue.init(app)
+
 const passport = require('./auth')(app, models)
 const api = require('./api-auth')
+
 require('@getg5/g5-updatable').init(app, models)
+
 app.use(checkAuth)
+
 require('../routes')(app, passport)
 
-const g5AuthOnly = [
-
-]
-const jwtOnly = [
-]
+const g5AuthOnly = []
+const jwtOnly = []
 const noAuth = [
+  '/api/v1/crs/add',
   '/api/v1/login',
   '/api/hub/clients',
   '/api/v1/signup',

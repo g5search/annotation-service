@@ -7,6 +7,9 @@ module.exports = (sequelize) => {
       autoIncrement: true,
       primaryKey: true
     },
+    check_id: {
+      type: INTEGER
+    },
     salesforce_id: {
       type: STRING
     },
