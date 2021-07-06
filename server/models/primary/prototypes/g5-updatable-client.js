@@ -1,7 +1,7 @@
 module.exports = (models, Sequelize, sequelize) => {
   models.g5_updatable_client.getAllNonInternal = where => models.g5_updatable_client.findAll({
     where: {
-      'properties.g5_internal': false,
+      properties: { g5_internal: false },
       ...where
     },
     attributes: [

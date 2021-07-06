@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@cloudnative/health-connect": "^2.1.0",
-    "@getg5/g5-auth": "^2.0.9",
+    "@getg5/g5-auth": "^4.0.0",
     "@getg5/g5-updatable": "^2.2.3",
     "@nuxtjs/axios": "^5.10.3",
     "@nuxtjs/google-analytics": "^2.3.0",
@@ -54,7 +54,7 @@
     "path": "^0.12.7",
     "pg": "^7.18.2",
     "save-dev": "0.0.1-security",
-    "sequelize": "^5.21.11",
+    "sequelize": "^6.5.0",
     "sequelize-cli": "^6.2.0",
     "sequelize-mock": "^0.10.2",
     "tiptap": "^1.27.1",

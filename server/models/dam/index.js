@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const Sequelize = require('sequelize')
+
 const {
   DAM_DATABASE_URL: dbUrl,
   DAM_DATABASE_MAX_CONNECTIONS: max,
@@ -47,19 +48,21 @@ fs.readdirSync(__dirname)
                   file !== 'README.md'
   )
   .forEach((file) => {
-    const model = sequelize.import(path.join(__dirname, file))
+    const model = require(path.join(__dirname, file))(sequelize)
     const { name } = model
     db[name] = model
   })
 
-Object.keys(db)
+Object
+  .keys(db)
   .forEach((modelName) => {
     if ('associate' in db[modelName]) {
       db[modelName].associate(db)
     }
   })
+
 require('./prototypes')(db, Sequelize, sequelize)
-// require('./hooks')(db)
+
 module.exports = {
   ...db,
   sequelize,
