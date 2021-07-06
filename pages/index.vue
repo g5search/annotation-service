@@ -396,7 +396,7 @@ export default {
   // if query params builds gets all notes and applies filters
   // otherwise just gets current users notes
   // returns local data props me, notes, totalRows
-  async asyncData({ $axios, store, route }) {
+  async asyncData({ $axios, store, route, error }) {
     try {
       const { client: urn = null, fromDate = null, toDate = null } = route.query
       const hasQueryParams = !!(urn || fromDate || toDate)
@@ -405,7 +405,6 @@ export default {
       const me = await $axios.$get('api/v1/me')
       let endpoint = `api/v1/notes?app=notesService&email=${me.email}`
       let isFiltered = true
-      console.log(hasQueryParams)
       if (hasQueryParams) {
         const client = urn ? clients.find(client => client.urn === urn) : null
         const locations = client ? await $axios.$get(`api/hub/clients/${client.urn}/locations`) : []
@@ -425,7 +424,7 @@ export default {
         isOpen: hasQueryParams
       }
     } catch (e) {
-
+      error(e)
     }
   },
   data() {
