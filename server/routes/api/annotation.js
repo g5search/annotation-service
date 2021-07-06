@@ -1,14 +1,14 @@
 const cors = require('cors')
-const axios = require('axios')
-const { Op } = require('sequelize')
+// const axios = require('axios')
+// const { Op } = require('sequelize')
 const models = require('../../models/primary')
-const objectUtil = require('../../controllers/utilities/object')
+// const objectUtil = require('../../controllers/utilities/object')
 const whitelist = [
   /chrome-extension:\/\/[a-z]*$/,
   /http:\/\/localhost:[\d]*/,
   /https:\/\/notes\.g5marketingcloud\.com/
 ]
-const crsSync = require('../../controllers/jobs/crsSync')
+// const crsSync = require('../../controllers/jobs/crsSync')
 const annCntlr = require('../../controllers/annotation')
 const corsOpts = {
   origin: (origin, callback) => {
@@ -71,10 +71,10 @@ module.exports = (app) => {
     }
   })
 
-  app.get('/api/v1/crs/sync', async (req, res) => {
-    const response = await axios.get('http://localhost:3009/api/annotation')
-    console.log(response)
-    crsSync(response.data)
-    res.json(response.data)
-  })
+  // app.get('/api/v1/crs/sync', async (req, res) => {
+  //   const response = await axios.get('http://localhost:3009/api/annotation')
+  //   console.log(response)
+  //   crsSync(response.data)
+  //   res.json(response.data)
+  // })
 }

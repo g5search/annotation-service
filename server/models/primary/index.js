@@ -1,10 +1,8 @@
 const fs = require('fs')
 const path = require('path')
 const Sequelize = require('sequelize')
-const { Transaction } = Sequelize
+
 const {
-  INCLUDE_G5_AUTH: includeAuth,
-  INCLUDE_G5_UPDATABLES: includeUpdatables,
   DATABASE_URL: dbUrl,
   DATABASE_MAX_CONNECTIONS: max,
   DATABASE_MIN_CONNECTIONS: min,
@@ -35,18 +33,16 @@ const sequelize = new Sequelize(dbUrl, {
   dialectOptions: {
     ssl: (ssl === 'true') ? { ca, cert, key } : false
   },
-  logging: (logging === 'true')
+  logging: logging === 'true' ? console.log : false
 })
 
 const updatableModels = require('@getg5/g5-updatable').models(sequelize)
 const authModels = require('@getg5/g5-auth').models(sequelize)
+
 const db = {
   ...updatableModels,
   ...authModels
 }
-// db.user.associate = (models) => {
-//   models.user.hasMany(models.seoAssignment, { foreignKey: 'userId', sourceKey: 'id' })
-// }
 
 fs.readdirSync(__dirname)
   .filter(file => file.indexOf('.') !== 0 &&
@@ -57,7 +53,7 @@ fs.readdirSync(__dirname)
                   file !== 'README.md'
   )
   .forEach((file) => {
-    const model = sequelize.import(path.join(__dirname, file))
+    const model = require(path.join(__dirname, file))(sequelize)
     const { name } = model
     db[name] = model
   })
@@ -68,8 +64,10 @@ Object.keys(db)
       db[modelName].associate(db)
     }
   })
+
 require('./prototypes')(db, Sequelize, sequelize)
 require('./hooks')(db)
+
 module.exports = {
   ...db,
   sequelize,

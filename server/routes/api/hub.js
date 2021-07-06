@@ -1,5 +1,8 @@
 const cors = require('cors')
 const sequelize = require('sequelize')
+const { Op } = sequelize
+const models = require('../../models/primary')
+
 const whitelist = [
   /chrome-extension:\/\/[a-z]*$/
 ]
@@ -14,8 +17,6 @@ const corsOpts = {
   preflightContinue: true,
   methods: 'GET'
 }
-const { Op } = sequelize
-const models = require('../../models/primary')
 
 module.exports = (app) => {
   app.options('/api/hub/clients', cors(corsOpts))
@@ -66,6 +67,7 @@ module.exports = (app) => {
         ]
       })
     } else {
+      where.properties.g5_internal = false
       clients = await models.g5_updatable_client.getAllNonInternal(where)
     }
     res.json(clients)

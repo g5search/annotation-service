@@ -1,7 +1,7 @@
 export const state = () => ({
   client: null,
   clients: [],
-  location: [],
+  location: null,
   locations: [],
   vertical: null,
   verticals: [
@@ -221,16 +221,18 @@ export const actions = {
     await commit('ON_RESET')
   },
   async fillClients({ commit }) {
-    await this.$axios
+    const clients = await this.$axios
       .$get('api/hub/clients?activeDa=false&internal=false')
-      .then(clients => commit('FILL_CLIENTS', clients))
+    commit('FILL_CLIENTS', clients)
+    return clients
   },
   async fillUsers({ commit }) {
     await this.$axios
       .$get('api/v1/strategists')
       .then(user => [...user.map(u => ({
         text: `${u.first_name} ${u.last_name}`,
-        value: u.email
+        value: u.email,
+        id: u.id
       })), { text: 'Select a User', value: null }])
       .then(users => commit('FILL_USERS', users))
   }
@@ -253,7 +255,10 @@ export const getters = {
 
 export const mutations = {
   ON_UPDATE(state, payload) {
-    state[payload.key] = payload.value
+    const keys = Object.keys(payload)
+    keys.forEach((key) => {
+      state[key] = payload[key]
+    })
   },
   ON_REMOVE(state, payload) {
     const newState = state[payload.key].filter(k => k.urn !== payload.value.urn)
