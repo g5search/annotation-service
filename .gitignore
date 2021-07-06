@@ -41,7 +41,7 @@ jspm_packages/
 greenlock.d/
 
 # TypeScript v1 declaration files
-typings/ß
+typings/
 
 # Optional npm cache directory
 .npm
