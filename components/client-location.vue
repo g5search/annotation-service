@@ -35,7 +35,7 @@
         :value="location"
         :options="locations"
         :custom-label="l => `${l.displayName ? l.displayName : l.name}`"
-        @input="onUpdate({ key: 'location', value: $event })"
+        @input="onUpdate({ location: $event })"
       />
     </b-form-group>
     <b-btn-group class="dangle__btn bg-white">
@@ -106,11 +106,11 @@ export default {
       if (!evt) {
         return
       }
-      this.onUpdate({ key: 'client', value: evt })
-      this.onUpdate({ key: 'location', value: [] })
+      this.onUpdate({ client: evt })
+      this.onUpdate({ location: [] })
       await this.$axios
         .$get(`api/hub/clients/${this.client.urn}/locations`)
-        .then(l => this.onUpdate({ key: 'locations', value: l }))
+        .then(l => this.onUpdate({ locations: l }))
     }
   }
 }
