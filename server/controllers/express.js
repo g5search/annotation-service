@@ -1,15 +1,11 @@
 const express = require('express')
-const models = require('../models/primary')
 const queue = require('./queue')
-
 const app = express()
-
 app.use(express.json({ limit: '1000kb' }))
 queue.init(app)
-
+const models = require('../models/primary')
 const passport = require('./auth')(app, models)
 const api = require('./api-auth')
-
 require('@getg5/g5-updatable').init(app, models)
 
 app.use(checkAuth)
