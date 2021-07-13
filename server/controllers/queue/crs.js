@@ -1,4 +1,5 @@
-const sync = require('../jobs/crsSync')
+const path = require('path')
+const crsSync = path.resolve('./server/controllers/jobs/crsSync.js')
 
 module.exports = {
   bullConfig,
@@ -7,7 +8,7 @@ module.exports = {
 
 function bullConfig (Bull) {
   const queue = new Bull('CRS', process.env.REDIS_URL, { prefix: 'notes' })
-  queue.process('Import Notes from CRS', 1, (job, done) => sync(job, done))
+  queue.process('Import Notes from CRS', 1, (job, done) => crsSync(job, done))
   return queue
 }
 
