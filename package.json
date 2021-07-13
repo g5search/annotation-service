@@ -1,8 +1,8 @@
 {
   "name": "notes",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "A note taking service for the G5 Delivery teams.",
-  "author": "David Miller & Tyler Hasenoehrl",
+  "author": "The OpEx Technical Team",
   "private": true,
   "config": {
     "imageRepo": "gcr.io/g5-images/annotation",
