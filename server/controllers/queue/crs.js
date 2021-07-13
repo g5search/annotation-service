@@ -8,8 +8,9 @@ module.exports = {
 
 function bullConfig (Bull) {
   const queue = new Bull('CRS', process.env.REDIS_URL, { prefix: 'notes' })
-  queue.process('Import Notes from CRS', 1, (job, done) => crsSync(job, done))
-  return queue
+  queue.process('Import Notes from CRS', 1, (job, done) => {
+    return require(crsSync)(job, done)
+  })
 }
 
 function arenaConfig () {
