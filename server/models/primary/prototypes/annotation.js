@@ -42,30 +42,32 @@ module.exports = (models, Sequelize, sequelize) => {
         urn: clientUrn
       }
     })
-    const result = await sequelize.transaction(async (t) => {
-      const update = {
-        html,
-        startDate,
-        endDate,
-        annotation,
-        internal,
-        promoted,
-        annotationUserId,
-        g5UpdatableClientId: client.dataValues.id,
-        appId: 1,
-        teamId
-      }
-      if (createdAt) {
-        update.createdAt = createdAt
-      }
-      const note = await models.annotation.create(update, { transaction: t })
-      await note.addG5_updatable_locations(locations, { transaction: t })
-      await note.setAnnotationType(actionType, { transaction: t, hooks: false })
-      await note.setAnnotationCategory(category, { transaction: t, hooks: false })
+    const transaction = await sequelize.transaction()
+    const update = {
+      html,
+      startDate,
+      endDate,
+      annotation,
+      internal,
+      promoted,
+      annotationUserId,
+      g5UpdatableClientId: client.dataValues.id,
+      appId: 1,
+      teamId
+    }
+    if (createdAt) {
+      update.createdAt = createdAt
+    }
+    try {
+      const note = await models.annotation.create(update, { transaction })
+      await note.addG5_updatable_locations(locations, { transaction })
+      await note.setAnnotationType(actionType, { transaction, hooks: false })
+      await note.setAnnotationCategory(category, { transaction, hooks: false })
+      await transaction.commit()
       return note
-    })
-
-    return result
+    } catch (error) {
+      await transaction.rollback()
+    }
   }
   models.annotation.findByQuery = (params) => {
     const whereGroups = objectUtil.group({
